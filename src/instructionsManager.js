@@ -1,5 +1,4 @@
 import Game from "/src/game";
-import Vehicle from "/src/vehicle";
 
 export default class InstructionManager {
   constructor() {

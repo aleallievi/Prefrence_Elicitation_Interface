@@ -1,3 +1,6 @@
+import 'regenerator-runtime/runtime'
+// import regeneratorRuntime from "regenerator-runtime";
+
 import Game from "/src/game";
 import Score from "/src/score";
 import InstructionsManager from "/src/instructionsManager";

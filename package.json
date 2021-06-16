@@ -8,13 +8,14 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "DOM": "0.0.3",
     "assets": "3.0.1",
     "canvg": "3.0.7",
     "canvg-browser": "1.0.0",
     "d3": "6.7.0",
     "dom": "0.0.3",
-    "parcel-bundler": "^1.6.1"
+    "DOM": "0.0.3",
+    "parcel-bundler": "^1.6.1",
+    "regenerator-runtime": "^0.13.7"
   },
   "devDependencies": {
     "@babel/core": "7.2.0"

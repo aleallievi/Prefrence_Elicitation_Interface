@@ -45,6 +45,7 @@ export default class Game {
     this.collectedCoin = false;
 
     if (this.dispTraj === true) this.trajHandler.update(deltaTime);
+
     this.gameObjects.forEach((object) => object.update(deltaTime));
 
     //update oneway gates
@@ -102,15 +103,12 @@ export default class Game {
   async load_board(loadTerm) {
     let objects = [];
 
-    // let json = await (
-    //   await fetch(
-    //     "/assets/trajData/" + String(this.boardName) + "_json_board.json"
-    //   )
-    // ).json();
+    console.log("loading json")
     let json = await (
-      await fetch("/assets/boards/" + String(this.boardName) + "_board.json")
+      await fetch("./assets/boards/" + String(this.boardName) + "_board.json")
     ).json();
-
+    console.log("JSON:")
+    console.log(json)
     // var json = require("/assets/boards/test_json_board.json");
     var board = [];
     // var blocking_cords = [];
