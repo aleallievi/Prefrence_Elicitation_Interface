@@ -41,8 +41,12 @@ const CELL_SIZE = GAME_WIDTH / 10;
 window.canvas.width = GAME_WIDTH;
 window.canvas.height = GAME_HEIGHT;
 
-scoreDisp.style.left = "1030px";
-scoreDisp.style.top = "20px";
+window.canvas.style.top = "5%"
+window.canvas.style.left = "25%";
+window.canvas.style.position = "absolute";
+
+scoreDisp.style.left = "70%";
+scoreDisp.style.top = "5%";
 scoreDisp.style.position = "absolute";
 
 //set SVG (for curves as an element of the canvas)

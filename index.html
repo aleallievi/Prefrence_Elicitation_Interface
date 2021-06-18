@@ -21,10 +21,20 @@
         display: table;
         margin: auto;
       }
-      body {
+      /* body {
         display: table-cell;
         vertical-align: middle;
-      }
+      } */
+      /* #wrapper{
+        position:relative;
+        top: 0%; left: 0%;
+
+      } */
+      /* #container{position:relative;border:1px solid;width:800px;height:400px;}
+      .part{position:absolute;}
+      #gameScreen{top:left:0;border:1px solid black}
+      #scoreScreen{left:300px;border:1px }; */
+
       @font-face {
         font-family: "CustomFont";
         src: url("assets/fonts/SUPERBOOM.ttf");
@@ -77,10 +87,15 @@
     </form>
 
     <!-- <div id="app"></div> -->
-    <canvas id="gameScreen"></canvas>
-    <canvas id="scoreScreen" width="300" height="600"> </canvas>
+    <!-- <div id = "wrapper"> -->
+
+      <canvas id="gameScreen"></canvas>
+      <canvas id="scoreScreen" width="300" height="600"> </canvas>
     <!-- <canvas id="queryScreen" width="300" height="600"> </canvas> -->
+    <!-- </div> -->
 
     <script src="src/index.js"></script>
   </body>
+
+
 </html>
