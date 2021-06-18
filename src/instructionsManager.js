@@ -23,7 +23,11 @@ export default class InstructionManager {
 
   update() {
     if (this.insScene === 7 && !this.finishedGamePlay) this.finishedIns = true;
-    if (this.insScene === 10 && !this.finishedGamePlay) this.finishedIns = true;
+    if (this.insScene === 10) {
+      this.finishedIns = true;
+      window.begunQueries = true;
+      console.log("finsihed");
+    }
 
     this.img = document.getElementById("ins" + String(this.insScene));
     // console.log("here");

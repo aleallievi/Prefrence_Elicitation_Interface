@@ -42,13 +42,20 @@ export default class Vehicle {
     // let rjson = require("/assets/trajData/" +
     //   String(this.game.boardName) +
     //   "_rewards_function.json");
+    // let rjson = await (
+    //   await fetch(
+    //     "/assets/boards/" +
+    //       String(this.game.boardName) +
+    //       "_rewards_function.json"
+    //   )
+    // ).json();
+    // console.log("loading board with name: " + String(this.boardName));
+
     let rjson = await (
-      await fetch(
-        "/assets/boards/" +
-          String(this.game.boardName) +
-          "_rewards_function.json"
-      )
+      await fetch('https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/boards/' + String(this.game.boardName) + '_rewards_function.json')
     ).json();
+    //console.log(json)
+
     // console.log(rjson);
     this.rFunc = [];
     for (var i in rjson) {
@@ -337,21 +344,23 @@ export default class Vehicle {
         this.game.score += this.rFunc[this.curStatePrevCords.y][
           this.curStatePrevCords.x
         ][aI];
+
+        if (!this.game.reached_terminal) {
+          if (!this.game.is_in_ow(this.curStatePrevCords)) {
+            this.game.gasScore -= 1;
+          } else {
+            this.game.gasScore -= 2;
+          }
+        }
+
+        this.game.pScore = this.game.score - this.game.gasScore;
+
       }
 
       // console.log(
       //   this.rFunc[this.curStatePrevCords.y][this.curStatePrevCords.x][aI]
       // );
 
-      if (!this.game.reached_terminal) {
-        if (!this.game.is_in_ow(this.curStatePrevCords)) {
-          this.game.gasScore -= 1;
-        } else {
-          this.game.gasScore -= 2;
-        }
-      }
-
-      this.game.pScore = this.game.score - this.game.gasScore;
 
       let ns = {
         x: this.curStatePrevCords.x + a.x,

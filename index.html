@@ -58,27 +58,28 @@
     <img id="ins8" src="assets/images/ins8.png" />
     <img id="ins9" src="assets/images/ins9.png" />
 
-    <!-- <img id="img_x" src="assets/images/image_x.png" />
-    <img id="img_arrow_right" src="assets/images/img_arrow_right.png" />
-    <img id="img_arrow_left" src="assets/images/img_arrow_left.png" /> -->
+    <img id="traj10" src="assets/trajImages/(0,-2)_0_0.png" />
+    <img id="traj11" src="assets/trajImages/(0,-2)_0_1.png" />
+    <img id="traj20" src="assets/trajImages/(0,-2)_1_0.png" />
+    <img id="traj21" src="assets/trajImages/(0,-2)_1_1.png" />
 
-    <!-- <svg id="SVG" width="240" height="160">
-      <!-- <circle id="au" class="spot" cx="200" cy="50" r="4"></circle>
-      <circle id="sl" class="spot" cx="100" cy="100" r="4"></circle>
-      <circle id="cp" class="spot2" cx="0" cy="0" r="4"></circle> -->
-    <!-- <path
-        id="curve"
-        d="M0 0"
-        stroke="green"
-        stroke-width="4"
-        stroke-linecap="round"
-        fill="transparent"
-      ></path>
-    </svg> -->
+    <img id="traj30" src="assets/trajImages/(1,1)_0_0.png" />
+    <img id="traj31" src="assets/trajImages/(1,1)_0_1.png" />
+    <img id="traj40" src="assets/trajImages/(1,1)_1_0.png" />
+    <img id="traj41" src="assets/trajImages/(1,1)_1_1.png" />
+
+
+    <form name="hitForm" id="hitForm" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="POST">
+    <input type="hidden" id = "assignmentId" name="assignmentId" value="" />
+    <input type="hidden" id = "query1" name="query1" value="" />
+    <input type="hidden" id = "query2" name="query2" value="" />
+    <input type="hidden" id = "query3" name="query3" value="" />
+    </form>
 
     <!-- <div id="app"></div> -->
-    <canvas id="gameScreen" width="600" height="600"></canvas>
+    <canvas id="gameScreen"></canvas>
     <canvas id="scoreScreen" width="300" height="600"> </canvas>
+    <!-- <canvas id="queryScreen" width="300" height="600"> </canvas> -->
 
     <script src="src/index.js"></script>
   </body>

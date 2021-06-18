@@ -9,6 +9,7 @@ import OWTile from "/src/owTile";
 import InputHandler from "/src/input";
 import TrajHandler from "/src/trajHandler";
 
+
 export default class Game {
   constructor(gameWidth, gameHeight, spawnPoint, boardName, dispTraj) {
     this.gameWidth = gameWidth;
@@ -24,6 +25,20 @@ export default class Game {
     this.isLeavingBlank = false;
   }
 
+//   fetchJSONFile(path, callback) {
+//     var httpRequest = new XMLHttpRequest();
+//     httpRequest.onreadystatechange = function() {
+//         if (httpRequest.readyState === 4) {
+//             if (httpRequest.status === 200) {
+//                 var data = JSON.parse(httpRequest.responseText);
+//                 if (callback) callback(data);
+//             }
+//         }
+//     };
+//     httpRequest.open('GET', path);
+//     httpRequest.send();
+// }
+
   start(loadTerm = true, isAnimating = false) {
     this.gameObjects = null;
     this.vehicle = new Vehicle(this, isAnimating);
@@ -33,6 +48,13 @@ export default class Game {
     this.pScore = 0;
     if (this.dispTraj === false) new InputHandler(this.vehicle);
     // this.board_objects = this.load_board();
+    // this.fetchJSONFile(("/assets/boards/" + String(this.boardName) + "_board.json", function(data){
+    // // do something with your data
+    // console.log(data);
+    // });
+    // var jsonData = JSON.parse(document.getElementById('data').textContent)
+    // console.log(jsonData);
+
 
     // Assume the async call always succeed
     this.load_board(loadTerm).then(() => {
@@ -103,12 +125,17 @@ export default class Game {
   async load_board(loadTerm) {
     let objects = [];
 
-    console.log("loading json")
+    //https://api.jsonbin.io/b/60ca6d8f8ea8ec25bd0e7835
+  //
+  //"/assets/boards/" + String(this.boardName) + "_board.json"
     let json = await (
-      await fetch("./assets/boards/" + String(this.boardName) + "_board.json")
+      await fetch('https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/boards/' + String(this.boardName) + '_board.json')
     ).json();
-    console.log("JSON:")
-    console.log(json)
+    // console.log(json)
+
+    // fetch('https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/boards/' + String(this.boardName) + '.json')
+    // .then(response => response.json())
+    // .then(data =>  this.json = data);
     // var json = require("/assets/boards/test_json_board.json");
     var board = [];
     // var blocking_cords = [];

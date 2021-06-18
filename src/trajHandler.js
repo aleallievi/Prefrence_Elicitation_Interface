@@ -1,9 +1,20 @@
+// // import screenshot from "desktop-screenshot";
+// const fs = require('fs')
+// const screenshot = require('screenshot-desktop')
+// var {spawn} = require('child_process')
+
 export default class TrajHandler {
   constructor(vehicle, game) {
     this.trajLength = 3;
     this.vehicle = vehicle;
     this.game = game;
-    this.json = require("/assets/trajData/ql_passing_spaces.json");
+    this.loadPassingSpaces().then(() => {
+      this.loadedTrajData= true;
+    });
+
+    // this.json = require("/assets/trajData/ql_passing_spaces.json");
+    this.loadedRFunc = false;
+    this.tookScreenShot = false;
     this.loadRewardFunction().then(() => {
       this.loadedRFunc = true;
     });
@@ -13,13 +24,11 @@ export default class TrajHandler {
     this.cordsI = 0;
     this.quadI = 0;
     this.trajp = 0;
-    this.keys = [];
+
     this.cellSize = vehicle.cellSize;
     this.trajCords = [];
     this.actions = [];
-    for (var i in this.json) {
-      this.keys.push(i);
-    }
+
     // this.fillStyles = ["red", "blue", "green", "purple"];
 
     this.nStyles = 0;
@@ -47,17 +56,26 @@ export default class TrajHandler {
     this.pScore = 0;
   }
 
+  async loadPassingSpaces() {
+    this.json = await (
+      await fetch("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/trajData/ql_passing_spaces.json")
+      ).json();
+
+    this.keys = [];
+    for (var i in this.json) {
+      this.keys.push(i);
+    }
+    // console.log(this.keys);
+  }
+
   async loadRewardFunction() {
     // let rjson = require("/assets/trajData/" +
     //   String(this.game.boardName) +
     //   "_rewards_function.json");
     let rjson = await (
-      await fetch(
-        "/assets/boards/" +
-          String(this.game.boardName) +
-          "_rewards_function.json"
-      )
+      await fetch('https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/boards/' + String(this.game.boardName) + '_rewards_function.json')
     ).json();
+    // console.log(rjson);
     this.rFunc = [];
     for (var i in rjson) {
       let row = [];
@@ -108,14 +126,18 @@ export default class TrajHandler {
           this.score += this.rFunc[this.curStatePrevCords.y][
             this.curStatePrevCords.x
           ][aI];
-        }
+          this.prevI = this.i;
 
-        if (!this.game.is_in_ow(this.curStatePrevCords)) {
-          this.gasScore -= 1;
-        } else {
-          this.gasScore -= 2;
+          // console.log(
+          //   this.rFunc[this.curStatePrevCords.y][this.curStatePrevCords.x][aI]
+          // );
+          if (!this.game.is_in_ow(this.curStatePrevCords)) {
+            this.gasScore -= 1;
+          } else {
+            this.gasScore -= 2;
+          }
+          this.pScore = this.score - this.gasScore;
         }
-        this.pScore = this.score - this.gasScore;
 
         // console.log(a);
         // console.log(this.curStatePrevCords);
@@ -172,9 +194,12 @@ export default class TrajHandler {
     }
 
     //execute actions
+
     let a = traj[this.i];
+
     //----------------------------------------------------
-    this.updateScore(a);
+    if (this.prevI !== this.i) this.updateScore(a);
+    // console.log(this.i);
 
     if (a[0] === 0 && a[1] === 1 && this.vehicle.updatedScore === true) {
       // console.log("right");
@@ -560,6 +585,7 @@ export default class TrajHandler {
 
   drawTriangle(ctx, tipCordX, tipCordY, xDir, yDir) {
     ctx.beginPath();
+
     let offset1 = 0;
     let offset2 = 0;
     let offset3 = 0;
@@ -567,14 +593,21 @@ export default class TrajHandler {
     let offset5 = 0;
     let offset6 = 0;
     let offset7 = 0;
+    let label_offset_x = 0;
+    let label_offset_y = 0;
+
     if (xDir > 0) {
       offset1 = 15;
       offset2 = -30;
       offset3 = -10;
+      label_offset_x = -12;
+      label_offset_y = 2;
     } else if (xDir < 0) {
       offset1 = 0;
       offset2 = 0;
       offset3 = 10;
+      label_offset_x = 8;
+      label_offset_y = 2;
     } else if (yDir > 0) {
       // console.log("here");
       offset2 = -3.5;
@@ -583,6 +616,8 @@ export default class TrajHandler {
       offset5 = -24;
       offset6 = -4;
       offset7 = -25;
+      label_offset_x = -2;
+      label_offset_y = -7;
     } else if (yDir < 0) {
       // console.log("here");
       offset2 = -3.5;
@@ -591,7 +626,12 @@ export default class TrajHandler {
       offset5 = -24;
       offset6 = 24;
       offset7 = 5;
+      label_offset_x = -2;
+      label_offset_y = 11;
     }
+    // ctx.fillStyle = prevFill;
+    let prevFill = ctx.fillStyle.valueOf();
+
     tipCordY = tipCordY + 5 + offset4 + this.sameDirYoffset;
     tipCordX = tipCordX + offset3 + offset1 + this.sameDirXoffset;
     let arrowLength = 15;
@@ -605,7 +645,20 @@ export default class TrajHandler {
       tipCordX + arrowLength + offset2 + offset5,
       offset6 + tipCordY - arrowHeight / 2
     );
+
     ctx.fill();
+    ctx.font = "9px CustomFont";
+    ctx.fillStyle = "white";
+    let text;
+
+    if (prevFill === "#c0a948") text = "1";
+    else if (prevFill === "#c0aac2") text = "2";
+    else text = 3;
+
+    // console.log(text);
+
+    ctx.fillText(text, tipCordX + label_offset_x, tipCordY + label_offset_y);
+    ctx.fillStyle = prevFill;
   }
 
   inBlocking(cords) {
@@ -688,6 +741,7 @@ export default class TrajHandler {
     this.styleStatus = [false, false, false, false];
 
     //find centers of trajectory
+    // console.log(this.trajCords);
     for (var n = 0; n < this.trajCords.length; n++) {
       let cords = this.trajCords[n];
       // console.log(cords);
@@ -728,11 +782,12 @@ export default class TrajHandler {
     }
 
     // console.log(centers);
-
+    // console.log(this.trajCords);
     for (var i = 0; i < this.trajCords.length; i++) {
       // console.log(cords);
       // this.updateColors(ctx);
       let cords = this.trajCords[i];
+      // console.log(cords);
       let cordsX = this.cord2canvas(cords.x, 20);
       let cordsY = this.cord2canvas(cords.y, 15);
       let drawArrow = false;
@@ -839,21 +894,64 @@ export default class TrajHandler {
     this.recolorCanvas(ctx);
   }
 
+  // saveBase64AsFile(base64, fileName) {
+  //   var link = document.createElement("a");
+  //   document.body.appendChild(link);
+  //   link.setAttribute("type", "hidden");
+  //   link.href = "data:text/plain;base64," + base64;
+  //   link.download = fileName;
+  //   link.click();
+  //   document.body.removeChild(link);
+  // }
+
   update(deltaTime) {
     //NOTE!! FOR DEBUGGING PURPOSES - DONT FORGET
     if (this.quadI === 0) {
       this.cordsI = 0;
-      this.quadI += 4;
+      this.quadI = 0;
+      this.trajp = 0;
+      // if (!this.tookScreenShot) {
+      //   this.cur_name = "/trajImages/" +
+      //     String(this.keys[this.cordsI]) +
+      //     "_" +
+      //     String(this.quadI) +
+      //     "_" +
+      //     String(this.trajp);
+      //   screenshot({format: 'png'}).then((img) => {
+      //     // img: Buffer filled with jpg goodness
+      //     fs.writeFile('out.jpg', img, function (err) {
+      //       if (err) {
+      //         throw err
+      //       }
+      //       console.log('written to out.jpg')
+      //     })
+      //     // ...
+      //   }).catch((err) => {
+      //     console.log(err);
+      //   })
+      //
+      //   this.tookScreenShot = true;
+      // }
+
     }
 
-    if (this.i < this.trajLength + 2) {
+    if (this.i < this.trajLength + 2 && this.loadedRFunc && this.loadedTrajData) {
       let traj1 = this.json[this.keys[this.cordsI]][this.quadI][this.trajp];
+
       this.executeTraj(traj1);
     }
 
-    if (this.vehicle.isDone === true && this.vehicle.updatedScore === true) {
+    if (
+      this.vehicle.isDone === true &&
+      this.vehicle.updatedScore === true &&
+      this.loadedRFunc && this.loadedTrajData
+    ) {
+      // if (this.i === this.trajLength + 2) {
+      //   this.tookScreenShot = false;
+      // }
       if (this.i < this.trajLength + 2) {
         this.i += 1;
+
       }
       // else if (this.trajp === 0) {
       //   this.trajp = 1;

@@ -4,9 +4,28 @@ import 'regenerator-runtime/runtime'
 import Game from "/src/game";
 import Score from "/src/score";
 import InstructionsManager from "/src/instructionsManager";
+import QueryManager from "/src/queryManager"
+//---------------------------------MTURK STUFF--------------------------------------
+// var AWS = require('aws-sdk');
+// var region_name = 'us-east-1';
+// var endpoint = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com';
+// // Uncomment this line to use in production
+// //var endpoint = 'https://mturk-requester.us-east-1.amazonaws.com';
+// AWS.config.update({ region: 'us-east-1',
+// 		    endpoint: endpoint });
+//
+// var mturk = new AWS.MTurk();
+// //
+// let QUESTION_XML = '<ExternalQuestion' +
+//  'xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">' +
+//  '<ExternalURL>"https://dev.d1e16e31dm86sr.amplifyapp.com"</ExternalURL>' +
+//  '<FrameHeight>500</FrameHeight>' + '</ExternalQuestion>'
+//
 
-let canvas = document.getElementById("gameScreen");
-let ctx = canvas.getContext("2d");
+//---------------------------------MTURK STUFF--------------------------------------
+
+window.canvas = document.getElementById("gameScreen");
+let ctx = window.canvas.getContext("2d");
 
 let scoreDisp = document.getElementById("scoreScreen");
 let ctxScore = scoreDisp.getContext("2d");
@@ -18,6 +37,9 @@ const GAME_HEIGHT = 600;
 const SCORE_WIDTH = 300;
 const SCORE_HEIGHT = 600;
 const CELL_SIZE = GAME_WIDTH / 10;
+
+window.canvas.width = GAME_WIDTH;
+window.canvas.height = GAME_HEIGHT;
 
 scoreDisp.style.left = "1030px";
 scoreDisp.style.top = "20px";
@@ -70,10 +92,12 @@ window.game = null;
 window.n_games = 0;
 window.max_games = 8;
 window.finished_game = true;
-window.total_tsteps = 100;
+window.total_tsteps = 2;
 window.timestep = 0;
+//NOTE: USE THIS LINK TO VIEW TRAJECTORIES https://codesandbox.io/s/gridworld-dwkdg?file=/src/trajHandler.js
 window.disTraj = false;
 window.im = new InstructionsManager();
+window.qm = new QueryManager();
 // window.im.createButton(canvas, ctx);
 
 //creates button
@@ -95,20 +119,63 @@ function isInside(pos, rect) {
     pos.y > rect.y
   );
 }
-var rect = {
+var nextRect = {
   x: 500,
   y: 550,
   width: 100,
   height: 50
 };
+
+let offset = 450;
+
+var leftRect = {
+  x: 215+8+offset-65,
+  y: 530-200,
+  width: 70,
+  height: 50
+};
+
+var rightRect = {
+  x: 315-8+offset-65,
+  y: 530-200,
+  width: 70,
+  height: 50
+};
+
+var sameRect = {
+  x: 155+8+offset-65,
+  y: 590-200,
+  width: 130,
+  height: 50
+};
+
+var incRect = {
+  x: 315-8+offset-65,
+  y: 590-200,
+  width: 130,
+  height: 50
+};
+
 //Binding the click event on the canvas
-canvas.addEventListener(
+window.canvas.addEventListener(
   "click",
   function (evt) {
-    let mousePos = getMousePos(canvas, evt);
+    let mousePos = getMousePos(window.canvas, evt);
 
-    if (isInside(mousePos, rect) && !this.finishedIns) {
+    if (isInside(mousePos, nextRect) && !this.finishedIns) {
       window.im.insScene += 1;
+    } else if (isInside(mousePos,leftRect) && window.begunQueries) {
+      window.qm.pressed = true;
+      window.qm.queried("left");
+    } else if (isInside(mousePos,rightRect) && window.begunQueries) {
+      window.qm.pressed = true;
+      window.qm.queried("right");
+    }else if (isInside(mousePos,sameRect) && window.begunQueries) {
+      window.qm.pressed = true;
+      window.qm.queried("same");
+    }else if (isInside(mousePos,incRect) && window.begunQueries) {
+      window.qm.pressed = true;
+      window.qm.queried("dis");
     }
   },
   false
@@ -149,6 +216,7 @@ function startNewGame() {
     window.alpha = 1; /// current alpha value
     window.delta = 0.005; /// delta = speed
     window.n_games += 1;
+    window.begunQueries = false;
     ctx.globalAlpha = 1;
 
     if (window.n_games === window.max_games) window.n_games = 0;
@@ -158,6 +226,7 @@ function startNewGame() {
 function gameLoop(timestamp) {
   ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
   ctxScore.clearRect(0, 0, SCORE_WIDTH, SCORE_HEIGHT);
+  let deltaTime = timestamp - window.lastTime;
 
   if (!window.im.finishedIns && !window.disTraj) {
     ctx.globalAlpha = 1;
@@ -165,9 +234,14 @@ function gameLoop(timestamp) {
     window.im.draw(ctx);
     requestAnimationFrame(gameLoop);
     // requestAnimationFrame(gameLoop);
-  } else {
+  } else if (window.begunQueries) {
+    ctx.globalAlpha = 1;
+    window.qm.update(deltaTime);
+    window.qm.draw(ctx);
+    requestAnimationFrame(gameLoop);
+
+  }else {
     startNewGame();
-    let deltaTime = timestamp - window.lastTime;
     window.lastTime = timestamp;
 
     if (window.game.reached_terminal === true && !window.disTraj) {
