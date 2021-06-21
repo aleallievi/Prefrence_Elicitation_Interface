@@ -30,10 +30,15 @@ let ctx = window.canvas.getContext("2d");
 let scoreDisp = document.getElementById("scoreScreen");
 let ctxScore = scoreDisp.getContext("2d");
 
+let queryDisp = document.getElementById("queryScreen");
+let ctxQuery = queryDisp.getContext("2d");
+
 // var svg = document.querySelector("svg");
 
 const GAME_WIDTH = 600;
 const GAME_HEIGHT = 600;
+const QUERY_WIDTH = 1200;
+const QUERY_HEIGHT = 700;
 const SCORE_WIDTH = 300;
 const SCORE_HEIGHT = 600;
 const CELL_SIZE = GAME_WIDTH / 10;
@@ -41,13 +46,19 @@ const CELL_SIZE = GAME_WIDTH / 10;
 window.canvas.width = GAME_WIDTH;
 window.canvas.height = GAME_HEIGHT;
 
-window.canvas.style.top = "5%"
 window.canvas.style.left = "25%";
+window.canvas.style.top = "5%"
 window.canvas.style.position = "absolute";
 
 scoreDisp.style.left = "70%";
 scoreDisp.style.top = "5%";
 scoreDisp.style.position = "absolute";
+
+queryDisp.width = QUERY_WIDTH;
+queryDisp.height = QUERY_HEIGHT;
+queryDisp.style.left = "7%";
+queryDisp.style.top = "5%";
+queryDisp.style.position = "absolute";
 
 //set SVG (for curves as an element of the canvas)
 
@@ -130,36 +141,36 @@ var nextRect = {
   height: 50
 };
 
-let offset = 450;
 
 var leftRect = {
-  x: 215+8+offset-65,
-  y: 530-200,
-  width: 70,
-  height: 50
+  x: window.qm.b1_x,
+  y: window.qm.b1_y,
+  width: window.qm.b1_w,
+  height: window.qm.b1_h
 };
 
 var rightRect = {
-  x: 315-8+offset-65,
-  y: 530-200,
-  width: 70,
-  height: 50
+  x: window.qm.b2_x,
+  y: window.qm.b1_y,
+  width: window.qm.b1_w,
+  height: window.qm.b1_h
 };
 
 var sameRect = {
-  x: 155+8+offset-65,
-  y: 590-200,
-  width: 130,
-  height: 50
+  x: window.qm.b3_x,
+  y: window.qm.b3_y,
+  width: window.qm.b3_w*2.5,
+  height: window.qm.b3_h*2.5
 };
 
 var incRect = {
-  x: 315-8+offset-65,
-  y: 590-200,
-  width: 130,
-  height: 50
+  x: window.qm.b3_x,
+  y: window.qm.b4_y,
+  width: window.qm.b3_w*2.5,
+  height: window.qm.b3_h*2.5
 };
 
+console.log(leftRect);
 //Binding the click event on the canvas
 window.canvas.addEventListener(
   "click",
@@ -168,7 +179,16 @@ window.canvas.addEventListener(
 
     if (isInside(mousePos, nextRect) && !this.finishedIns) {
       window.im.insScene += 1;
-    } else if (isInside(mousePos,leftRect) && window.begunQueries) {
+    }
+  },
+  false
+);
+
+queryDisp.addEventListener(
+  "click",
+  function (evt) {
+    let mousePos = getMousePos(queryDisp, evt);
+    if (isInside(mousePos,leftRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("left");
     } else if (isInside(mousePos,rightRect) && window.begunQueries) {
@@ -184,7 +204,6 @@ window.canvas.addEventListener(
   },
   false
 );
-
 //------------------------------------------------
 
 function startNewGame() {
@@ -230,6 +249,7 @@ function startNewGame() {
 function gameLoop(timestamp) {
   ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
   ctxScore.clearRect(0, 0, SCORE_WIDTH, SCORE_HEIGHT);
+  ctxQuery.clearRect(0,0,QUERY_WIDTH,QUERY_HEIGHT);
   let deltaTime = timestamp - window.lastTime;
 
   if (!window.im.finishedIns && !window.disTraj) {
@@ -241,7 +261,8 @@ function gameLoop(timestamp) {
   } else if (window.begunQueries) {
     ctx.globalAlpha = 1;
     window.qm.update(deltaTime);
-    window.qm.draw(ctx);
+    window.qm.draw(ctxQuery);
+
     requestAnimationFrame(gameLoop);
 
   }else {
