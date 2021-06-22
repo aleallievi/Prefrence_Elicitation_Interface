@@ -86,11 +86,11 @@ const boardName3 = "player_board_2";
 window.boardNames.push(boardName3);
 window.boardNames.push(boardName3);
 
-const spawnPoint4 = { x: 8, y: 8 };
+const spawnPoint4 = { x: 8, y: 9 };
 window.spawnPoints.push(spawnPoint4);
 window.spawnPoints.push(spawnPoint4);
 
-const boardName4 = "player_board_3";
+const boardName4 = "redone_player_board_3";
 window.boardNames.push(boardName4);
 window.boardNames.push(boardName4);
 
@@ -98,12 +98,13 @@ const spawnPoint5 = { x: 0, y: 7 };
 window.spawnPoints.push(spawnPoint5);
 window.spawnPoints.push(spawnPoint5);
 
-const boardName5 = "player_board_4";
+const boardName5 = "redone_player_board_4";
 window.boardNames.push(boardName5);
 window.boardNames.push(boardName5);
 
 //------------------------------------------------
 window.game = null;
+window.playTrajBoard = false;
 window.n_games = 0;
 window.max_games = 8;
 window.finished_game = true;
@@ -170,7 +171,6 @@ var incRect = {
   height: window.qm.b3_h*2.5
 };
 
-console.log(leftRect);
 //Binding the click event on the canvas
 window.canvas.addEventListener(
   "click",
@@ -207,22 +207,25 @@ queryDisp.addEventListener(
 //------------------------------------------------
 
 function startNewGame() {
-  if (
-    window.finished_game &&
-    window.timestep < window.total_tsteps &&
-    window.n_games < window.max_games
-  ) {
+  if ((window.finished_game &&window.timestep < window.total_tsteps &&window.n_games < window.max_games) || window.playTrajBoard ) {
     window.finished_game = false;
 
     let boardName;
     let spawnPoint;
     if (window.disTraj) {
-      boardName = "test_single_goal";
+      boardName = "test_single_goal_mud";
       spawnPoint = { x: 0, y: 0 };
+    } else if (window.playTrajBoard) {
+      boardName = "test_single_goal_mud";
+      spawnPoint ={ x: 0, y: 0 };
     } else {
       boardName = window.boardNames[window.n_games];
       spawnPoint = window.spawnPoints[window.n_games];
     }
+
+    // if (window.n_games===window.max_games) {
+    //   //play the trajectory board
+    // }
 
     window.game = new Game(
       GAME_WIDTH,
@@ -242,7 +245,9 @@ function startNewGame() {
     window.begunQueries = false;
     ctx.globalAlpha = 1;
 
-    if (window.n_games === window.max_games) window.n_games = 0;
+    // if (window.n_games === window.max_games) {
+    //   return;
+    // }
   }
 }
 
@@ -285,7 +290,7 @@ function gameLoop(timestamp) {
         window.score.update(deltaTime);
         window.score.draw(ctxScore);
 
-        if (window.timestep > window.total_tsteps) {
+        if (window.timestep > window.total_tsteps || window.n_games > window.max_games) {
           window.game.reached_terminal = true;
           window.im.finishedIns = false;
           window.im.finishedGamePlay = true;

@@ -38,5 +38,6 @@ export default class Flag {
       this.size_x,
       this.size_y
     );
+  
   }
 }

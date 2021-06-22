@@ -22,8 +22,17 @@ export default class InstructionManager {
   // createButton(canvas, ctx) {}
 
   update() {
-    if (this.insScene === 7 && !this.finishedGamePlay) this.finishedIns = true;
-    if (this.insScene === 10) {
+
+    if (this.insScene === 7 && !this.finishedGamePlay) {
+      this.finishedIns = true;
+
+    }
+    if (this.insScene === 8 && this.finishedGamePlay) {
+      this.finishedIns = true;
+      window.playTrajBoard = true;
+
+    }
+    if (this.insScene === 11) {
       this.finishedIns = true;
       window.begunQueries = true;
       console.log("finsihed");
@@ -38,7 +47,7 @@ export default class InstructionManager {
   }
   draw(ctx) {
     if (this.insScene === 7 && !this.finishedGamePlay) return;
-    if (this.insScene === 10) return;
+    if (this.insScene === 11) return;
     if (this.insScene === 4) {
       this.playAnimation(ctx);
       this.h = 200;
@@ -64,7 +73,8 @@ export default class InstructionManager {
 
     // console.log("here");
     if (this.insScene === 6) ctx.fillText("Play", 500, 570);
-    else if (this.insScene === 9) ctx.fillText("Begin", 500, 570);
+    else if (this.insScene === 8) ctx.fillText("Play", 500, 570);
+    else if (this.insScene === 10) ctx.fillText("Begin", 500, 570);
     else ctx.fillText("Next", 500, 570);
     ctx.fill();
   }

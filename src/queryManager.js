@@ -1,3 +1,4 @@
+import QueryInputHandler from "/src/queryInput";
 
 export default class InstructionManager {
 
@@ -27,6 +28,7 @@ export default class InstructionManager {
     this.b3_h = 130
     this.b3_w = 50
     this.b4_y = 500
+    new QueryInputHandler();
   }
 
   turkGetParam( name ) {
