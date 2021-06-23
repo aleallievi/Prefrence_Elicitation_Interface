@@ -6,11 +6,11 @@ import numpy as np
 def format(img,name):
     img = cv2.resize(img,(1240,800))
     game_screen = img[160:700,360:880]
-    score_screen_1 = img[150:230,890:1110]
-    score_screen_2 = img[260:370,940:1145]
+    score_screen_1 = img[150:230,880:1110]
+    score_screen_2 = img[260:370,900:1145]
 
-    score_screen_1 = cv2.resize(score_screen_1, (140,35))
-    score_screen_2 = cv2.resize(score_screen_2, (185,90))
+    score_screen_1 = cv2.resize(score_screen_1, (150,55))
+    score_screen_2 = cv2.resize(score_screen_2, (225,90))
     # cv2.imshow("score_screen_1",score_screen_1)
     # cv2.imshow("score_screen_2",score_screen_2)
     # cv2.waitKey(0)
@@ -36,8 +36,8 @@ def format(img,name):
 
     # print (score_screen_1.shape)
     # print (score_screen_2.shape)
-    score_screen_1 = cv2.copyMakeBorder(score_screen_1, 0,deltah1, 0, 0, cv2.BORDER_CONSTANT,value=[255,255,255])
-    score_screen_2 = cv2.copyMakeBorder(score_screen_2, 0,deltah2,0, 0, cv2.BORDER_CONSTANT,value=[255,255,255])
+    score_screen_1 = cv2.copyMakeBorder(score_screen_1, 0,deltah1, 0, 50, cv2.BORDER_CONSTANT,value=[255,255,255])
+    score_screen_2 = cv2.copyMakeBorder(score_screen_2, 0,deltah2,50, 0, cv2.BORDER_CONSTANT,value=[255,255,255])
     score_screen = np.hstack([score_screen_1, score_screen_2])
 
     h4,w4,_ = score_screen.shape
@@ -51,13 +51,13 @@ def format(img,name):
     res = np.vstack([game_screen, score_screen])
     cv2.imwrite("assets/trajImages/"+str(name) + ".png",res)
 
-    cv2.imshow("res",res)
-    cv2.imshow("score_screen_1",score_screen)
-    # cv2.imshow("score_screen_2",score_screen_2)
-    cv2.imshow("game_screen",game_screen)
-
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow("res",res)
+    # cv2.imshow("score_screen_1",score_screen)
+    # # cv2.imshow("score_screen_2",score_screen_2)
+    # cv2.imshow("game_screen",game_screen)
+    #
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
 for i in range (1,7):
     img = cv2.imread("/Users/stephanehatgiskessell/Desktop/ex"+str(i)+".png")
