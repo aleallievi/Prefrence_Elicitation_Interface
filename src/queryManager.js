@@ -172,8 +172,23 @@ export default class InstructionManager {
   // }
 
   draw(ctx) {
-    // console.log(this.b1_x);
-    // console.log(this.b1_y);
+  
+    ctx.drawImage(
+      this.img1,
+      200-100,
+      0,
+      420,
+      550
+    );
+
+    ctx.drawImage(
+      this.img2,
+      290+this.offset-100,
+      0,
+      420,
+      550
+    );
+
     this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h/2)+5);
     this.drawButton(ctx,this.b2_x,this.b1_y,this.b1_w,this.b1_h,this.b2Color,"Right",this.b2_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h /2)+5)
 
@@ -181,23 +196,6 @@ export default class InstructionManager {
     this.drawButton(ctx,this.b3_x,  this.b3_y,this.b3_h,this.b3_w,this.b3Color,"Same",this.b3_x+(this.b3_h/2)-25,  this.b3_y+(this.b3_w/2)+5);
     this.drawButton(ctx,this.b3_x,this.b4_y,this.b3_h,this.b3_w,this.b4Color,"Can't Tell",  this.b3_x+(this.b3_h/2)-50,this.b4_y+(this.b3_w/2)+5);
 
-    // this.drawButton(ctx,315-8+offset-65,590-200,130,50,this.b4Color,"Can't Tell",315-8+15+offset-65,510+30+80-200)
-    //
-    // ctx.drawImage(
-    //   this.img1,
-    //   200-100,
-    //   0,
-    //   420,
-    //   550
-    // );
-    //
-    // ctx.drawImage(
-    //   this.img2,
-    //   290+this.offset-100,
-    //   0,
-    //   420,
-    //   550
-    // );
 
   }
 }

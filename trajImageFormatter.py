@@ -7,17 +7,17 @@ def format(img,name):
     img = cv2.resize(img,(1240,800))
     game_screen = img[160:700,360:880]
     score_screen_1 = img[150:230,890:1110]
-    score_screen_2 = img[260:370,1000:1145]
+    score_screen_2 = img[260:370,940:1145]
 
-    score_screen_1 = cv2.resize(score_screen_1, (190,55))
-    score_screen_2 = cv2.resize(score_screen_2, (125,90))
+    score_screen_1 = cv2.resize(score_screen_1, (140,35))
+    score_screen_2 = cv2.resize(score_screen_2, (185,90))
     # cv2.imshow("score_screen_1",score_screen_1)
     # cv2.imshow("score_screen_2",score_screen_2)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
     # (80, 220, 3)
     # (110, 145, 3)
-    #
+    # return
     h1,w1,_ = game_screen.shape
     h2,w2,_ = score_screen_1.shape
     h3,w3,_ = score_screen_2.shape
