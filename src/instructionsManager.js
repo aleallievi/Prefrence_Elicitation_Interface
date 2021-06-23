@@ -27,7 +27,7 @@ export default class InstructionManager {
       this.finishedIns = true;
 
     }
-    if (this.insScene === 8 && this.finishedGamePlay) {
+    if (this.insScene === 8 && this.finishedGamePlay && !window.finishedTrajBoard) {
       this.finishedIns = true;
       window.playTrajBoard = true;
 
@@ -73,7 +73,7 @@ export default class InstructionManager {
 
     // console.log("here");
     if (this.insScene === 6) ctx.fillText("Play", 500, 570);
-    else if (this.insScene === 8) ctx.fillText("Play", 500, 570);
+    else if (this.insScene === 7) ctx.fillText("Play", 500, 570);
     else if (this.insScene === 10) ctx.fillText("Begin", 500, 570);
     else ctx.fillText("Next", 500, 570);
     ctx.fill();

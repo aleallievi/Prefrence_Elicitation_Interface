@@ -41,14 +41,25 @@ const QUERY_WIDTH = 1200;
 const QUERY_HEIGHT = 700;
 const SCORE_WIDTH = 300;
 const SCORE_HEIGHT = 600;
+//width="300" height="600"
 const CELL_SIZE = GAME_WIDTH / 10;
+
+
 
 window.canvas.width = GAME_WIDTH;
 window.canvas.height = GAME_HEIGHT;
+// window.canvas.width = 0.41*window.innerWidth
+// window.canvas.height = 0.41*window.innerWidth
+
 
 window.canvas.style.left = "25%";
 window.canvas.style.top = "5%"
 window.canvas.style.position = "absolute";
+//
+scoreDisp.width = 300;
+scoreDisp.height = 600;
+// scoreDisp.width = "20%";
+// scoreDisp.height = "40%";
 
 scoreDisp.style.left = "70%";
 scoreDisp.style.top = "5%";
@@ -56,6 +67,9 @@ scoreDisp.style.position = "absolute";
 
 queryDisp.width = QUERY_WIDTH;
 queryDisp.height = QUERY_HEIGHT;
+// queryDisp.width = "80%";
+// queryDisp.height = "80%";
+
 queryDisp.style.left = "7%";
 queryDisp.style.top = "5%";
 queryDisp.style.position = "absolute";
@@ -82,7 +96,7 @@ const spawnPoint3 = { x: 0, y: 8 };
 window.spawnPoints.push(spawnPoint3);
 window.spawnPoints.push(spawnPoint3);
 
-const boardName3 = "player_board_2";
+const boardName3 = "redone_player_board_2";
 window.boardNames.push(boardName3);
 window.boardNames.push(boardName3);
 
@@ -105,10 +119,11 @@ window.boardNames.push(boardName5);
 //------------------------------------------------
 window.game = null;
 window.playTrajBoard = false;
+window.finishedTrajBoard = false;
 window.n_games = 0;
 window.max_games = 8;
 window.finished_game = true;
-window.total_tsteps = 2;
+window.total_tsteps = 200;
 window.timestep = 0;
 //NOTE: USE THIS LINK TO VIEW TRAJECTORIES https://codesandbox.io/s/gridworld-dwkdg?file=/src/trajHandler.js
 window.disTraj = false;
@@ -207,7 +222,7 @@ queryDisp.addEventListener(
 //------------------------------------------------
 
 function startNewGame() {
-  if ((window.finished_game &&window.timestep < window.total_tsteps &&window.n_games < window.max_games) || window.playTrajBoard ) {
+  if (window.finished_game && ((window.timestep < window.total_tsteps &&window.n_games < window.max_games) || window.playTrajBoard) ) {
     window.finished_game = false;
 
     let boardName;
@@ -290,14 +305,22 @@ function gameLoop(timestamp) {
         window.score.update(deltaTime);
         window.score.draw(ctxScore);
 
-        if (window.timestep > window.total_tsteps || window.n_games > window.max_games) {
+        if (!window.playTrajBoard && (window.timestep > window.total_tsteps || window.n_games >= window.max_games)) {
           window.game.reached_terminal = true;
           window.im.finishedIns = false;
           window.im.finishedGamePlay = true;
+          window.finished_game = true;
         }
       }
     } else {
       window.finished_game = true;
+      if (window.playTrajBoard){
+        window.playTrajBoard = false;
+        window.im.finishedIns = false;
+        window.im.finishedGamePlay = true;
+        window.finishedTrajBoard = true;
+      }
+      // window.playTrajBoard = false;
     }
     requestAnimationFrame(gameLoop);
   }
