@@ -43,36 +43,84 @@ const SCORE_WIDTH = 300;
 const SCORE_HEIGHT = 600;
 //width="300" height="600"
 const CELL_SIZE = GAME_WIDTH / 10;
+//
+//
+// console.log(window.innerWidth);
+// console.log(window.innerHeight);
+//
+// window.canvas.width = GAME_WIDTH;
+// window.canvas.height = GAME_HEIGHT;
+
+window.gsWidth = window.canvas.width;
+window.gsHeight = window.canvas.height;
+
+window.qdWidth = 0.8*$(window).width();
+window.qdHeight= 0.8*$(window).height();
 
 
-
-window.canvas.width = GAME_WIDTH;
-window.canvas.height = GAME_HEIGHT;
-// window.canvas.width = 0.41*window.innerWidth
-// window.canvas.height = 0.41*window.innerWidth
+window.canvas.width = 0.416*window.innerWidth
+window.canvas.height = 0.416*window.innerWidth
 
 
 window.canvas.style.left = "29.1%";
 window.canvas.style.top = "5%"
 window.canvas.style.position = "absolute";
 //
-scoreDisp.width = 300;
-scoreDisp.height = 600;
-// scoreDisp.width = "20%";
-// scoreDisp.height = "40%";
+// scoreDisp.width = 300;
+// scoreDisp.height = 600;
+scoreDisp.width = 0.208*window.innerWidth;
+scoreDisp.height = 0.858*window.innerHeight;
 
 scoreDisp.style.left = "75%";
 scoreDisp.style.top = "5%";
 scoreDisp.style.position = "absolute";
 
-queryDisp.width = QUERY_WIDTH;
-queryDisp.height = QUERY_HEIGHT;
-// queryDisp.width = "80%";
-// queryDisp.height = "80%";
+// queryDisp.width = QUERY_WIDTH;
+// queryDisp.height = QUERY_HEIGHT;
+queryDisp.width = 0.8*window.innerWidth;
+queryDisp.height = 0.8*window.innerHeight;
 
 queryDisp.style.left = "7%";
 queryDisp.style.top = "5%";
 queryDisp.style.position = "absolute";
+
+
+window.addEventListener("resize", function(event) {
+  // let dw = window.innerWidth/window.canvas.width;
+  // let hw = window.innerHeight/window.canvas.height;
+  // console.log(dw);
+  // console.log(hw);
+  // ctx.scale(dw, hw);
+  var gs = $('#gameScreen');
+  gs.css("width", 0.416*$(window).width());
+  gs.css("height", 0.416*$(window).width());
+
+  var sd = $('#scoreScreen');
+  sd.css("width", 0.208*$(window).width());
+  sd.css("height",0.858*$(window).height());
+
+  var qs = $('#queryScreen');
+  qs.css("width", 0.8*$(window).width());
+  qs.css("height",0.8*$(window).height());
+
+
+  window.gsWidth = 0.416*$(window).width();
+  window.gsHeight = 0.416*$(window).height();
+
+  window.qdWidth = 0.8*$(window).width();
+  window.qdHeight= 0.8*$(window).height();
+
+  rects = updateRects(window.gsWidth, window.gsWidth);
+
+
+  window.nextRect = rects[0];
+  window.leftRect = rects[1];
+  window.rightRect = rects[2];
+  window.sameRect = rects[3];
+  window.incRect = rects[4];
+
+
+});
 
 //set SVG (for curves as an element of the canvas)
 
@@ -138,7 +186,7 @@ window.finishedTrajBoard = false;
 window.n_games = 0;
 window.max_games = 8;
 window.finished_game = true;
-window.total_tsteps = 200;
+window.total_tsteps = 2;
 window.timestep = 0;
 //NOTE: USE THIS LINK TO VIEW TRAJECTORIES https://codesandbox.io/s/gridworld-dwkdg?file=/src/trajHandler.js
 window.disTraj = false;
@@ -146,7 +194,13 @@ window.im = new InstructionsManager();
 window.qm = new QueryManager();
 // window.im.createButton(canvas, ctx);
 
-//creates button
+//creates buttons
+window.rects = updateRects(window.canvas.width, window.canvas.height);
+window.nextRect = rects[0];
+window.leftRect = rects[1];
+window.rightRect = rects[2];
+window.sameRect = rects[3];
+window.incRect = rects[4];
 //------------------------------------------------
 //https://stackoverflow.com/questions/24384368/simple-button-in-html5-canvas/24384882
 function getMousePos(canvas, event) {
@@ -165,41 +219,48 @@ function isInside(pos, rect) {
     pos.y > rect.y
   );
 }
-var nextRect = {
-  x: 500,
-  y: 550,
-  width: 100,
-  height: 50
-};
 
 
-var leftRect = {
-  x: window.qm.b1_x,
-  y: window.qm.b1_y,
-  width: window.qm.b1_w,
-  height: window.qm.b1_h
-};
+function updateRects(w,h) {
 
-var rightRect = {
-  x: window.qm.b2_x,
-  y: window.qm.b1_y,
-  width: window.qm.b1_w,
-  height: window.qm.b1_h
-};
+  var nextRect = {
+    x: 0.833*w,
+    y: 0.916*w,
+    width: 100,
+    height: 50
+  };
 
-var sameRect = {
-  x: window.qm.b3_x,
-  y: window.qm.b3_y,
-  width: window.qm.b3_w*2.5,
-  height: window.qm.b3_h*2.5
-};
+  let offset = 0.434*window.qdWidth;
+  var leftRect = {
+    x: 0.238*window.qdWidth,
+    y: 0.894*window.qdHeight,
+    width: 50,
+    height: 70
+  };
 
-var incRect = {
-  x: window.qm.b3_x,
-  y: window.qm.b4_y,
-  width: window.qm.b3_w*2.5,
-  height: window.qm.b3_h*2.5
-};
+  var rightRect = {
+    x: (0.316*window.qdWidth)+offset,
+    y: 0.894*window.qdHeight,
+    width: 50,
+    height: 70
+  };
+
+  var sameRect = {
+    x: 0.468*window.qdWidth,
+    y: 0.76*window.qdHeight,
+    width: 130,
+    height: 50
+  };
+
+  var incRect = {
+    x:  0.468*window.qdWidth,
+    y: 0.894*window.qdHeight,
+    width: 130,
+    height: 50
+  };
+  return [nextRect, leftRect, rightRect, sameRect, incRect]
+}
+
 
 //Binding the click event on the canvas
 window.canvas.addEventListener(
@@ -207,7 +268,7 @@ window.canvas.addEventListener(
   function (evt) {
     let mousePos = getMousePos(window.canvas, evt);
 
-    if (isInside(mousePos, nextRect) && !this.finishedIns) {
+    if (isInside(mousePos, window.nextRect) && !this.finishedIns) {
       window.im.insScene += 1;
     }
   },
@@ -218,18 +279,22 @@ queryDisp.addEventListener(
   "click",
   function (evt) {
     let mousePos = getMousePos(queryDisp, evt);
-    if (isInside(mousePos,leftRect) && window.begunQueries) {
+    if (isInside(mousePos,window.leftRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("left");
-    } else if (isInside(mousePos,rightRect) && window.begunQueries) {
+      console.log("left");
+    } else if (isInside(mousePos,window.rightRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("right");
-    }else if (isInside(mousePos,sameRect) && window.begunQueries) {
+      console.log("right");
+    }else if (isInside(mousePos,window.sameRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("same");
-    }else if (isInside(mousePos,incRect) && window.begunQueries) {
+      console.log("same");
+    }else if (isInside(mousePos,window.incRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("dis");
+      console.log("dis");
     }
   },
   false
@@ -286,9 +351,9 @@ function startNewGame() {
 }
 
 function gameLoop(timestamp) {
-  ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-  ctxScore.clearRect(0, 0, SCORE_WIDTH, SCORE_HEIGHT);
-  ctxQuery.clearRect(0,0,QUERY_WIDTH,QUERY_HEIGHT);
+  ctx.clearRect(0, 0, window.canvas.width, window.canvas.height);
+  ctxScore.clearRect(0, 0, scoreDisp.width, scoreDisp.height);
+  ctxQuery.clearRect(0,0,queryDisp.width,queryDisp.height);
   let deltaTime = timestamp - window.lastTime;
 
   if (!window.im.finishedIns && !window.disTraj) {

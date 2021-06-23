@@ -8,6 +8,15 @@ def format(img,name):
     game_screen = img[160:700,360:880]
     score_screen_1 = img[150:230,890:1110]
     score_screen_2 = img[260:370,1000:1145]
+
+    score_screen_1 = cv2.resize(score_screen_1, (190,55))
+    score_screen_2 = cv2.resize(score_screen_2, (125,90))
+    # cv2.imshow("score_screen_1",score_screen_1)
+    # cv2.imshow("score_screen_2",score_screen_2)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # (80, 220, 3)
+    # (110, 145, 3)
     #
     h1,w1,_ = game_screen.shape
     h2,w2,_ = score_screen_1.shape
@@ -42,13 +51,13 @@ def format(img,name):
     res = np.vstack([game_screen, score_screen])
     cv2.imwrite("assets/trajImages/"+str(name) + ".png",res)
 
-    # cv2.imshow("res",res)
-    # # cv2.imshow("score_screen_1",score_screen_1)
-    # # cv2.imshow("score_screen_2",score_screen_2)
-    # # cv2.imshow("game_screen",game_screen)
-    #
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    cv2.imshow("res",res)
+    cv2.imshow("score_screen_1",score_screen)
+    # cv2.imshow("score_screen_2",score_screen_2)
+    cv2.imshow("game_screen",game_screen)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 for i in range (1,7):
     img = cv2.imread("/Users/stephanehatgiskessell/Desktop/ex"+str(i)+".png")

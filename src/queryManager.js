@@ -19,15 +19,29 @@ export default class InstructionManager {
 
     this.offset = 500;
     this.b1_x = 200+(420/2)-(70/2)-100
-    this.b1_y = 600
+    this.b1_y = 500
     this.b1_h = 50
     this.b1_w = 70
-    this.b2_x = 290+this.offset+(420/2)-(70/2)-100
+    this.b2_x = 290+(420/2)-(70/2)-100+this.offset
     this.b3_x = 720-160/2-100
-    this.b3_y = 600
+    this.b3_y = 425
     this.b3_h = 130
     this.b3_w = 50
     this.b4_y = 500
+
+    // this.offset = 0.416*window.qdWidth;
+    // this.b1_x = 0.229*window.qdWidth;
+    // this.b1_y = 0.714*window.qdHeight;
+    // this.b1_h = 50
+    // this.b1_w = 70
+    // this.b2_x = (0.304*window.qdWidth)+this.offset
+    // this.b3_x = 0.45*window.qdWidth
+    // this.b3_y = 0.607*window.qdHeight;
+    // this.b3_h = 130
+    // this.b3_w = 50
+    // this.b4_y = 0.714*window.qdHeight;
+
+
     new QueryInputHandler();
   }
 
@@ -102,7 +116,19 @@ export default class InstructionManager {
 
   update(deltaTime) {
     if (!this.started)this.start(deltaTime);
-    // console.log(deltaTime -  this.lastDeltaTime);
+    //
+    // this.offset = 0.416*window.qdWidth;
+    // this.b1_x = 0.229*window.qdWidth;
+    // this.b1_y = 0.714*window.qdHeight;
+    // this.b1_h = 50
+    // this.b1_w = 70
+    // this.b2_x = (0.304*window.qdWidth)+this.offset
+    // this.b3_x = 0.45*window.qdWidth
+    // this.b3_y = 0.607*window.qdHeight;
+    // this.b3_h = 130
+    // this.b3_w = 50
+    // this.b4_y = 0.714*window.qdHeight;
+
     if (deltaTime -  this.lastDeltaTime > 200){
       this.resetButtons();
       this.lastDeltaTime = deltaTime;
@@ -146,32 +172,32 @@ export default class InstructionManager {
   // }
 
   draw(ctx) {
-
-
-    this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h/2)+5)
+    // console.log(this.b1_x);
+    // console.log(this.b1_y);
+    this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h/2)+5);
     this.drawButton(ctx,this.b2_x,this.b1_y,this.b1_w,this.b1_h,this.b2Color,"Right",this.b2_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h /2)+5)
 
 
-    this.drawButton(ctx,this.b3_x,  this.b3_y,this.b3_h,this.b3_w,this.b3Color,"Same",this.b3_x+(this.b3_h/2)-25,  this.b3_y+(this.b3_w/2)+5)
-    this.drawButton(ctx,this.b3_x,this.b4_y,this.b3_h,this.b3_w,this.b4Color,"Can't Tell",  this.b3_x+(this.b3_h/2)-50,this.b4_y+(this.b3_w/2)+5)
+    this.drawButton(ctx,this.b3_x,  this.b3_y,this.b3_h,this.b3_w,this.b3Color,"Same",this.b3_x+(this.b3_h/2)-25,  this.b3_y+(this.b3_w/2)+5);
+    this.drawButton(ctx,this.b3_x,this.b4_y,this.b3_h,this.b3_w,this.b4Color,"Can't Tell",  this.b3_x+(this.b3_h/2)-50,this.b4_y+(this.b3_w/2)+5);
 
     // this.drawButton(ctx,315-8+offset-65,590-200,130,50,this.b4Color,"Can't Tell",315-8+15+offset-65,510+30+80-200)
-
-    ctx.drawImage(
-      this.img1,
-      200-100,
-      10,
-      420,
-      550
-    );
-
-    ctx.drawImage(
-      this.img2,
-      290+this.offset-100,
-      10,
-      420,
-      550
-    );
+    //
+    // ctx.drawImage(
+    //   this.img1,
+    //   200-100,
+    //   0,
+    //   420,
+    //   550
+    // );
+    //
+    // ctx.drawImage(
+    //   this.img2,
+    //   290+this.offset-100,
+    //   0,
+    //   420,
+    //   550
+    // );
 
   }
 }
