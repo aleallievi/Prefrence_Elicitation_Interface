@@ -52,7 +52,7 @@ window.canvas.height = GAME_HEIGHT;
 // window.canvas.height = 0.41*window.innerWidth
 
 
-window.canvas.style.left = "25%";
+window.canvas.style.left = "29.1%";
 window.canvas.style.top = "5%"
 window.canvas.style.position = "absolute";
 //
@@ -61,7 +61,7 @@ scoreDisp.height = 600;
 // scoreDisp.width = "20%";
 // scoreDisp.height = "40%";
 
-scoreDisp.style.left = "70%";
+scoreDisp.style.left = "75%";
 scoreDisp.style.top = "5%";
 scoreDisp.style.position = "absolute";
 
@@ -78,6 +78,7 @@ queryDisp.style.position = "absolute";
 
 window.spawnPoints = [];
 window.boardNames = [];
+window.instructions = [];
 
 // const spawnPoint1 = { x: 0, y: 5 };
 // window.spawnPoints.push(spawnPoint1);
@@ -92,6 +93,9 @@ const boardName2 = "player_board_1";
 window.boardNames.push(boardName2);
 window.boardNames.push(boardName2);
 
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_1_ins.png");
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_1_ins.png");
+
 const spawnPoint3 = { x: 0, y: 8 };
 window.spawnPoints.push(spawnPoint3);
 window.spawnPoints.push(spawnPoint3);
@@ -99,6 +103,10 @@ window.spawnPoints.push(spawnPoint3);
 const boardName3 = "redone_player_board_2";
 window.boardNames.push(boardName3);
 window.boardNames.push(boardName3);
+
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_2_ins.png");
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_2_ins.png");
+
 
 const spawnPoint4 = { x: 8, y: 9 };
 window.spawnPoints.push(spawnPoint4);
@@ -108,6 +116,10 @@ const boardName4 = "redone_player_board_3";
 window.boardNames.push(boardName4);
 window.boardNames.push(boardName4);
 
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_3_ins.png");
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_3_ins.png");
+
+
 const spawnPoint5 = { x: 0, y: 7 };
 window.spawnPoints.push(spawnPoint5);
 window.spawnPoints.push(spawnPoint5);
@@ -115,6 +127,9 @@ window.spawnPoints.push(spawnPoint5);
 const boardName5 = "redone_player_board_4";
 window.boardNames.push(boardName5);
 window.boardNames.push(boardName5);
+
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_4_ins.png");
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_4_ins.png");
 
 //------------------------------------------------
 window.game = null;
@@ -227,15 +242,19 @@ function startNewGame() {
 
     let boardName;
     let spawnPoint;
+    let ins = "";
+    let dispIns = true;
     if (window.disTraj) {
       boardName = "test_single_goal_mud";
       spawnPoint = { x: 0, y: 0 };
     } else if (window.playTrajBoard) {
       boardName = "test_single_goal_mud";
       spawnPoint ={ x: 0, y: 0 };
+      dispIns = false;
     } else {
       boardName = window.boardNames[window.n_games];
       spawnPoint = window.spawnPoints[window.n_games];
+      ins = window.instructions[window.n_games];
     }
 
     // if (window.n_games===window.max_games) {
@@ -249,7 +268,7 @@ function startNewGame() {
       boardName,
       window.disTraj
     );
-    window.game.start();
+    window.game.start(ins=ins,dispIns=dispIns);
     window.score = new Score(window.game);
     window.score.start();
 

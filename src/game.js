@@ -39,7 +39,8 @@ export default class Game {
 //     httpRequest.send();
 // }
 
-  start(loadTerm = true, isAnimating = false) {
+  start(ins = "",dispIns = true, loadTerm = true, isAnimating = false) {
+    // if (window.n_games === 7)return;
     this.gameObjects = null;
     this.vehicle = new Vehicle(this, isAnimating);
     // this.coin = new Coin(this, { x: 0, y: 0 });
@@ -61,6 +62,19 @@ export default class Game {
       this.gameObjects = [...this.board_objects, this.vehicle];
     });
     this.trajHandler = new TrajHandler(this.vehicle, this);
+
+    if (window.n_games !== 7 && dispIns) {
+      $("#myModal").on('show.bs.modal', function (e) {
+         var modal = $(this)
+         // modal.find('.label1').text(ins)
+         // modal.find('.modal_img1').attr("src","assets/images/img_flag.png")
+         $(".img-responsive").attr('src', ins);
+         //modal_img1
+
+      });
+      $("#myModal").modal("show");
+    }
+
   }
 
   update(deltaTime) {

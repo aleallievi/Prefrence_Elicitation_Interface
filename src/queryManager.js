@@ -53,6 +53,15 @@ export default class InstructionManager {
     this.started = true;
     this.queryResults = {}
     this.lastDeltaTime = deltaTime;
+    $("#myModal").on('show.bs.modal', function (e) {
+       var modal = $(this)
+       // modal.find('.label1').text(ins)
+       // modal.find('.modal_img1').attr("src","assets/images/img_flag.png")
+       $(".img-responsive").attr('src', "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/query_ins.png");
+       //modal_img1
+
+    });
+    $("#myModal").modal("show");
   }
 
   submit() {
