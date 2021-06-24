@@ -156,6 +156,7 @@ export default class InstructionManager {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, w, h);
     ctx.stroke();
+    
     ctx.font = "20px CustomFont";
     ctx.fillStyle = "white";
     ctx.fillText(text, tx,ty);
@@ -172,7 +173,7 @@ export default class InstructionManager {
   // }
 
   draw(ctx) {
-  
+
     ctx.drawImage(
       this.img1,
       200-100,

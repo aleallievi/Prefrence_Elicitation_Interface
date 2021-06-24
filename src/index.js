@@ -51,15 +51,20 @@ const CELL_SIZE = GAME_WIDTH / 10;
 // window.canvas.width = GAME_WIDTH;
 // window.canvas.height = GAME_HEIGHT;
 
+//
+// window.canvas.width = 0.416*window.innerWidth
+// window.canvas.height = 0.416*window.innerWidth
+
+// console.log((window).width());
+// console.log(window.innerWidth);
+window.canvas.width = 0.416*$(window).width()
+window.canvas.height = 0.416*$(window).width()
+
 window.gsWidth = window.canvas.width;
 window.gsHeight = window.canvas.height;
 
 window.qdWidth = 0.8*$(window).width();
 window.qdHeight= 0.8*$(window).height();
-
-
-window.canvas.width = 0.416*window.innerWidth
-window.canvas.height = 0.416*window.innerWidth
 
 
 window.canvas.style.left = "29.1%";
@@ -68,8 +73,8 @@ window.canvas.style.position = "absolute";
 //
 // scoreDisp.width = 300;
 // scoreDisp.height = 600;
-scoreDisp.width = 0.208*window.innerWidth;
-scoreDisp.height = 0.858*window.innerHeight;
+scoreDisp.width = 0.208*$(window).width();
+scoreDisp.height = 0.858*$(window).height()
 
 scoreDisp.style.left = "75%";
 scoreDisp.style.top = "5%";
@@ -84,8 +89,52 @@ queryDisp.style.left = "7%";
 queryDisp.style.top = "5%";
 queryDisp.style.position = "absolute";
 
+window.addEventListener("load", function(event) {
+  // window.im.w = 1.252*window.gsWidth;
+  // window.im.h = 0.751*window.gsWidth;
+  // window.im.x = -0.125*window.gsWidth;
+  // window.im.y = 0.083*window.gsWidth;
+  window.im.nW =0.833*window.gsWidth;
+  window.im.nH =0.95*window.gsWidth;
+  //
+  ctx.canvas.width  = 600;
+  ctx.canvas.height = 600;
 
+  var gs = $('#gameScreen');
+  gs.css("width", 0.416*$(window).width());
+  gs.css("height", 0.416*$(window).width());
+
+  var sd = $('#scoreScreen');
+  sd.css("width", 0.208*$(window).width());
+  sd.css("height",0.858*$(window).height());
+
+  var qs = $('#queryScreen');
+  qs.css("width", 0.8*$(window).width());
+  qs.css("height",0.8*$(window).height());
+
+
+  // console.log(window.gsWidth);
+
+});
+
+// function resizeend() {
+//     if (new Date() - rtime < delta) {
+//         setTimeout(resizeend, delta);
+//     } else {
+//         timeout = false;
+//         window.resizing = false;
+//     }
+// }
+
+// var rtime;
+// var timeout = false;
+// var delta = 200;
 window.addEventListener("resize", function(event) {
+  window.resizing = true;
+  // if (timeout === false) {
+  //       timeout = true;
+  //       setTimeout(resizeend, delta);
+  //   }
   // let dw = window.innerWidth/window.canvas.width;
   // let hw = window.innerHeight/window.canvas.height;
   // console.log(dw);
@@ -118,6 +167,11 @@ window.addEventListener("resize", function(event) {
   window.rightRect = rects[2];
   window.sameRect = rects[3];
   window.incRect = rects[4];
+  //
+  // window.im.w = 750;
+  // window.im.h = 450;
+  // window.im.x = -75;
+  // window.im.y = 50;
 
 
 });
@@ -186,7 +240,7 @@ window.finishedTrajBoard = false;
 window.n_games = 0;
 window.max_games = 8;
 window.finished_game = true;
-window.total_tsteps = 2;
+window.total_tsteps = 200;
 window.timestep = 0;
 //NOTE: USE THIS LINK TO VIEW TRAJECTORIES https://codesandbox.io/s/gridworld-dwkdg?file=/src/trajHandler.js
 window.disTraj = false;
