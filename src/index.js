@@ -57,18 +57,18 @@ const CELL_SIZE = GAME_WIDTH / 10;
 
 // console.log((window).width());
 // console.log(window.innerWidth);
-window.canvas.width = 0.416*$(window).width()
-window.canvas.height = 0.416*$(window).width()
+window.canvas.width = 0.35*$(window).width()
+window.canvas.height = 0.35*$(window).width()
 
 window.gsWidth = window.canvas.width;
 window.gsHeight = window.canvas.height;
 
-window.qdWidth = 0.8*$(window).width();
-window.qdHeight= 0.8*$(window).height();
+window.qdWidth = 0.7*$(window).width();
+window.qdHeight= 1*$(window).height();
 
 
-window.canvas.style.left = "29.1%";
-window.canvas.style.top = "5%"
+window.canvas.style.left = "30%";
+window.canvas.style.top = "13%"
 window.canvas.style.position = "absolute";
 //
 // scoreDisp.width = 300;
@@ -76,17 +76,18 @@ window.canvas.style.position = "absolute";
 scoreDisp.width = 0.208*$(window).width();
 scoreDisp.height = 0.858*$(window).height()
 
-scoreDisp.style.left = "75%";
-scoreDisp.style.top = "5%";
+scoreDisp.style.left = "70%";
+scoreDisp.style.top = "13%";
 scoreDisp.style.position = "absolute";
 
 // queryDisp.width = QUERY_WIDTH;
 // queryDisp.height = QUERY_HEIGHT;
-queryDisp.width = 0.8*window.innerWidth;
-queryDisp.height = 0.8*window.innerHeight;
+queryDisp.width = 0.7*window.innerWidth;
+queryDisp.height = 1*window.innerHeight;
 
-queryDisp.style.left = "7%";
-queryDisp.style.top = "5%";
+
+queryDisp.style.left = "15%";
+queryDisp.style.top = "0%";
 queryDisp.style.position = "absolute";
 
 window.addEventListener("load", function(event) {
@@ -94,23 +95,34 @@ window.addEventListener("load", function(event) {
   // window.im.h = 0.751*window.gsWidth;
   // window.im.x = -0.125*window.gsWidth;
   // window.im.y = 0.083*window.gsWidth;
-  window.im.nW =0.833*window.gsWidth;
-  window.im.nH =0.95*window.gsWidth;
+  // window.im.nW =0.833*window.gsWidth;
+  // window.im.nH =0.95*window.gsWidth;
   //
   ctx.canvas.width  = 600;
   ctx.canvas.height = 600;
 
+  ctxQuery.canvas.width = 0.7*$(window).width();
+  ctxQuery.canvas.height = 1*$(window).height();
+
+  // console.log(ctxQuery.canvas.width);
+  // console.log(ctxQuery.canvas.height);
+
+
   var gs = $('#gameScreen');
-  gs.css("width", 0.416*$(window).width());
-  gs.css("height", 0.416*$(window).width());
+  gs.css("width", 0.35*$(window).width());
+  gs.css("height", 0.35*$(window).width());
 
   var sd = $('#scoreScreen');
   sd.css("width", 0.208*$(window).width());
   sd.css("height",0.858*$(window).height());
 
   var qs = $('#queryScreen');
-  qs.css("width", 0.8*$(window).width());
-  qs.css("height",0.8*$(window).height());
+  qs.css("width", 0.7*$(window).width());
+  qs.css("height",1*$(window).height());
+
+
+  window.qdWidth = 0.7*$(window).width();
+  window.qdHeight= 1*$(window).height();
 
 
   // console.log(window.gsWidth);
@@ -141,23 +153,23 @@ window.addEventListener("resize", function(event) {
   // console.log(hw);
   // ctx.scale(dw, hw);
   var gs = $('#gameScreen');
-  gs.css("width", 0.416*$(window).width());
-  gs.css("height", 0.416*$(window).width());
+  gs.css("width", 0.35*$(window).width());
+  gs.css("height", 0.35*$(window).width());
 
   var sd = $('#scoreScreen');
   sd.css("width", 0.208*$(window).width());
   sd.css("height",0.858*$(window).height());
 
   var qs = $('#queryScreen');
-  qs.css("width", 0.8*$(window).width());
-  qs.css("height",0.8*$(window).height());
+  qs.css("width", 0.7*$(window).width());
+  qs.css("height",1*$(window).height());
 
 
-  window.gsWidth = 0.416*$(window).width();
-  window.gsHeight = 0.416*$(window).height();
+  window.gsWidth = 0.35*$(window).width();
+  window.gsHeight = 0.35*$(window).height();
 
-  window.qdWidth = 0.8*$(window).width();
-  window.qdHeight= 0.8*$(window).height();
+  window.qdWidth = 0.7*$(window).width();
+  window.qdHeight= 1*$(window).height();
 
   rects = updateRects(window.gsWidth, window.gsWidth);
 
@@ -240,7 +252,7 @@ window.finishedTrajBoard = false;
 window.n_games = 0;
 window.max_games = 8;
 window.finished_game = true;
-window.total_tsteps = 200;
+window.total_tsteps = 2;
 window.timestep = 0;
 //NOTE: USE THIS LINK TO VIEW TRAJECTORIES https://codesandbox.io/s/gridworld-dwkdg?file=/src/trajHandler.js
 window.disTraj = false;
@@ -284,31 +296,42 @@ function updateRects(w,h) {
     height: 50
   };
 
-  let offset = 0.434*window.qdWidth;
+  // this.offset = 500
+  // this.b1_x = 200+(420/2)-(70/2)-100-125
+  // this.b1_y = 500-100+15
+  // this.b1_h = 50
+  // this.b1_w = 70
+  // this.b2_x = 290+(420/2)-(70/2)-100+this.offset-125
+  // this.b3_x = 720-160/2-100-125
+  // this.b3_y = 425-100+15
+  // this.b3_h = 130
+  // this.b3_w = 50
+  // this.b4_y = 500-100+15
+
   var leftRect = {
-    x: 0.238*window.qdWidth,
-    y: 0.894*window.qdHeight,
+    x: (window.qm.b1_x/1009)*window.qdWidth,
+    y: (window.qm.b1_y/699)*window.qdHeight,
     width: 50,
     height: 70
   };
 
   var rightRect = {
-    x: (0.316*window.qdWidth)+offset,
-    y: 0.894*window.qdHeight,
+    x:(window.qm.b2_x/1009)*window.qdWidth,
+    y: (window.qm.b1_y/699)*window.qdHeight,
     width: 50,
     height: 70
   };
 
   var sameRect = {
-    x: 0.468*window.qdWidth,
-    y: 0.76*window.qdHeight,
+    x:(window.qm.b3_x/1009)*window.qdWidth,
+    y: (window.qm.b3_y/699)*window.qdHeight,
     width: 130,
     height: 50
   };
 
   var incRect = {
-    x:  0.468*window.qdWidth,
-    y: 0.894*window.qdHeight,
+    x: (window.qm.b3_x/1009)*window.qdWidth,
+    y: (window.qm.b4_y/699)*window.qdHeight,
     width: 130,
     height: 50
   };

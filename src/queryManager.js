@@ -17,17 +17,7 @@ export default class InstructionManager {
     this.b4Color = "grey";
     this.isSubmitted = false;
 
-    this.offset = 500;
-    this.b1_x = 200+(420/2)-(70/2)-100
-    this.b1_y = 500
-    this.b1_h = 50
-    this.b1_w = 70
-    this.b2_x = 290+(420/2)-(70/2)-100+this.offset
-    this.b3_x = 720-160/2-100
-    this.b3_y = 425
-    this.b3_h = 130
-    this.b3_w = 50
-    this.b4_y = 500
+
 
     // this.offset = 0.416*window.qdWidth;
     // this.b1_x = 0.229*window.qdWidth;
@@ -40,8 +30,18 @@ export default class InstructionManager {
     // this.b3_h = 130
     // this.b3_w = 50
     // this.b4_y = 0.714*window.qdHeight;
-
-
+    this.offset = 500
+    this.b1_x = 200+(420/2)-(70/2)-100-125
+    this.b1_y = 500-100+15
+    this.b1_h = 50
+    this.b1_w = 70
+    this.b2_x = 290+(420/2)-(70/2)-100+this.offset-125
+    this.b3_x = 720-160/2-100-125
+    this.b3_y = 425-100+15
+    this.b3_h = 130
+    this.b3_w = 50
+    this.b4_y = 500-100+15
+    
     new QueryInputHandler();
   }
 
@@ -59,6 +59,18 @@ export default class InstructionManager {
 }
 
   start(deltaTime) {
+    // this.offset = 0.495*window.qdWidth;
+    // this.b1_x = 0.272*window.qdWidth;
+    // this.b1_y = 1.02*window.qdHeight;
+    // this.b1_h = 50
+    // this.b1_w = 70
+    // this.b2_x = 0.361*window.qdWidth+this.offset
+    // this.b3_x = 0.535*window.qdWidth
+    // this.b3_y = 0.869*window.qdHeight;
+    // this.b3_h = 130
+    // this.b3_w = 50
+    // this.b4_y = 1.022*window.qdHeight;
+
     // window.canvas.width = window.innerWidth;
     // window.canvas.height = window.innerHeight;
     // window.canvas.width = 1200;
@@ -156,7 +168,7 @@ export default class InstructionManager {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, w, h);
     ctx.stroke();
-    
+
     ctx.font = "20px CustomFont";
     ctx.fillStyle = "white";
     ctx.fillText(text, tx,ty);
@@ -176,18 +188,18 @@ export default class InstructionManager {
 
     ctx.drawImage(
       this.img1,
-      200-100,
+      200-100-100,
       0,
-      420,
-      550
+      350,
+      480
     );
 
     ctx.drawImage(
       this.img2,
-      290+this.offset-100,
+      290+this.offset-100-80,
       0,
-      420,
-      550
+      350,
+      480
     );
 
     this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h/2)+5);
