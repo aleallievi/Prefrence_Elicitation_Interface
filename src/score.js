@@ -22,6 +22,7 @@ export default class Score {
   }
 
   drawRect(ctx, x, y, w, h, color) {
+    if (color === "white")console.log("printing white rect!!");
     ctx.beginPath();
     ctx.fillStyle = color;
     ctx.fillRect(x, y, w, h);
@@ -247,7 +248,7 @@ export default class Score {
     if (this.game.dispTraj === false) {
       this.drawRects(ctx, x, w);
       ctx.clearRect(10, 60, w, -100);
-      ctx.clearRect(10, 600, w, -20);
+      // ctx.clearRect(10, 600, w, -20);
       ctx.fill();
 
       this.setupLabels(ctx, x, w);

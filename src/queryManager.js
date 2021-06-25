@@ -32,16 +32,17 @@ export default class InstructionManager {
     // this.b4_y = 0.714*window.qdHeight;
     this.offset = 500
     this.b1_x = 200+(420/2)-(70/2)-100-125
-    this.b1_y = 500-100+15
+    this.b1_y = 500-100+15 + 40
     this.b1_h = 50
     this.b1_w = 70
-    this.b2_x = 290+(420/2)-(70/2)-100+this.offset-125
+    this.b2_x = 290+(420/2)-(70/2)-100+500-125
     this.b3_x = 720-160/2-100-125
-    this.b3_y = 425-100+15
+    this.b3_y = 425-100+15 + 40
     this.b3_h = 130
     this.b3_w = 50
-    this.b4_y = 500-100+15
-    
+    this.b4_y = 500-100+15 + 40
+
+
     new QueryInputHandler();
   }
 
@@ -186,12 +187,13 @@ export default class InstructionManager {
 
   draw(ctx) {
 
+
     ctx.drawImage(
       this.img1,
       200-100-100,
       0,
       350,
-      480
+      520
     );
 
     ctx.drawImage(
@@ -199,7 +201,7 @@ export default class InstructionManager {
       290+this.offset-100-80,
       0,
       350,
-      480
+      520
     );
 
     this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h/2)+5);

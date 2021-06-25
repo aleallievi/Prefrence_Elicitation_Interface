@@ -57,38 +57,47 @@ const CELL_SIZE = GAME_WIDTH / 10;
 
 // console.log((window).width());
 // console.log(window.innerWidth);
-window.canvas.width = 0.35*$(window).width()
-window.canvas.height = 0.35*$(window).width()
+window.canvas.width = $(window).height()
+window.canvas.height = $(window).height()
 
 window.gsWidth = window.canvas.width;
 window.gsHeight = window.canvas.height;
 
-window.qdWidth = 0.7*$(window).width();
+window.qdWidth = 0.75*$(window).width();
 window.qdHeight= 1*$(window).height();
 
 
-window.canvas.style.left = "30%";
-window.canvas.style.top = "13%"
+window.canvas.style.left = "18%";
+window.canvas.style.top = "0%"
 window.canvas.style.position = "absolute";
 //
 // scoreDisp.width = 300;
 // scoreDisp.height = 600;
 scoreDisp.width = 0.208*$(window).width();
-scoreDisp.height = 0.858*$(window).height()
+scoreDisp.height = $(window).height()
 
-scoreDisp.style.left = "70%";
-scoreDisp.style.top = "13%";
+
+
+scoreDisp.style.left ="68%"
+// scoreDist.style.left =  String((window.canvas.width/$(window).width()) + 10 + 10) + "%";
+// console.log(String(10*(window.canvas.width/$(window).width()) + 10 + 10) + "%")
+scoreDisp.style.top = "0%";
 scoreDisp.style.position = "absolute";
 
 // queryDisp.width = QUERY_WIDTH;
 // queryDisp.height = QUERY_HEIGHT;
-queryDisp.width = 0.7*window.innerWidth;
-queryDisp.height = 1*window.innerHeight;
-
+queryDisp.width = 0.75*$(window).width();
+queryDisp.height =  1*$(window).height()
 
 queryDisp.style.left = "15%";
-queryDisp.style.top = "0%";
+queryDisp.style.top = "15%";
 queryDisp.style.position = "absolute";
+
+window.addEventListener("keydown", function(e) {
+    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+    }
+}, false);
 
 window.addEventListener("load", function(event) {
   // window.im.w = 1.252*window.gsWidth;
@@ -101,28 +110,68 @@ window.addEventListener("load", function(event) {
   ctx.canvas.width  = 600;
   ctx.canvas.height = 600;
 
-  ctxQuery.canvas.width = 0.7*$(window).width();
-  ctxQuery.canvas.height = 1*$(window).height();
+  ctxQuery.canvas.width = 1009;
+  ctxQuery.canvas.height = 699;
 
-  // console.log(ctxQuery.canvas.width);
-  // console.log(ctxQuery.canvas.height);
+  scoreDisp.width = 300;
+  scoreDisp.height = 600;
 
+  var gsRect = window.canvas.getBoundingClientRect();
+  let gsLX = gsRect.left;
+  var ssRect = scoreDisp.getBoundingClientRect();
+  let ssLX = ssRect.left;
+  let maxDist = 10;
+  let newGsSize = $(window).height();
+  let newCsWidth = 0.208*$(window).width();
+  let newCsHeight = $(window).height();
+  let newCsDispWidth = 0.208*$(window).width();
+  let newCsDispHeight =$(window).height();
+
+  if (window.playTrajBoard || (window.timestep < window.total_tsteps || window.n_games < window.max_games)) {
+    if (gsLX + $(window).height() - ssLX >= maxDist) {
+      //means we are overlapping
+      newGsSize = $(window).height() - (gsLX + $(window).height() - ssLX);
+      // newCsWidth =8*newCsWidth/10
+    }
+    if ($(window).height() < 500 || gsLX + $(window).height() - ssLX >= maxDist ) {
+      newCsDispWidth = 0.5*$(window).width();
+      newCsDispHeight = 2*$(window).height();
+    }
+
+  }
+
+  //WE NEED TO RESIZE GAME SCREEN BASED ON THE DISTANCE FROM GAME SCREEN TO SCORE
 
   var gs = $('#gameScreen');
-  gs.css("width", 0.35*$(window).width());
-  gs.css("height", 0.35*$(window).width());
+  gs.css("width", newGsSize);
+  gs.css("height", newGsSize);
 
   var sd = $('#scoreScreen');
-  sd.css("width", 0.208*$(window).width());
-  sd.css("height",0.858*$(window).height());
+  sd.css("width", newCsWidth);
+  sd.css("height",newCsHeight);
 
   var qs = $('#queryScreen');
-  qs.css("width", 0.7*$(window).width());
-  qs.css("height",1*$(window).height());
+  qs.css("width", 0.75*$(window).width());
+  qs.css("height", 1*$(window).height());
 
+  window.gsWidth = newGsSize;
+  window.gsHeight = newGsSize;
 
-  window.qdWidth = 0.7*$(window).width();
+  window.qdWidth = 0.75*$(window).width();
   window.qdHeight= 1*$(window).height();
+
+  scoreDisp.width = newCsDispWidth;
+  scoreDisp.height = newCsDispHeight;
+
+  //
+  rects = updateRects(window.gsWidth, window.gsWidth);
+
+
+  window.nextRect = rects[0];
+  window.leftRect = rects[1];
+  window.rightRect = rects[2];
+  window.sameRect = rects[3];
+  window.incRect = rects[4];
 
 
   // console.log(window.gsWidth);
@@ -152,24 +201,64 @@ window.addEventListener("resize", function(event) {
   // console.log(dw);
   // console.log(hw);
   // ctx.scale(dw, hw);
+  var gsRect = window.canvas.getBoundingClientRect();
+  let gsLX = gsRect.left;
+  var ssRect = scoreDisp.getBoundingClientRect();
+  let ssLX = ssRect.left;
+  let maxDist = 10;
+  let newGsSize = $(window).height();
+  let newCsWidth = 0.208*$(window).width();
+  let newCsHeight = $(window).height();
+  let newCsDispWidth = 0.208*$(window).width();
+  let newCsDispHeight =$(window).height();
+  // let newCsDispWidth = 0.6*$(window).width();
+  // let newCsDispHeight = 1.2*$(window).height();
+  if (window.playTrajBoard || (window.timestep < window.total_tsteps || window.n_games < window.max_games)) {
+    if (gsLX + $(window).height() - ssLX >= maxDist) {
+      //means we are overlapping
+      newGsSize = $(window).height() - (gsLX + $(window).height() - ssLX);
+      // newCsWidth =8*newCsWidth/10
+
+    }
+    if ($(window).height() < 500 || gsLX + $(window).height() - ssLX >= maxDist ) {
+      newCsDispWidth = 0.5*$(window).width();
+      newCsDispHeight = 2*$(window).height();
+    }
+
+    // if (newCsWidth > (0.42)*newGsSize) {
+    //   newCsDispWidth = 0.5*$(window).width();
+    //   newCsDispHeight = 2*$(window).height();
+    // }
+
+  }
+
+
   var gs = $('#gameScreen');
-  gs.css("width", 0.35*$(window).width());
-  gs.css("height", 0.35*$(window).width());
+  gs.css("width", newGsSize);
+  gs.css("height", newGsSize);
 
   var sd = $('#scoreScreen');
-  sd.css("width", 0.208*$(window).width());
-  sd.css("height",0.858*$(window).height());
+  sd.css("width", newCsWidth);
+  sd.css("height",newCsHeight);
 
   var qs = $('#queryScreen');
-  qs.css("width", 0.7*$(window).width());
-  qs.css("height",1*$(window).height());
+  qs.css("width", 0.75*$(window).width());
+  qs.css("height", 0.41*$(window).width());
 
 
-  window.gsWidth = 0.35*$(window).width();
-  window.gsHeight = 0.35*$(window).height();
+  // window.gsWidth = $(window).height();
+  // window.gsHeight = $(window).height();
+  window.gsWidth = newGsSize;
+  window.gsHeight = newGsSize;
 
-  window.qdWidth = 0.7*$(window).width();
-  window.qdHeight= 1*$(window).height();
+  window.qdWidth = 0.75*$(window).width();
+  window.qdHeight=  0.41*$(window).width();
+
+  scoreDisp.width = newCsDispWidth;
+  scoreDisp.height = newCsDispHeight;
+
+  // scoreDisp.width = 0.208*$(window).width();
+  // scoreDisp.height = $(window).height()
 
   rects = updateRects(window.gsWidth, window.gsWidth);
 
@@ -252,7 +341,7 @@ window.finishedTrajBoard = false;
 window.n_games = 0;
 window.max_games = 8;
 window.finished_game = true;
-window.total_tsteps = 2;
+window.total_tsteps = 200;
 window.timestep = 0;
 //NOTE: USE THIS LINK TO VIEW TRAJECTORIES https://codesandbox.io/s/gridworld-dwkdg?file=/src/trajHandler.js
 window.disTraj = false;
@@ -316,11 +405,12 @@ function updateRects(w,h) {
   };
 
   var rightRect = {
-    x:(window.qm.b2_x/1009)*window.qdWidth,
+    x: (window.qm.b2_x/1009)*window.qdWidth,
     y: (window.qm.b1_y/699)*window.qdHeight,
     width: 50,
     height: 70
   };
+
 
   var sameRect = {
     x:(window.qm.b3_x/1009)*window.qdWidth,
@@ -359,19 +449,15 @@ queryDisp.addEventListener(
     if (isInside(mousePos,window.leftRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("left");
-      console.log("left");
     } else if (isInside(mousePos,window.rightRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("right");
-      console.log("right");
     }else if (isInside(mousePos,window.sameRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("same");
-      console.log("same");
     }else if (isInside(mousePos,window.incRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("dis");
-      console.log("dis");
     }
   },
   false

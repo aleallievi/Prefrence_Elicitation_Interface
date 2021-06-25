@@ -39,7 +39,6 @@ export default class InstructionManager {
     if (this.insScene === 11) {
       this.finishedIns = true;
       window.begunQueries = true;
-      console.log("finsihed");
     }
 
     this.img = document.getElementById("ins" + String(this.insScene));
