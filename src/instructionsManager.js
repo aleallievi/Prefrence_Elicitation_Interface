@@ -27,16 +27,15 @@ export default class InstructionManager {
 
   update() {
 
-    if (this.insScene === 7 && !this.finishedGamePlay) {
+    if (this.insScene === 10 && !this.finishedGamePlay) {
       this.finishedIns = true;
-
     }
-    if (this.insScene === 8 && this.finishedGamePlay && !window.finishedTrajBoard) {
+    if (this.insScene === 11 && this.finishedGamePlay && !window.finishedTrajBoard) {
       this.finishedIns = true;
       window.playTrajBoard = true;
 
     }
-    if (this.insScene === 11) {
+    if (this.insScene === 14) {
       this.finishedIns = true;
       window.begunQueries = true;
     }
@@ -49,8 +48,8 @@ export default class InstructionManager {
     this.animationGame.draw(ctx);
   }
   draw(ctx) {
-    if (this.insScene === 7 && !this.finishedGamePlay) return;
-    if (this.insScene === 11) return;
+    if (this.insScene === 10 && !this.finishedGamePlay) return;
+    if (this.insScene === 14) return;
     if (this.insScene === 4) {
       this.playAnimation(ctx);
       // this.h = 0.333*window.gsWidth;
@@ -91,9 +90,9 @@ export default class InstructionManager {
     ctx.fillStyle = "gray";
 
     // console.log("here");
-    if (this.insScene === 6) ctx.fillText("Play", 500, 570);
-    else if (this.insScene === 7) ctx.fillText("Play", 500, 570);
-    else if (this.insScene === 10) ctx.fillText("Begin", 500, 570);
+    if (this.insScene === 9) ctx.fillText("Play", 500, 570);
+    else if (this.insScene === 10) ctx.fillText("Play", 500, 570);
+    else if (this.insScene === 13) ctx.fillText("Begin", 500, 570);
     else ctx.fillText("Next",500, 570);
     //500, 570
     //

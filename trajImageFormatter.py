@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
+import glob
 
 
-
-def format(img,name):
+def format(img,name,save=True):
     img = cv2.resize(img,(1240,800))
     game_screen = img[160:700,360:880]
     score_screen_1 = img[150:230,880:1110]
@@ -49,7 +49,8 @@ def format(img,name):
 
     score_screen = cv2.copyMakeBorder(score_screen, 0,0,left_border, right_border, cv2.BORDER_CONSTANT,value=[255,255,255])
     res = np.vstack([game_screen, score_screen])
-    cv2.imwrite("assets/trajImages/"+str(name) + ".png",res)
+    if save:
+        cv2.imwrite("assets/trajImages/" + str(name),res)
 
     # cv2.imshow("res",res)
     # cv2.imshow("score_screen_1",score_screen)
@@ -58,7 +59,34 @@ def format(img,name):
     #
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
+    return res
 
-for i in range (1,7):
-    img = cv2.imread("/Users/stephanehatgiskessell/Desktop/ex"+str(i)+".png")
-    format(img,"ex"+str(i))
+filenames = [img for img in glob.glob("/Users/stephanehatgiskessell/Desktop/same_ss_same_term/*.png")]
+filenames.sort()
+
+for i in range (0,len(filenames),2):
+    n1 = filenames[i]
+    n2 = filenames[i+1]
+
+    #get rid of filepath
+    n1 = n1.replace("/",".")
+    n2 = n2.replace("/",".")
+    n1 = n1.split(".")[5]
+    n2 = n2.split(".")[5]
+
+    #get rid of the pair indicator
+    n1 = n1.split("_")
+    n2 = n2.split("_")
+
+    #make sure we are always using images that corrospond to the same points
+    assert(n1[2] == "0" and n2[2] == "1" and n1[0] == n2[0] and n1[1] == n2[1])
+    name = n1[0] + "_" + n1[1] + ".png"
+
+    img1 = cv2.imread(filenames[i])
+    img2 = cv2.imread(filenames[i+1])
+
+    res1 = format(img1,filenames[i],save=False)
+    res2 = format(img2,filenames[i+1],save=False)
+    res = np.hstack([res1, res2])
+    print (name)
+    cv2.imwrite("/Users/stephanehatgiskessell/Desktop/Kivy_stuff/formatted_same_ss_same_term/" + str(name),res)
