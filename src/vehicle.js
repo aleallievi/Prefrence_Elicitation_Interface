@@ -145,6 +145,16 @@ export default class Vehicle {
 
       this.game.find_is_leaving_ow(posGoal);
 
+      //log player activity during each game
+      if (this.game.isLeaving){
+        this.game.triedLeaving = true
+      }else if (this.position.x - 1 < 0){
+        this.game.hitEdge = true
+      }else if (this.inBlocking(posGoal)){
+        this.game.hitHouse = true
+      }
+
+
       if (
         !this.game.isLeaving &&
         this.position.x - 1 >= 0 &&
@@ -174,6 +184,15 @@ export default class Vehicle {
       let posGoal = { x: this.position.x + 1, y: this.position.y };
 
       this.game.find_is_leaving_ow(posGoal);
+
+      //log player activity during each game
+      if (this.game.isLeaving){
+        this.game.triedLeaving = true
+      }else if (this.position.x + 1 >= 10){
+        this.game.hitEdge = true
+      }else if (this.inBlocking(posGoal)){
+        this.game.hitHouse = true
+      }
 
       if (
         !this.game.isLeaving &&
@@ -209,6 +228,15 @@ export default class Vehicle {
       };
       this.game.find_is_leaving_ow(posGoal);
 
+      //log player activity during each game
+      if (this.game.isLeaving){
+        this.game.triedLeaving = true
+      }else if (this.position.y - 1 < 0){
+        this.game.hitEdge = true
+      }else if (this.inBlocking(posGoal)){
+        this.game.hitHouse = true
+      }
+
       if (
         !this.game.isLeaving &&
         this.position.y - 1 >= 0 &&
@@ -238,6 +266,14 @@ export default class Vehicle {
       let posGoal = { x: this.position.x, y: this.position.y + 1 };
 
       this.game.find_is_leaving_ow(posGoal);
+
+      if (this.game.isLeaving){
+        this.game.triedLeaving = true
+      }else if (this.position.y + 1 >= 10){
+        this.game.hitEdge = true
+      }else if (this.inBlocking(posGoal)){
+        this.game.hitHouse = true
+      }
 
       if (
         !this.game.isLeaving &&
@@ -341,15 +377,23 @@ export default class Vehicle {
       let aI = this.findActionIndex(a);
       this.updatedScore = true;
       if (this.loadedRFunc) {
-        this.game.score += this.rFunc[this.curStatePrevCords.y][
+        let ds= this.rFunc[this.curStatePrevCords.y][
           this.curStatePrevCords.x
         ][aI];
+        this.game.score += ds;
 
         if (!this.game.reached_terminal) {
           if (!this.game.is_in_ow(this.curStatePrevCords)) {
             this.game.gasScore -= 1;
           } else {
             this.game.gasScore -= 2;
+          }
+        } else {
+          if (ds === 50) {
+            this.game.hitFlag = true;
+          } else if (ds === -50) {
+            this.game.hitPerson = true;
+
           }
         }
 

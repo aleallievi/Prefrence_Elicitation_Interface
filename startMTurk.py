@@ -34,8 +34,8 @@ TaskAttributes = {
     'MaxAssignments': 100,
     # How long the task will be available on MTurk (24 hours)
     'LifetimeInSeconds': 60*60*24,
-    # How long Workers have to complete each item (10 minutes)
-    'AssignmentDurationInSeconds': 60*10,
+    # How long Workers have to complete each item (120 minutes)
+    'AssignmentDurationInSeconds': 60*60*2,
     # The reward you will offer Workers for each response
     'Reward': '0.00',
     'Title': 'Choose the best image',

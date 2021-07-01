@@ -128,14 +128,16 @@ window.addEventListener("load", function(event) {
   let newCsDispHeight =$(window).height();
 
   if (window.playTrajBoard || (window.timestep < window.total_tsteps || window.n_games < window.max_games)) {
-    if (gsLX + $(window).height() - ssLX >= maxDist) {
-      //means we are overlapping
-      newGsSize = $(window).height() - (gsLX + $(window).height() - ssLX);
-      // newCsWidth =8*newCsWidth/10
-    }
+    // if (gsLX + $(window).height() - ssLX >= maxDist) {
+    //   //means we are overlapping
+    //   newGsSize = $(window).height() - (gsLX + $(window).height() - ssLX);
+    //   // newCsWidth =8*newCsWidth/10
+    // }
     if ($(window).height() < 500 || gsLX + $(window).height() - ssLX >= maxDist ) {
-      newCsDispWidth = 0.5*$(window).width();
-      newCsDispHeight = 2*$(window).height();
+      // newCsDispWidth = 0.4*$(window).width();
+      // newCsDispHeight = 1.9*$(window).height();
+      newCsDispWidth = 0.3*$(window).width();
+      newCsDispHeight = 1.7*$(window).height();
     }
 
   }
@@ -149,10 +151,17 @@ window.addEventListener("load", function(event) {
   var sd = $('#scoreScreen');
   sd.css("width", newCsWidth);
   sd.css("height",newCsHeight);
+  sd.css("left",gsLX + newGsSize + 10);
 
   var qs = $('#queryScreen');
   qs.css("width", 0.75*$(window).width());
   qs.css("height", 1*$(window).height());
+
+  var bs = $('.displayInsBtn');
+  bs.css("width", 0.1*$(window).width());
+  bs.css("height", 0.075*$(window).height());
+  bs.css("font-size", 0.02*$(window).height());
+  bs.css("left", gsLX + newGsSize/2 - (0.1*$(window).width())/2);
 
   window.gsWidth = newGsSize;
   window.gsHeight = newGsSize;
@@ -207,22 +216,29 @@ window.addEventListener("resize", function(event) {
   let ssLX = ssRect.left;
   let maxDist = 10;
   let newGsSize = $(window).height();
+
   let newCsWidth = 0.208*$(window).width();
   let newCsHeight = $(window).height();
+
   let newCsDispWidth = 0.208*$(window).width();
   let newCsDispHeight =$(window).height();
   // let newCsDispWidth = 0.6*$(window).width();
   // let newCsDispHeight = 1.2*$(window).height();
   if (window.playTrajBoard || (window.timestep < window.total_tsteps || window.n_games < window.max_games)) {
-    if (gsLX + $(window).height() - ssLX >= maxDist) {
-      //means we are overlapping
-      newGsSize = $(window).height() - (gsLX + $(window).height() - ssLX);
-      // newCsWidth =8*newCsWidth/10
-
-    }
+    // if (gsLX + $(window).height() - ssLX >= maxDist) {
+    //   //means we are overlapping
+    //   newGsSize = $(window).height() - (gsLX + $(window).height() - ssLX);
+    //   // newCsWidth =8*newCsWidth/10
+    //
+    // }
     if ($(window).height() < 500 || gsLX + $(window).height() - ssLX >= maxDist ) {
-      newCsDispWidth = 0.5*$(window).width();
-      newCsDispHeight = 2*$(window).height();
+
+      // newCsDispWidth = 0.4*$(window).width();
+      // newCsDispHeight = 1.9*$(window).height();
+
+      newCsDispWidth = 0.3*$(window).width();
+      newCsDispHeight = 1.7*$(window).height();
+
     }
 
     // if (newCsWidth > (0.42)*newGsSize) {
@@ -240,10 +256,17 @@ window.addEventListener("resize", function(event) {
   var sd = $('#scoreScreen');
   sd.css("width", newCsWidth);
   sd.css("height",newCsHeight);
+  sd.css("left",gsLX + newGsSize + 10);
 
   var qs = $('#queryScreen');
   qs.css("width", 0.75*$(window).width());
   qs.css("height", 0.41*$(window).width());
+
+  var bs = $('.displayInsBtn');
+  bs.css("width", 0.1*$(window).width());
+  bs.css("height", 0.075*$(window).height());
+  bs.css("font-size", 0.02*$(window).height());
+  bs.css("left", gsLX + newGsSize/2 - (0.1*$(window).width())/2);
 
 
   // window.gsWidth = $(window).height();
@@ -322,8 +345,7 @@ window.boardNames.push(boardName4);
 window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_3_ins.png");
 window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_3_ins.png");
 
-
-const spawnPoint5 = { x: 0, y: 7 };
+const spawnPoint5 = { x: 9, y: 9 };
 window.spawnPoints.push(spawnPoint5);
 window.spawnPoints.push(spawnPoint5);
 
@@ -334,12 +356,37 @@ window.boardNames.push(boardName5);
 window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_4_ins.png");
 window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_4_ins.png");
 
+
+const spawnPoint6 = { x: 8, y: 9 };
+window.spawnPoints.push(spawnPoint6);
+window.spawnPoints.push(spawnPoint6);
+
+const boardName6 = "player_board_5";
+window.boardNames.push(boardName6);
+window.boardNames.push(boardName6);
+
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_5_ins.png");
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_5_ins.png");
+
+const spawnPoint7 = { x: 5, y: 5 };
+window.spawnPoints.push(spawnPoint7);
+window.spawnPoints.push(spawnPoint7);
+
+const boardName7 = "player_board_6";
+window.boardNames.push(boardName7);
+window.boardNames.push(boardName7);
+
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_6_ins.png");
+window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_6_ins.png");
+
+
+
 //------------------------------------------------
 window.game = null;
 window.playTrajBoard = false;
 window.finishedTrajBoard = false;
 window.n_games = 0;
-window.max_games = 8;
+window.max_games = 12;
 window.finished_game = true;
 window.total_tsteps = 200;
 window.timestep = 0;
@@ -463,7 +510,24 @@ queryDisp.addEventListener(
   false
 );
 //------------------------------------------------
+function checkInsCompletion() {
+  //check objective and see if we still need to play another board
+  if (window.n_games === 1){
+    if (window.game.hitFlag)window.n_games += 1;
+  }else if (window.n_games === 3){
+      if (window.game.triedLeaving)window.n_games += 1;
+  }else if (window.n_games === 5){
+    if (window.game.hitFlag)window.n_games += 1;
+  }else if (window.n_games === 7){
+    if (window.game.hitFlag)window.n_games += 1;
+  }else if (window.n_games === 9){
+    if (window.game.hitEdge && window.game.hitHouse)window.n_games += 1;
+  }
+  // else if (window.n_games === 11){
+  //   if (window.game.hitPerson)window.n_games += 1;
+  // }
 
+}
 function startNewGame() {
   if (window.finished_game && ((window.timestep < window.total_tsteps &&window.n_games < window.max_games) || window.playTrajBoard) ) {
     window.finished_game = false;
@@ -503,7 +567,9 @@ function startNewGame() {
     window.lastTime = 0;
     window.alpha = 1; /// current alpha value
     window.delta = 0.005; /// delta = speed
+
     window.n_games += 1;
+
     window.begunQueries = false;
     ctx.globalAlpha = 1;
 
@@ -557,10 +623,12 @@ function gameLoop(timestamp) {
           window.im.finishedIns = false;
           window.im.finishedGamePlay = true;
           window.finished_game = true;
+          $(".displayInsBtn").hide();
         }
       }
     } else {
       window.finished_game = true;
+      checkInsCompletion();
       if (window.playTrajBoard){
         window.playTrajBoard = false;
         window.im.finishedIns = false;

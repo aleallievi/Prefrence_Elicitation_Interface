@@ -23,6 +23,14 @@ export default class Game {
     this.dispTraj = dispTraj;
     this.blockingCords = [];
     this.isLeavingBlank = false;
+
+
+    //metrics used to see if the user completing our assigned goals
+    this.hitPerson = false
+    this.hitFlag = false
+    this.hitHouse = false
+    this.hitEdge = false
+    this.triedLeaving = false
   }
 
 //   fetchJSONFile(path, callback) {
@@ -63,9 +71,14 @@ export default class Game {
     });
     this.trajHandler = new TrajHandler(this.vehicle, this);
 
-    if (window.n_games !== 7 && dispIns) {
+    if (window.n_games !== 11 && dispIns) {
+      // document.getElementById("displayInsBtn").style.display = "block";
+      // displayInsBtn
+      $(".displayInsBtn").show();
+
       $("#myModal").on('show.bs.modal', function (e) {
          var modal = $(this)
+
          // modal.find('.label1').text(ins)
          // modal.find('.modal_img1').attr("src","assets/images/img_flag.png")
          $(".img-responsive").attr('src', ins);
