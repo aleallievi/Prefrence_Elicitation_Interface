@@ -401,6 +401,9 @@ window.finishedHIT = false;
 window.nSamples = 40;
 window.nUsers = 30;
 window.sampleNumber = getRandomInt(0,window.nUsers);; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
+window.observationType = getRandomInt(0,2); //0 means display partial return and 1 means display change in state value
+// window.observationType = 0; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
+
 window.openedSurvey = false;
 
 

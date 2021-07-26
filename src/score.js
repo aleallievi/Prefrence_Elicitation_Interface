@@ -20,6 +20,39 @@ export default class Score {
     this.prevPScore = 0;
     this.maxHeight = 500;
     this.updateAll = false;
+    this.loadValueFunction().then(() => {
+      this.loadedVFunc = true;
+    });
+  }
+
+  async loadValueFunction() {
+    // let rjson = require("/assets/trajData/" +
+    //   String(this.game.boardName) +
+    //   "_rewards_function.json");
+    // let rjson = await (
+    //   await fetch(
+    //     "/assets/boards/" +
+    //       String(this.game.boardName) +
+    //       "_rewards_function.json"
+    //   )
+    // ).json();
+    // console.log("loading board with name: " + String(this.boardName));
+
+    let vjson = await (
+      await fetch('https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/boards/' + String(this.game.boardName) + '_value_function.json')
+    ).json();
+    //console.log(json)
+
+    // console.log(rjson);
+    this.vFunc = [];
+    for (var i in vjson) {
+      let row = [];
+      for (var j in vjson[i]) {
+        row.push(vjson[i][j]);
+      }
+      this.vFunc.push(row);
+      // this.keys.push(i);
+    }
   }
 
   drawRect(ctx, x, y, w, h, color) {
@@ -58,7 +91,7 @@ export default class Score {
   }
 
 
-  staticBarText(ctx, val, y,x, text = "", fontSize = "20px") {
+  staticBarText(ctx, val, y,x, text = "", fontSize = "20px",keepBlack=false) {
     ctx.font = fontSize + " CustomFont";
     let symbol = "$";
     if (val > 0) {
@@ -71,6 +104,7 @@ export default class Score {
       val = -val;
     }
     if (val === 0) ctx.fillStyle = "brown";
+    if (keepBlack)ctx.fillStyle = "black";
     if (this.lasty > 20)
       ctx.fillText(
         text + symbol + String(val),
@@ -242,30 +276,57 @@ export default class Score {
 
     if (this.printDecomposed === true) {
       if (this.game.dispTraj === false) {
-        ctx.font = "40px CustomFont";
-        ctx.fillStyle = "black";
-        ctx.fillText("Score: $" + String(this.score), 10, 50);
+
 
         if (this.showRects) {
+          ctx.font = "40px CustomFont";
+          ctx.fillStyle = "black";
+          ctx.fillText("Score: $" + String(this.score), 10, 50);
           this.barImg(ctx, "img_gas", -25);
           this.barText(ctx, this.gasScore - this.prevGasScore, 0);
           this.barImg(ctx, "img_total", 10);
           this.barText(ctx, this.pScore - this.prevPScore, 30);
         } else {
-          this.staticBarImg(ctx, "img_gas", 100,120,50,60)
-          this.staticBarText(ctx, this.gasScore, 130,50,"","30px")
 
-          this.staticBarImg(ctx, "img_coin_multiple", 180,120,60,50);
-          this.staticBarText(ctx, this.game.nCoins, 210,50,"","30px");
+          if (window.observationType === 0) {
+            ctx.font = "40px CustomFont";
+            ctx.fillStyle = "black";
+            ctx.fillText("Score: $" + String(this.score), 10, 50);
+            this.staticBarImg(ctx, "img_gas", 100,120,50,60)
+            this.staticBarText(ctx, this.gasScore, 130,50,"","30px")
 
-          this.staticBarImg(ctx, "img_garbage_multiple", 260,120,70,50);
-          this.staticBarText(ctx, -this.game.nGarbage, 290,50,"","30px");
+            this.staticBarImg(ctx, "img_coin_multiple", 180,120,60,50);
+            this.staticBarText(ctx, this.game.nCoins, 210,50,"","30px");
 
-          this.staticBarImg(ctx, "img_person", 340,120,50,60);
-          this.staticBarText(ctx, -50*this.game.nPeople, 370,50,"","30px");
+            this.staticBarImg(ctx, "img_garbage_multiple", 260,120,70,50);
+            this.staticBarText(ctx, -this.game.nGarbage, 290,50,"","30px");
 
-          this.staticBarImg(ctx, "img_flag", 420,120,50,60);
-          this.staticBarText(ctx, 50*this.game.nFlags, 460,50,"","30px");
+            this.staticBarImg(ctx, "img_person", 340,120,50,60);
+            this.staticBarText(ctx, -50*this.game.nPeople, 370,50,"","30px");
+
+            this.staticBarImg(ctx, "img_flag", 420,120,50,60);
+            this.staticBarText(ctx, 50*this.game.nFlags, 460,50,"","30px");
+          } else {
+            ctx.fillStyle = "black";
+            ctx.font = "30px CustomFont";
+            ctx.fillText(
+              "Best Possible Score",
+              10,
+              50
+            );
+            ctx.fillText(
+              "From Here:",
+              10,
+              100
+            );
+
+            if (this.loadedVFunc) {
+              let sv= this.vFunc[this.game.vehicle.curStatePrevCords.y][this.game.vehicle.curStatePrevCords.x]
+              this.staticBarText(ctx, sv, 190,10,"","30px")
+            }
+
+          }
+
 
         }
 

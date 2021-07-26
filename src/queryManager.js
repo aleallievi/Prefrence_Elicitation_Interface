@@ -147,6 +147,7 @@ export default class InstructionManager {
     if (!this.isSubmitted) {
       document.getElementById('assignmentId').value = this.assignmentID
       document.getElementById('sampleNumber').value = window.sampleNumber
+      document.getElementById('observationType').value = window.observationType
 
       // for (var key in this.queryResults) {
       //   document.getElementById('foo').value = this.queryResults[key]
