@@ -52,7 +52,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   </head>
 
-  <body>
+  <body id ="body">
     <img id="img_car_front" src="assets/images/car_front.png" />
     <img id="img_car_back" src="assets/images/car_back.png" />
     <img id="img_car_side" src="assets/images/car_side.png" />
@@ -67,36 +67,58 @@
     <img id="img_blockade_closed" src="assets/images/img_blockade_closed.png" />
     <img id="img_gas" src="assets/images/img_gas.png" />
     <img id="img_total" src="assets/images/img_total.png" />
+    <img id="img_garbage_multiple" src="assets/images/img_garbage_multiple.png" />
+    <img id="img_coin_multiple" src="assets/images/img_coin_multiple.png" />
 
-    <img id="ins1" src="assets/images/ins1.png" />
-    <img id="ins2" src="assets/images/ins2.png" />
-    <img id="ins3" src="assets/images/ins3.png" />
-    <img id="ins4" src="assets/images/ins4.png" />
-    <img id="ins5" src="assets/images/ins5.png" />
-    <img id="ins6" src="assets/images/ins6.png" />
-    <img id="ins7" src="assets/images/ins7.png" />
-    <img id="ins8" src="assets/images/ins8.png" />
-    <img id="ins9" src="assets/images/ins9.png" />
-    <img id="ins10" src="assets/images/ins10.png" />
-    <img id="ins11" src="assets/images/ins11.png" />
-    <img id="ins12" src="assets/images/ins12.png" />
-    <img id="ins13" src="assets/images/ins13.png" />
 
-    <img id="traj10" src="assets/trajImages/ex1.png" />
+    <!-- <img id="ins1" src="https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/ins1.svg"/> -->
+    <!-- <object id="ins1" data="assets/images/ins1.svg" type="image/svg+xml" /> -->
+    <!-- <img id="ins1" src="assets/images/ins1.png" srcset="assets/images/ins1.svg" width = "600" height = "600"/>
+    <img id="ins2" src="assets/images/ins2.png" srcset="assets/images/ins2.svg" />
+    <img id="ins3" src="assets/images/ins3.png" srcset="assets/images/ins3.svg" />
+    <img id="ins4" src="assets/images/ins4.png" srcset="assets/images/ins4.svg" />
+    <img id="ins5" src="assets/images/ins5.png" srcset="assets/images/ins5.svg"/>
+    <img id="ins6" src="assets/images/ins6.png" srcset="assets/images/ins6.svg"/>
+    <img id="ins7" src="assets/images/ins7.png" srcset="assets/images/ins7.svg"/>
+    <img id="ins8" src="assets/images/ins8.png" srcset="assets/images/ins8.svg"/>
+    <img id="ins9" src="assets/images/ins9.png" srcset="assets/images/ins9.svg"/>
+    <img id="ins10" src="assets/images/ins10.png" srcset="assets/images/ins10.svg"/>
+    <img id="ins11" src="assets/images/ins11.png" srcset="assets/images/ins11.svg"/>
+    <img id="ins12" src="assets/images/ins12.png" srcset="assets/images/ins12.svg"/>
+    <img id="ins13" src="assets/images/ins13.png" srcset="assets/images/ins13.svg"/> -->
+    <img id="ins1" src="assets/images/ins1.png"/>
+    <img id="ins2" src="assets/images/ins2.png"/>
+    <img id="ins3" src="assets/images/ins3.png"/>
+    <img id="ins4" src="assets/images/ins4.png"/>
+    <img id="ins5" src="assets/images/ins5.png"/>
+    <img id="ins6" src="assets/images/ins6.png"/>
+    <img id="ins7" src="assets/images/ins7.png"/>
+    <img id="ins8" src="assets/images/ins8.png"/>
+    <img id="ins9" src="assets/images/ins9.png"/>
+    <img id="ins10" src="assets/images/ins10.png"/>
+    <img id="ins11" src="assets/images/ins11.png"/>
+    <img id="ins12" src="assets/images/ins12.png"/>
+    <img id="ins13" src="assets/images/ins13.png"/>
+    <img id="ins14" src="assets/images/ins14.png"/>
+
+    <!-- <img id="traj10" src="assets/trajImages/ex1.png" />
     <img id="traj11" src="assets/trajImages/ex2.png" />
     <img id="traj20" src="assets/trajImages/ex3.png" />
     <img id="traj21" src="assets/trajImages/ex4.png" />
-
     <img id="traj30" src="assets/trajImages/ex5.png" />
-    <img id="traj31" src="assets/trajImages/ex6.png" />
+    <img id="traj31" src="assets/trajImages/ex6.png" /> -->
 
 
-
-    <form name="hitForm" id="hitForm" action="https://workersandbox.mturk.com/mturk/externalSubmit" method="POST">
+    <!-- https://www.mturk.com/mturk/externalSubmit -->
+    <!-- https://workersandbox.mturk.com/mturk/externalSubmit -->
+    <form name="hitForm" id="hitForm" action="https://www.mturk.com/mturk/externalSubmit" method="POST">
     <input type="hidden" id = "assignmentId" name="assignmentId" value="" />
-    <input type="hidden" id = "query1" name="query1" value="" />
+    <input type="hidden" id = "sampleNumber" name="sampleNumber" value="" />
+
+
+    <!-- <input type="hidden" id = "query1" name="query1" value="" />
     <input type="hidden" id = "query2" name="query2" value="" />
-    <input type="hidden" id = "query3" name="query3" value="" />
+    <input type="hidden" id = "query3" name="query3" value="" /> -->
     </form>
 
     <!-- <div id="app"></div> -->
@@ -117,7 +139,7 @@
   <!-- Trigger the modal with a button -->
   <!-- <button id = "displayInsBtn" type="button" class="btn btn-info btn-lg" style = "display:none; position:absolute; left: 37%; top:100%; background-color: #fcbc14" data-toggle="modal" data-target="#myModal">View Instructions</button> -->
   <button id = "displayInsBtn" type="button" class="displayInsBtn" style = "font-family:CustomFont; border-radius: 5%; display:none; position:absolute; left:30%; top:100%; background-color: #fcbc14" data-toggle="modal" data-target="#myModal">View Instructions</button>
-
+  <!-- <iframe id = "surveyLink" src="https://docs.google.com/forms/d/e/1FAIpQLScx9ngKDyBEWVwUH1bTey1Km7mt1FH3tjxvfACFCd4ERZ5A6Q/viewform?embedded=true" style="position: absolute; width:0; height:0; border:0;" width="0" height="0" frameborder="0" marginheight="0" marginwidth="0">Click Here</iframe> -->
 
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
@@ -135,7 +157,7 @@
          <div class="modal-body">
            <!-- <h5 class="label1" id="exampleModalLabel" style="font-family:CustomFont; font-size:20px">New message</h5> -->
 
-            <img class="img-responsive" style="margin:0 auto;width:400px;height:200;" src="assets/images/img_flag.png" alt="">
+            <img class="img-responsive" style="margin:0 auto;width:400;height:200;" src="assets/images/img_flag.png" alt="">
         </div>
         <!-- <label class="modal-body" id = "modal-body"></label> -->
         <div class="modal-footer">

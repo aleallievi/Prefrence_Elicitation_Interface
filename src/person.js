@@ -25,6 +25,7 @@ export default class Person {
         // this.game.score -= 50;
         // this.game.pScore -= 50;
         this.game.vehicle.updatedScore = true;
+        this.game.nPeople +=1;
       }
     }
   }

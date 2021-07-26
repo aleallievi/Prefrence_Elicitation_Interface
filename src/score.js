@@ -13,6 +13,7 @@ export default class Score {
     this.startY = 300;
     this.decomposedScore = false;
     this.printDecomposed = true;
+    this.showRects = false;
     this.gasScore = 0;
     this.prevGasScore = 0;
     this.pScore = 0;
@@ -56,6 +57,34 @@ export default class Score {
       );
   }
 
+
+  staticBarText(ctx, val, y,x, text = "", fontSize = "20px") {
+    ctx.font = fontSize + " CustomFont";
+    let symbol = "$";
+    if (val > 0) {
+      ctx.fillStyle = "green";
+      symbol = "+ $";
+    }
+    if (val < 0) {
+      ctx.fillStyle = "red";
+      symbol = "- $";
+      val = -val;
+    }
+    if (val === 0) ctx.fillStyle = "brown";
+    if (this.lasty > 20)
+      ctx.fillText(
+        text + symbol + String(val),
+        x,
+        y
+      );
+    else
+      ctx.fillText(
+        text + symbol + String(val),
+        x,
+        y
+      );
+  }
+
   barImg(ctx, id, y_offset, x = 180, size = 30) {
     let img = document.getElementById(id);
 
@@ -63,6 +92,11 @@ export default class Score {
       ctx.drawImage(img, x, this.cap(this.lasty + y_offset), size, size);
     else
       ctx.drawImage(img, x, this.cap(this.startY + 10 + y_offset), size, size);
+  }
+
+  staticBarImg(ctx, id, y, x, sizex = 30, sizey = 30) {
+    let img = document.getElementById(id);
+    ctx.drawImage(img, x,y, sizex, sizey);
   }
 
   drawGasTank(ctx, x) {
@@ -202,31 +236,50 @@ export default class Score {
 
   setupLabels(ctx, x, w) {
     if (this.game.dispTraj === false) {
-      this.drawRect(ctx, x - 10, this.startY, 160, 3, "black");
+      if (this.showRects)this.drawRect(ctx, x - 10, this.startY, 160, 3, "black");
     }
     ctx.font = "30px CustomFont";
 
     if (this.printDecomposed === true) {
       if (this.game.dispTraj === false) {
         ctx.font = "40px CustomFont";
+        ctx.fillStyle = "black";
         ctx.fillText("Score: $" + String(this.score), 10, 50);
 
-        this.barImg(ctx, "img_gas", -25);
-        this.barText(ctx, this.gasScore - this.prevGasScore, 0);
+        if (this.showRects) {
+          this.barImg(ctx, "img_gas", -25);
+          this.barText(ctx, this.gasScore - this.prevGasScore, 0);
+          this.barImg(ctx, "img_total", 10);
+          this.barText(ctx, this.pScore - this.prevPScore, 30);
+        } else {
+          this.staticBarImg(ctx, "img_gas", 100,120,50,60)
+          this.staticBarText(ctx, this.gasScore, 130,50,"","30px")
 
-        this.barImg(ctx, "img_total", 10);
-        this.barText(ctx, this.pScore - this.prevPScore, 30);
+          this.staticBarImg(ctx, "img_coin_multiple", 180,120,60,50);
+          this.staticBarText(ctx, this.game.nCoins, 210,50,"","30px");
+
+          this.staticBarImg(ctx, "img_garbage_multiple", 260,120,70,50);
+          this.staticBarText(ctx, -this.game.nGarbage, 290,50,"","30px");
+
+          this.staticBarImg(ctx, "img_person", 340,120,50,60);
+          this.staticBarText(ctx, -50*this.game.nPeople, 370,50,"","30px");
+
+          this.staticBarImg(ctx, "img_flag", 420,120,50,60);
+          this.staticBarText(ctx, 50*this.game.nFlags, 460,50,"","30px");
+
+        }
+
       } else {
         ctx.font = "40px CustomFont";
         ctx.fillStyle = "black";
         ctx.fillText("Score", 10, 50);
         ctx.fillText("Change: $" + String(this.score), 10, 90);
 
-        this.barImg(ctx, "img_gas", -170, 130, 50);
-        this.barText(ctx, this.gasScore, -140, "", "30px");
+        if (this.showRects)this.barImg(ctx, "img_gas", -170, 130, 50);
+        if (this.showRects)this.barText(ctx, this.gasScore, -140, "", "30px");
 
-        this.barImg(ctx, "img_total", -100, 130, 50);
-        this.barText(ctx, this.pScore, -70, "", "30px");
+        if (this.showRects)this.barImg(ctx, "img_total", -100, 130, 50);
+        if (this.showRects)this.barText(ctx, this.pScore, -70, "", "30px");
       }
     } else if (this.decomposedScore === true) {
       ctx.fillStyle = "brown";
@@ -246,7 +299,7 @@ export default class Score {
     // ctx.fillText("Score: $" + String(this.delta), 10, 100);
     //draw prevscore
     if (this.game.dispTraj === false) {
-      this.drawRects(ctx, x, w);
+      if (this.showRects)this.drawRects(ctx, x, w);
       ctx.clearRect(10, 60, w, -100);
       // ctx.clearRect(10, 600, w, -20);
       ctx.fill();

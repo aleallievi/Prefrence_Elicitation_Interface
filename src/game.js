@@ -31,6 +31,11 @@ export default class Game {
     this.hitHouse = false
     this.hitEdge = false
     this.triedLeaving = false
+    //metrics used to decompose score
+    this.nCoins = 0;
+    this.nPeople = 0;
+    this.nGarbage = 0;
+    this.nFlags = 0;
   }
 
 //   fetchJSONFile(path, callback) {
@@ -78,6 +83,10 @@ export default class Game {
 
       $("#myModal").on('show.bs.modal', function (e) {
          var modal = $(this)
+
+         // var mimg = $('.img-responsive');
+         // mimg.css("width", 380);
+         // mimg.css("height", 110);
 
          // modal.find('.label1').text(ins)
          // modal.find('.modal_img1').attr("src","assets/images/img_flag.png")

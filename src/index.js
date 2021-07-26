@@ -127,7 +127,7 @@ window.addEventListener("load", function(event) {
   let newCsDispWidth = 0.208*$(window).width();
   let newCsDispHeight =$(window).height();
 
-  if (window.playTrajBoard || (window.timestep < window.total_tsteps || window.n_games < window.max_games)) {
+  if (window.playTrajBoard || (window.n_games < window.max_games)) {
     // if (gsLX + $(window).height() - ssLX >= maxDist) {
     //   //means we are overlapping
     //   newGsSize = $(window).height() - (gsLX + $(window).height() - ssLX);
@@ -181,6 +181,8 @@ window.addEventListener("load", function(event) {
   window.rightRect = rects[2];
   window.sameRect = rects[3];
   window.incRect = rects[4];
+  window.submitSurveyRect = rects[5];
+  window.openLinkRect = rects[6]
 
 
   // console.log(window.gsWidth);
@@ -224,7 +226,7 @@ window.addEventListener("resize", function(event) {
   let newCsDispHeight =$(window).height();
   // let newCsDispWidth = 0.6*$(window).width();
   // let newCsDispHeight = 1.2*$(window).height();
-  if (window.playTrajBoard || (window.timestep < window.total_tsteps || window.n_games < window.max_games)) {
+  if (window.playTrajBoard || (window.n_games < window.max_games)) {
     // if (gsLX + $(window).height() - ssLX >= maxDist) {
     //   //means we are overlapping
     //   newGsSize = $(window).height() - (gsLX + $(window).height() - ssLX);
@@ -291,6 +293,8 @@ window.addEventListener("resize", function(event) {
   window.rightRect = rects[2];
   window.sameRect = rects[3];
   window.incRect = rects[4];
+  window.submitSurveyRect = rects[5]
+  window.openLinkRect = rects[6]
   //
   // window.im.w = 750;
   // window.im.h = 450;
@@ -382,14 +386,24 @@ window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence
 
 
 //------------------------------------------------
+let nTrajBoards = 0;
+window.showFinalScreen = false;
 window.game = null;
 window.playTrajBoard = false;
 window.finishedTrajBoard = false;
 window.n_games = 0;
 window.max_games = 12;
 window.finished_game = true;
-window.total_tsteps = 200;
+window.total_tsteps = 50;
 window.timestep = 0;
+window.finishedHIT = false;
+// window.sampleNumber = getRandomInt(0,2);
+window.nSamples = 40;
+window.nUsers = 30;
+window.sampleNumber = getRandomInt(0,window.nUsers);; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
+window.openedSurvey = false;
+
+
 //NOTE: USE THIS LINK TO VIEW TRAJECTORIES https://codesandbox.io/s/gridworld-dwkdg?file=/src/trajHandler.js
 window.disTraj = false;
 window.im = new InstructionsManager();
@@ -403,6 +417,8 @@ window.leftRect = rects[1];
 window.rightRect = rects[2];
 window.sameRect = rects[3];
 window.incRect = rects[4];
+window.submitSurveyRect = rects[5]
+window.openLinkRect = rects[6]
 //------------------------------------------------
 //https://stackoverflow.com/questions/24384368/simple-button-in-html5-canvas/24384882
 function getMousePos(canvas, event) {
@@ -443,36 +459,51 @@ function updateRects(w,h) {
   // this.b3_h = 130
   // this.b3_w = 50
   // this.b4_y = 500-100+15
+  var submitSurveyRect = {
+    x: (window.qm.sb_x/1009)*window.qdWidth,
+    y: (window.qm.sb_y/699)*window.qdHeight,
+    width: ((window.qm.sb_w*1.5)/1009)*window.qdWidth,
+    height: ((window.qm.sb_h*1.5)/699)*window.qdHeight
+
+  }
+
+  var openLinkRect = {
+    x: (window.qm.sb_x/1009)*window.qdWidth,
+    y: ((window.qm.sb_y-50)/699)*window.qdHeight,
+    width: ((window.qm.sb_w*1.5)/1009)*window.qdWidth,
+    height: ((window.qm.sb_h*1.5)/699)*window.qdHeight
+
+  }
 
   var leftRect = {
     x: (window.qm.b1_x/1009)*window.qdWidth,
     y: (window.qm.b1_y/699)*window.qdHeight,
-    width: 50,
-    height: 70
+    width: ((50*1.5)/1009)*window.qdWidth,
+    height: ((70*1.5)/699)*window.qdHeight
   };
 
   var rightRect = {
     x: (window.qm.b2_x/1009)*window.qdWidth,
     y: (window.qm.b1_y/699)*window.qdHeight,
-    width: 50,
-    height: 70
+    width: ((50*1.5)/1009)*window.qdWidth,
+    height: ((70*1.5)/699)*window.qdHeight
   };
 
 
   var sameRect = {
     x:(window.qm.b3_x/1009)*window.qdWidth,
     y: (window.qm.b3_y/699)*window.qdHeight,
-    width: 130,
-    height: 50
+    width: ((130*1.5)/1009)*window.qdWidth,
+    height: ((50*1.5)/699)*window.qdHeight
   };
 
   var incRect = {
     x: (window.qm.b3_x/1009)*window.qdWidth,
     y: (window.qm.b4_y/699)*window.qdHeight,
-    width: 130,
-    height: 50
+    width: ((130*1.5)/1009)*window.qdWidth,
+    height: ((50*1.5)/699)*window.qdHeight
   };
-  return [nextRect, leftRect, rightRect, sameRect, incRect]
+  return [nextRect, leftRect, rightRect, sameRect, incRect,submitSurveyRect,openLinkRect]
 }
 
 
@@ -493,9 +524,17 @@ queryDisp.addEventListener(
   "click",
   function (evt) {
     let mousePos = getMousePos(queryDisp, evt);
-    if (isInside(mousePos,window.leftRect) && window.begunQueries) {
+    if (isInside(mousePos,window.submitSurveyRect) && window.showFinalScreen && window.openedSurvey) {
+      window.finishedHIT = true;
+      // window.open("https://docs.google.com/forms/d/e/1FAIpQLScx9ngKDyBEWVwUH1bTey1Km7mt1FH3tjxvfACFCd4ERZ5A6Q/viewform?usp=sf_link");
+    } else if (isInside(mousePos,window.openLinkRect) && window.showFinalScreen) {
+      window.open("https://docs.google.com/forms/d/e/1FAIpQLScx9ngKDyBEWVwUH1bTey1Km7mt1FH3tjxvfACFCd4ERZ5A6Q/viewform?usp=sf_link");
+      window.openedSurvey = true;
+    }
+    else if (isInside(mousePos,window.leftRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("left");
+
     } else if (isInside(mousePos,window.rightRect) && window.begunQueries) {
       window.qm.pressed = true;
       window.qm.queried("right");
@@ -509,6 +548,11 @@ queryDisp.addEventListener(
   },
   false
 );
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
 //------------------------------------------------
 function checkInsCompletion() {
   //check objective and see if we still need to play another board
@@ -529,9 +573,9 @@ function checkInsCompletion() {
 
 }
 function startNewGame() {
-  if (window.finished_game && ((window.timestep < window.total_tsteps &&window.n_games < window.max_games) || window.playTrajBoard) ) {
+  if (window.finished_game && ((window.n_games < window.max_games) || window.playTrajBoard) ) {
     window.finished_game = false;
-
+    window.timestep = 0;
     let boardName;
     let spawnPoint;
     let ins = "";
@@ -541,7 +585,8 @@ function startNewGame() {
       spawnPoint = { x: 0, y: 0 };
     } else if (window.playTrajBoard) {
       boardName = "test_single_goal_mud";
-      spawnPoint ={ x: 0, y: 0 };
+      if (nTrajBoards === 0)spawnPoint ={ x: 0, y: 0 };
+      else spawnPoint ={ x: 0, y: 5 };
       dispIns = false;
     } else {
       boardName = window.boardNames[window.n_games];
@@ -618,7 +663,7 @@ function gameLoop(timestamp) {
         window.score.update(deltaTime);
         window.score.draw(ctxScore);
 
-        if (!window.playTrajBoard && (window.timestep > window.total_tsteps || window.n_games >= window.max_games)) {
+        if (!window.playTrajBoard && (window.n_games >= window.max_games)) {
           window.game.reached_terminal = true;
           window.im.finishedIns = false;
           window.im.finishedGamePlay = true;
@@ -629,7 +674,10 @@ function gameLoop(timestamp) {
     } else {
       window.finished_game = true;
       checkInsCompletion();
-      if (window.playTrajBoard){
+      if (window.playTrajBoard && nTrajBoards === 0){
+        nTrajBoards+=1;
+        // window.n_games-=1;
+      }else if (window.playTrajBoard && nTrajBoards === 1){
         window.playTrajBoard = false;
         window.im.finishedIns = false;
         window.im.finishedGamePlay = true;

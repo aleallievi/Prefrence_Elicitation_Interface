@@ -25,7 +25,11 @@ export default class Garbage {
         // this.game.score -= 1;
         // this.game.pScore -= 1;
         this.game.vehicle.updatedScore = true;
+        this.game.nGarbage+=1;
       }
+    }
+    if (this.game.vehicle.goal.x != this.position.x || this.game.vehicle.goal.y != this.position.y){
+      this.lastCol = { x: -1, y: -1 };
     }
   }
 

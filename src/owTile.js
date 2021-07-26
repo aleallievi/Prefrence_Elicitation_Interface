@@ -44,6 +44,9 @@ export default class OWTile {
 
   update() {
     if (detectCollision(this.game.vehicle, this)) {
+      if (!this.isOW(this.game.vehicle.lastCol)){
+        this.game.gasScore-=1;
+      }
       // this.game.ball.speed.x = 0;
       // this.game.ball.speed.y = 0;
       // this.markedForDeletion = true;

@@ -12,7 +12,7 @@ export default class InstructionManager {
       "anim_examp",
       false
     );
-    this.animationGame.start(false, true);
+    this.animationGame.start("",false,false,true);
     // this.w = 1.252*window.gsWidth;
     // this.h = 0.751*window.gsHeight;
     // this.x = -0.125*window.gsWidth;
@@ -41,6 +41,11 @@ export default class InstructionManager {
     }
 
     this.img = document.getElementById("ins" + String(this.insScene));
+
+	// this.img.setAttribute('width',  66);
+	// this.img.setAttribute('height',  66);
+
+    // $("#ins" + String(this.insScene)).show();
     // console.log("here");
   }
   playAnimation(ctx) {
@@ -48,18 +53,20 @@ export default class InstructionManager {
     this.animationGame.draw(ctx);
   }
   draw(ctx) {
+    this.pa = false;
     if (this.insScene === 10 && !this.finishedGamePlay) return;
     if (this.insScene === 14) return;
     if (this.insScene === 4) {
-      this.playAnimation(ctx);
+      this.pa = true;
+
       // this.h = 0.333*window.gsWidth;
       // this.w = 1.166*window.gsWidth;
       // this.x = -0.0666*window.gsWidth;
       // this.y = -0.0166*window.gsWidth;
-      this.h = 200;
-      this.w = 700;
-      this.x = -40;
-      this.y = -10;
+      // this.h = 200;
+      // this.w = 700;
+      // this.x = -40;
+      // this.y = -10;
     } else {
       //TODO: WE ONLY WANT TO DO THIS ON LOAD
       // if (!window.resizing) {
@@ -79,6 +86,9 @@ export default class InstructionManager {
     }
 
     ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
+
+    // $("#ins" + String(this.insScene)).show();
+    if (this.pa)this.playAnimation(ctx);
     //draw button
     // ctx.fillStyle = "white";
     // ctx.beginPath();

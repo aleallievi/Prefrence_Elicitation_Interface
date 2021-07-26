@@ -5,8 +5,9 @@ export default class InstructionManager {
   constructor() {
     this.n_query = 0;
     // this.img = document.getElementById("img_ow_tile");
-    this.nTrajs = 3;
-    this.traj = 1;
+    this.nTrajs = window.nSamples;
+    // this.nTrajs = 1;
+    this.traj = 0;
     this.started = false;
     this.pressed = false;
     // ASSIGNS THE URL PARAMETERS TO JAVASCRIPT VARIABLES
@@ -16,8 +17,38 @@ export default class InstructionManager {
     this.b3Color = "grey";
     this.b4Color = "grey";
     this.isSubmitted = false;
+    this.addedLink = false;
 
 
+    let gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp2_data_samples/sample" + String(window.sampleNumber) + "/"
+    for (let i = 0; i < window.nSamples; i++) {
+      //create MTURK HIT query
+      // <input type="hidden" id = "query3" name="query3" value="" /> -->
+      var q = document.createElement('input');
+      q.setAttribute('type', 'text');
+      q.type = "hidden"
+      q.id = "query" + String(i)
+      q.name = "query" + String(i)
+      q.value = ""
+
+      document.getElementById('hitForm').appendChild(q);
+
+
+      //create/store image
+      let sample1 = gitDir + "s" + String(i) + "_0" + ".png"
+      let sample2 = gitDir + "s" + String(i) + "_1" + ".png"
+      //traj10
+      var img1 = document.createElement('img');
+      img1.src =sample1;
+      img1.id = "traj" + String(i) + "0"
+      document.getElementById('body').appendChild(img1);
+      //traj11
+      var img2 = document.createElement('img');
+      img2.src =sample2;
+      img2.id = "traj" + String(i) + "1"
+      document.getElementById('body').appendChild(img2);
+    }
+      //window.sampleNumber
 
     // this.offset = 0.416*window.qdWidth;
     // this.b1_x = 0.229*window.qdWidth;
@@ -32,15 +63,23 @@ export default class InstructionManager {
     // this.b4_y = 0.714*window.qdHeight;
     this.offset = 500
     this.b1_x = 200+(420/2)-(70/2)-100-125
-    this.b1_y = 500-100+15 + 40
+    this.b1_y = 500-100+15 + 40 + 70
     this.b1_h = 50
     this.b1_w = 70
     this.b2_x = 290+(420/2)-(70/2)-100+500-125
     this.b3_x = 720-160/2-100-125
-    this.b3_y = 425-100+15 + 40
+    this.b3_y = 425-100+15 + 40 + 70
     this.b3_h = 130
     this.b3_w = 50
-    this.b4_y = 500-100+15 + 40
+    this.b4_y = 500-100+15 + 40 + 70
+
+    this.sb_x = 200+(420/2)-(70/2)
+    this.sb_y = 500-100+15
+    this.sb_w = 175
+    this.sb_h = 100
+
+
+    //load in images from the folder corrospding to window.sampleNumber
 
 
     new QueryInputHandler();
@@ -80,11 +119,23 @@ export default class InstructionManager {
     this.started = true;
     this.queryResults = {}
     this.lastDeltaTime = deltaTime;
+
+    // var gs = $('#gameScreen');
+    // gs.css("width", newGsSize);
+    // gs.css("height", newGsSize);
+
     $("#myModal").on('show.bs.modal', function (e) {
        var modal = $(this)
+
+       var mimg = $('.img-responsive');
+       mimg.css("width", 700);
+       mimg.css("height", 350);
        // modal.find('.label1').text(ins)
        // modal.find('.modal_img1').attr("src","assets/images/img_flag.png")
        $(".img-responsive").attr('src', "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/query_ins.png");
+       // $(".img-responsive").attr('width', "500");
+       // $(".img-responsive").attr('height', "500");
+
        //modal_img1
 
     });
@@ -95,6 +146,7 @@ export default class InstructionManager {
     // console.log(this.assignmentID);
     if (!this.isSubmitted) {
       document.getElementById('assignmentId').value = this.assignmentID
+      document.getElementById('sampleNumber').value = window.sampleNumber
 
       // for (var key in this.queryResults) {
       //   document.getElementById('foo').value = this.queryResults[key]
@@ -141,6 +193,9 @@ export default class InstructionManager {
     // this.b3_h = 130
     // this.b3_w = 50
     // this.b4_y = 0.714*window.qdHeight;
+    if (window.finishedHIT){
+      this.submit();
+    }
 
     if (deltaTime -  this.lastDeltaTime > 200){
       this.resetButtons();
@@ -149,8 +204,13 @@ export default class InstructionManager {
     if (this.pressed){
       // console.log("pressed");
       // console.log(this.traj);
-      if (this.traj === this.nTrajs) {
-        this.submit();
+      if (this.traj === this.nTrajs-1) {
+        window.showFinalScreen = true;
+        // this.b1_x = this.sb_x;
+        // this.b1_y = this.sb_y;
+        // this.b1_h = this.sb_h;
+        // this.b1_w = this.sb_w;
+        // this.submit();
       } else {
         this.traj+=1;
         this.pressed = false;
@@ -187,29 +247,68 @@ export default class InstructionManager {
 
   draw(ctx) {
 
-
-    ctx.drawImage(
-      this.img1,
-      200-100-100,
-      0,
-      350,
-      520
-    );
-
-    ctx.drawImage(
-      this.img2,
-      290+this.offset-100-80,
-      0,
-      350,
-      520
-    );
-
-    this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h/2)+5);
-    this.drawButton(ctx,this.b2_x,this.b1_y,this.b1_w,this.b1_h,this.b2Color,"Right",this.b2_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h /2)+5)
+    if (window.showFinalScreen) {
+      this.img = document.getElementById("ins14");
+      this.w = 750;
+      this.h = 450;
+      this.x = 75;
+      this.y = 0;
 
 
-    this.drawButton(ctx,this.b3_x,  this.b3_y,this.b3_h,this.b3_w,this.b3Color,"Same",this.b3_x+(this.b3_h/2)-25,  this.b3_y+(this.b3_w/2)+5);
-    this.drawButton(ctx,this.b3_x,this.b4_y,this.b3_h,this.b3_w,this.b4Color,"Can't Tell",  this.b3_x+(this.b3_h/2)-50,this.b4_y+(this.b3_w/2)+5);
+      if (window.openedSurvey){
+        this.drawButton(ctx,this.sb_x,this.sb_y,this.sb_w,this.sb_h,"DodgerBlue","Submit HIT",this.sb_x-(this.sb_w/2)+120,this.sb_y+(this.sb_h/2)+25);
+
+      }
+
+      // this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h/2)+5);
+
+      ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
+
+      ctx.font = "25px CustomFont";
+      ctx.fillStyle = "black";
+      ctx.fillText("Open Survey", this.sb_x,this.sb_y-30);
+      ctx.fill();
+
+
+    } else {
+      ctx.font = "25px CustomFont";
+      ctx.fillStyle = "black";
+      ctx.fillText("Which shows", 480-40-20-30,20);
+      ctx.fillText("better behavior?", 480-40-30-30,45);
+      ctx.fill();
+
+
+      ctx.font = "20px CustomFont";
+      ctx.fillStyle = "black";
+      ctx.fillText(String(this.traj+1) + "/" + String(this.nTrajs+1),480-40-30-30+70,85);
+      ctx.fill();
+
+
+      ctx.drawImage(
+        this.img1,
+        200-100-100,
+        0,
+        350,
+        520
+      );
+
+      ctx.drawImage(
+        this.img2,
+        290+this.offset-100-80,
+        0,
+        350,
+        520
+      );
+
+      this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h/2)+5);
+      this.drawButton(ctx,this.b2_x,this.b1_y,this.b1_w,this.b1_h,this.b2Color,"Right",this.b2_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h /2)+5)
+
+
+      this.drawButton(ctx,this.b3_x,  this.b3_y,this.b3_h,this.b3_w,this.b3Color,"Same",this.b3_x+(this.b3_h/2)-25,  this.b3_y+(this.b3_w/2)+5);
+      this.drawButton(ctx,this.b3_x,this.b4_y,this.b3_h,this.b3_w,this.b4Color,"Can't Tell",  this.b3_x+(this.b3_h/2)-50,this.b4_y+(this.b3_w/2)+5);
+
+    }
+
 
 
   }

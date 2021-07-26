@@ -16,7 +16,12 @@ export default class Coin {
   }
 
   update() {
+    // if (detectAnyCollision(this.game.vehicle,this)){
+    //   console.log("collected")
+    // }
+
     if (detectCollision(this.game.vehicle, this)) {
+
       // this.game.ball.speed.y = -this.game.ball.speed.y;
       // this.markedForDeletion = true;
       this.game.find_is_leaving_ow(this.position);
@@ -25,7 +30,12 @@ export default class Coin {
         // this.game.pScore += 1;
         this.game.collectedCoin = true;
         this.game.vehicle.updatedScore = true;
+        this.game.nCoins+=1;
+
       }
+    }
+    if (this.game.vehicle.goal.x != this.position.x || this.game.vehicle.goal.y != this.position.y){
+      this.lastCol = { x: -1, y: -1 };
     }
   }
 

@@ -466,7 +466,7 @@ export default class Vehicle {
         return;
       }
       if (!this.game.isLeaving) this.lastCol = this.goal;
-
+      
       this.reachedGoal = true;
       this.stop();
     }

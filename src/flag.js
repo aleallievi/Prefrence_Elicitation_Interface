@@ -26,6 +26,7 @@ export default class Flag {
         // this.game.score += 50;
         // this.game.pScore += 50;
         this.game.vehicle.updatedScore = true;
+        this.game.nFlags+=1;
       }
     }
   }
@@ -38,6 +39,6 @@ export default class Flag {
       this.size_x,
       this.size_y
     );
-  
+
   }
 }
