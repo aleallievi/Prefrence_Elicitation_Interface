@@ -426,6 +426,10 @@ async function getInstanceParams() {
 // Listen for messages
 window.socket.addEventListener("message", function (event) {
   window.sampleNumber = parseInt(event.data)
+  if (window.sampleNumber %2 == 0) window.observationType = 0;
+  else window.observationType = 1;
+  window.qm.handleSampleImages()
+  window.qm.nTrajs = window.nSamples;
   console.log(window.sampleNumber);
 });
 
@@ -442,14 +446,13 @@ window.total_tsteps = 50;
 window.timestep = 0;
 window.finishedHIT = false;
 // window.sampleNumber = getRandomInt(0,2);
-window.nSamples = 40;
+window.nSamples = 36;
 window.nUsers = 30;
 // window.sampleNumber = getRandomInt(0,window.nUsers);; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
 getInstanceParams();
 // window.observationType = getRandomInt(0,2); //0 means display partial return and 1 means display change in state value
 // window.observationType = 0; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
-if (window.sampleNumber %2 == 0) window.observationType = 0;
-else window.observationType = 1;
+
 window.openedSurvey = false;
 
 // window.im.createButton(canvas, ctx);

@@ -80,6 +80,7 @@ def build_sample(worker_1_cords,n):
         dom_val = chosen.split("/")[8].split("_")[-1].replace(".png","")
         chosen_2 = chosen.replace("0_" + dom_val + ".png", "1_"+ dom_val +".png")
 
+        #
         img1 = cv2.imread(chosen)
         img2 = cv2.imread(chosen_2)
         chosen_name = chosen.replace("_0_" + dom_val + ".png","")
@@ -114,7 +115,9 @@ for root, dirs, files in os.walk("/Users/stephanehatgiskessell/Desktop/Kivy_stuf
 
             last_char = name_split[-1].replace(".png","")
             if (len(name_split) > 2 and last_char.isalpha()):
-                 if int(name_split[2]) == 1:
+                 if int(name_split[2]) == 1 and handling_vf_bucket == False:
+                     continue
+                 if int(name_split[3]) == 1 and handling_vf_bucket == True:
                      continue
                  traj_root = root2 + "/" + name
                  # if (pt == "dsdt_formatted_imgs"):

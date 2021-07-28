@@ -5,7 +5,7 @@ export default class InstructionManager {
   constructor() {
     this.n_query = 0;
     // this.img = document.getElementById("img_ow_tile");
-    this.nTrajs = window.nSamples;
+
     // this.nTrajs = 1;
     this.traj = 0;
     this.started = false;
@@ -18,40 +18,7 @@ export default class InstructionManager {
     this.b4Color = "grey";
     this.isSubmitted = false;
     this.addedLink = false;
-    let gitDir;
-    if (window.observationType == 0){
-      gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/pr_sample" + String(window.sampleNumber) + "/"
-    } else {
-      gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/vf_sample" + String(window.sampleNumber) + "/"
 
-    }
-    for (let i = 0; i < window.nSamples; i++) {
-      //create MTURK HIT query
-      // <input type="hidden" id = "query3" name="query3" value="" /> -->
-      var q = document.createElement('input');
-      q.setAttribute('type', 'text');
-      q.type = "hidden"
-      q.id = "query" + String(i)
-      q.name = "query" + String(i)
-      q.value = ""
-
-      document.getElementById('hitForm').appendChild(q);
-
-
-      //create/store image
-      let sample1 = gitDir + "s" + String(i) + "_0" + ".png"
-      let sample2 = gitDir + "s" + String(i) + "_1" + ".png"
-      //traj10
-      var img1 = document.createElement('img');
-      img1.src =sample1;
-      img1.id = "traj" + String(i) + "0"
-      document.getElementById('body').appendChild(img1);
-      //traj11
-      var img2 = document.createElement('img');
-      img2.src =sample2;
-      img2.id = "traj" + String(i) + "1"
-      document.getElementById('body').appendChild(img2);
-    }
       //window.sampleNumber
 
     // this.offset = 0.416*window.qdWidth;
@@ -87,6 +54,45 @@ export default class InstructionManager {
 
 
     new QueryInputHandler();
+  }
+
+  handleSampleImages(){
+    let gitDir;
+    console.log(window.observationType)
+    console.log(window.sampleNumber)
+    if (window.observationType == 0){
+      gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/pr_sample" + String(window.sampleNumber) + "/"
+    } else {
+      gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/vf_sample" + String(window.sampleNumber) + "/"
+
+    }
+    for (let i = 0; i < window.nSamples; i++) {
+      //create MTURK HIT query
+      // <input type="hidden" id = "query3" name="query3" value="" /> -->
+      var q = document.createElement('input');
+      q.setAttribute('type', 'text');
+      q.type = "hidden"
+      q.id = "query" + String(i)
+      q.name = "query" + String(i)
+      q.value = ""
+
+      document.getElementById('hitForm').appendChild(q);
+
+
+      //create/store image
+      let sample1 = gitDir + "s" + String(i) + "_0" + ".png"
+      let sample2 = gitDir + "s" + String(i) + "_1" + ".png"
+      //traj10
+      var img1 = document.createElement('img');
+      img1.src =sample1;
+      img1.id = "traj" + String(i) + "0"
+      document.getElementById('body').appendChild(img1);
+      //traj11
+      var img2 = document.createElement('img');
+      img2.src =sample2;
+      img2.id = "traj" + String(i) + "1"
+      document.getElementById('body').appendChild(img2);
+    }
   }
 
   turkGetParam( name ) {

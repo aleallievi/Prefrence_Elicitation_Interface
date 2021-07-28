@@ -9,10 +9,10 @@ export default class QueryInputHandler {
           }
           break;
         case 38:
-          if (window.begunQueries) {
-            window.qm.pressed = true;
-            window.qm.queried("dis");
-          }
+        if (window.begunQueries) {
+          window.qm.pressed = true;
+          window.qm.queried("same");
+        }
           break;
         case 39:
           if (window.begunQueries) {
@@ -24,7 +24,7 @@ export default class QueryInputHandler {
         case 40:
         if (window.begunQueries) {
           window.qm.pressed = true;
-          window.qm.queried("same");
+          window.qm.queried("dis");
         }
         break;
       }

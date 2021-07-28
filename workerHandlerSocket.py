@@ -21,6 +21,8 @@ async def server(websocket, path):
                 await websocket.send(str(sample_number))
                 sample_number = int(sample_number)
                 sample_number+=1
+                if sample_number >= 30:
+                    sample_number = 0
                 file = open("worker_tracker.txt","w")
                 file.write(str(sample_number))
                 file.close()
