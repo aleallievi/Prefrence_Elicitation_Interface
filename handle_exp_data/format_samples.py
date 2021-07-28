@@ -10,7 +10,85 @@ ssst_pts2img = {}
 sss_pts2img = {}
 
 quad2points = {"dsdt":[],"dsst":[],"ssst":[],"sss":[]}
+point2index = {}
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#TODO: subtract (0,1), (0,2), (7,0)
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+handling_vf_bucket = True
+
+def build_sample(worker_1_cords,n):
+    sample_1 = []
+    sample_dict_1 = {}
+    seen_sample_numbers_1 = []
+    if handling_vf_bucket:
+        sample_dir_1 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/exp3_data_samples/vf_sample" + str(n) + "/"
+    else:
+        sample_dir_1 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/exp3_data_samples/pr_sample" + str(n) + "/"
+    #make sample directory if it does not exist
+    if not os.path.exists(sample_dir_1):
+        os.makedirs(sample_dir_1)
+
+    for point in worker_1_cords:
+        point_ = point.split("_")
+        quad = point_[0]
+        pt = point_[1]
+        if quad == "dsdt":
+            pts_traj_pairs = dsdt_pts2img.get(pt)
+        elif quad == "dsst":
+            pts_traj_pairs = dsst_pts2img.get(pt)
+        elif quad == "ssst":
+            pts_traj_pairs = ssst_pts2img.get(pt)
+        elif quad == "sss":
+            pts_traj_pairs = sss_pts2img.get(pt)
+
+        #second layer of randomness - choose random points for each coordinate
+        index = point2index.get(quad + "_" + str(pt))
+        chosen = pts_traj_pairs[index]
+
+        chosen_name = chosen.split("/")[8]
+        if (chosen_name == ".DS_Store"):
+            index+=1
+            if (index == len(pts_traj_pairs)):
+                index = 0
+            chosen = pts_traj_pairs[index]
+            chosen_name = chosen.split("/")[8]
+        index+=1
+
+        #reshuffle array and reset index if we have chosen all samples
+        if (index == len(pts_traj_pairs)):
+            random.shuffle(pts_traj_pairs)
+            if quad == "dsdt":
+                dsdt_pts2img[pt] = pts_traj_pairs
+            elif quad == "dsst":
+                dsst_pts2img[pt] = pts_traj_pairs
+            elif quad == "ssst":
+                ssst_pts2img[pt] = pts_traj_pairs
+            elif quad == "sss":
+                sss_pts2img[pt] = pts_traj_pairs
+            index = 0
+        point2index[quad + "_" + str(pt)] = index
+
+        sample_1.append(chosen)
+
+        query_number = random.randint(0, len(worker_1_cords)-1)
+        while query_number in seen_sample_numbers_1:
+            query_number = random.randint(0, len(worker_1_cords)-1)
+        seen_sample_numbers_1.append(query_number)
+
+        #save image
+        dom_val = chosen.split("/")[8].split("_")[-1].replace(".png","")
+        chosen_2 = chosen.replace("0_" + dom_val + ".png", "1_"+ dom_val +".png")
+
+        img1 = cv2.imread(chosen)
+        img2 = cv2.imread(chosen_2)
+        chosen_name = chosen.replace("_0_" + dom_val + ".png","")
+        cv2.imwrite(sample_dir_1 + "s" + str(query_number) + "_0.png",img1)
+        cv2.imwrite(sample_dir_1 + "s" + str(query_number) + "_1.png",img2)
+
+        sample_dict_1[query_number] = {"query":query_number,"name":chosen_name,"quadrant":quad,"dom_val":dom_val,"disp_vf":handling_vf_bucket}
+        with open(sample_dir_1 +"/sample" + str(n) + "_dict" + '.pkl', 'wb') as f:
+            pickle.dump(sample_dict_1, f, pickle.HIGHEST_PROTOCOL)
 
 for root, dirs, files in os.walk("/Users/stephanehatgiskessell/Desktop/Kivy_stuff/all_formatted_imgs/"):
     # for name in files:
@@ -22,19 +100,28 @@ for root, dirs, files in os.walk("/Users/stephanehatgiskessell/Desktop/Kivy_stuf
         # print (root)
         # print ("\n")
         #/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/all_formatted_imgs/ssst_formatted_imgs/(0, -1.0)
-            sub_dir = root.split("/")[7]
+            if len(root.split("/")) == 7:
+                continue
+            # print (len(root.split("/")))
             pt =root.split("/")[-1]
-            quad = sub_dir.split("_")[0]
-
+            quad = root.split("/")[6].split("_")[0]
             # traj_root = root2 + "/" + name
             name_split = name.split("_")
+            if name_split[0] == "vf" and handling_vf_bucket == False:
+                continue
+            if name_split[0] != "vf" and handling_vf_bucket == True:
+                continue
+
             last_char = name_split[-1].replace(".png","")
-            if (len(name_split) == 3 and last_char.isalpha()):
+            if (len(name_split) > 2 and last_char.isalpha()):
+                 if int(name_split[2]) == 1:
+                     continue
                  traj_root = root2 + "/" + name
                  # if (pt == "dsdt_formatted_imgs"):
                  #     continue
                  if quad == "dsdt":
                      arr = quad2points.get("dsdt")
+
                      if pt not in arr:
                          arr.append(pt)
                          quad2points["dsdt"] = arr
@@ -76,96 +163,100 @@ for root, dirs, files in os.walk("/Users/stephanehatgiskessell/Desktop/Kivy_stuf
                      pt_arr = sss_pts2img.get(pt)
                      pt_arr.append(traj_root)
                      sss_pts2img[pt] = pt_arr
+                 #create index dictionary for sampling
+                 point2index[quad + "_" + str(pt)] = 0
 
-
-n_samples = 35
+n_samples = 30
 n_traj_pairs = len(dsdt_pts2img.keys()) + len(dsst_pts2img.keys()) + len(ssst_pts2img.keys())  + len(sss_pts2img.keys()) - 4
-for i in range(n_samples):
+#build a list of all unique points
+all_cords = []
+for quad in quad2points.keys():
+    pts = quad2points.get(quad)[1:]
+    for pt in pts:
+        all_cords.append(quad + "_" + pt)
+
+for i in range(0,n_samples,2):
+    #first layer of randomness - choose random coordinates for worker
+    random.shuffle(all_cords)
+    worker_1_cords = all_cords[0:int(len(all_cords)/2)]
+    worker_2_cords = all_cords[int(len(all_cords)/2):len(all_cords)]
+
     print ("building sample " + str(i))
-    sample = []
-    sample_dict = {}
-    seen_sample_numbers = []
-    sample_dir = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/exp3_data_samples/sample" + str(i) + "/"
-    #make sample directory if it does not exist
-    if not os.path.exists(sample_dir):
-        os.makedirs(sample_dir)
-    for quad in quad2points.keys():
-        pts = quad2points.get(quad)[1:]
-        for pt in pts:
-            if quad == "dsdt":
-                pts_traj_pairs = dsdt_pts2img.get(pt)
-            elif quad == "dsst":
-                pts_traj_pairs = dsst_pts2img.get(pt)
-            elif quad == "ssst":
-                pts_traj_pairs = ssst_pts2img.get(pt)
-            elif quad == "sss":
-                pts_traj_pairs = sss_pts2img.get(pt)
+    build_sample(worker_1_cords,i)
 
-            chosen = random.choice(pts_traj_pairs)
-            chosen_name = chosen.split("/")[9]
-            while (chosen_name == ".DS_Store"):
-                chosen = random.choice(pts_traj_pairs)
-                chosen_name = chosen.split("/")[9]
+    print ("building sample " + str(i+1))
+    build_sample(worker_2_cords,i+1)
 
-            sample.append(chosen)
-
-            query_number = random.randint(0, n_traj_pairs-1)
-            while query_number in seen_sample_numbers:
-                query_number = random.randint(0, n_traj_pairs-1)
-            seen_sample_numbers.append(query_number)
-
-            #save image
-            dom_val = chosen.split("/")[9].split("_")[-1].replace(".png","")
-            chosen_ = chosen.replace(".png","")
-            chosen_ = chosen_.replace("_L","")
-            chosen_ = chosen_.replace("_R","")
-            # print (chosen_)
-            img1 = cv2.imread(chosen_ + "_0.png")
-            img2 = cv2.imread(chosen_ + "_1.png")
-
-            cv2.imwrite(sample_dir + "s" + str(query_number) + "_0.png",img1)
-            cv2.imwrite(sample_dir + "s" + str(query_number) + "_1.png",img2)
-
-            sample_dict[query_number] = {"query":query_number,"name":chosen_name,"quadrant":quad,"dom_val":dom_val}
-
-    # save pickled dictionary
-    with open(sample_dir +"/sample" + str(i) + "_dict" + '.pkl', 'wb') as f:
-        pickle.dump(sample_dict, f, pickle.HIGHEST_PROTOCOL)
-
-
-
-
-
-
-    # random.choice()
 
 #
-# def format_samples(dir):
-#     filenames = [img for img in glob.glob(dir + "/*.png")]
-#     filenames.sort()
-#
-#     numbers2choosefrom = []
-#     for i in range (0,len(filenames),3):
-#          numbers2choosefrom.append(int(i/3))
-#
+# for i in range(n_samples):
+#     print ("building sample " + str(i))
+#     sample = []
 #     sample_dict = {}
-#     for i in range (0,len(filenames),3):
-#         n = filenames[i]
-#         n0 = filenames[i+1]
-#         n1 = filenames[i+2]
+#     seen_sample_numbers = []
+#     if handling_vf_bucket:
+#         sample_dir = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/exp3_data_samples/vf_sample" + str(i) + "/"
+#     else:
+#         sample_dir = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/exp3_data_samples/pr_sample" + str(i) + "/"
+#     #make sample directory if it does not exist
+#     if not os.path.exists(sample_dir):
+#         os.makedirs(sample_dir)
+#     for quad in quad2points.keys():
+#         pts = quad2points.get(quad)[1:]
+#         for pt in pts:
+#             if quad == "dsdt":
+#                 pts_traj_pairs = dsdt_pts2img.get(pt)
+#             elif quad == "dsst":
+#                 pts_traj_pairs = dsst_pts2img.get(pt)
+#             elif quad == "ssst":
+#                 pts_traj_pairs = ssst_pts2img.get(pt)
+#             elif quad == "sss":
+#                 pts_traj_pairs = sss_pts2img.get(pt)
+#             index = point2index.get(quad + "_" + str(pt))
+#             chosen = pts_traj_pairs[index]
+#             chosen_name = chosen.split("/")[8]
+#             if (chosen_name == ".DS_Store"):
+#                 index+=1
+#                 if (index == len(pts_traj_pairs)):
+#                     index = 0
+#                 chosen = pts_traj_pairs[index]
+#                 chosen_name = chosen.split("/")[8]
+#             index+=1
 #
-#         n_split = n.split("/")[2]
-#         quadrant = n_split.split("_")[0]
+#             #reshuffle array and reset index if we have chosen all samples
+#             if (index == len(pts_traj_pairs)):
+#                 random.shuffle(pts_traj_pairs)
+#                 if quad == "dsdt":
+#                     dsdt_pts2img[pt] = pts_traj_pairs
+#                 elif quad == "dsst":
+#                     dsst_pts2img[pt] = pts_traj_pairs
+#                 elif quad == "ssst":
+#                     ssst_pts2img[pt] = pts_traj_pairs
+#                 elif quad == "sss":
+#                     sss_pts2img[pt] = pts_traj_pairs
+#                 index = 0
+#             point2index[quad + "_" + str(pt)] = index
 #
-#         query_number = random.choice(numbers2choosefrom)
-#         numbers2choosefrom.remove(query_number)
-#         #s0_0...
-#         os.rename(n0, dir + "/" + "s"+ str(query_number) + "_0.png")
-#         os.rename(n1,  dir + "/" + "s"+ str(query_number) + "_1.png")
+#             sample.append(chosen)
+#             query_number = random.randint(0, n_traj_pairs-1)
+#             while query_number in seen_sample_numbers:
+#                 query_number = random.randint(0, n_traj_pairs-1)
+#             seen_sample_numbers.append(query_number)
 #
-#         sample_dict[n] = {"query":str(query_number),"name":n,"s"+ str(query_number) + "_0.png":n0,"s"+ str(query_number) + "_1.png":n1,"quadrant":quadrant}
-#     with open(dir + "_dict" + '.pkl', 'wb') as f:
+#             #save image
+#             dom_val = chosen.split("/")[8].split("_")[-1].replace(".png","")
+#             chosen_ = chosen.replace(".png","")
+#             chosen_ = chosen_.replace("_L","")
+#             chosen_ = chosen_.replace("_R","")
+#             img1 = cv2.imread(chosen_ + "_0.png")
+#             img2 = cv2.imread(chosen_ + "_1.png")
+#
+#
+#             cv2.imwrite(sample_dir + "s" + str(query_number) + "_0.png",img1)
+#             cv2.imwrite(sample_dir + "s" + str(query_number) + "_1.png",img2)
+#
+#             sample_dict[query_number] = {"query":query_number,"name":chosen_name,"quadrant":quad,"dom_val":dom_val}
+#
+#     # save pickled dictionary
+#     with open(sample_dir +"/sample" + str(i) + "_dict" + '.pkl', 'wb') as f:
 #         pickle.dump(sample_dict, f, pickle.HIGHEST_PROTOCOL)
-#
-#
-# format_samples("exp1_data_samples/sample0")

@@ -6,7 +6,12 @@ import pickle
 
 
 # img = cv2.imread("/Users/stephanehatgiskessell/Desktop/sample10.png")
-quadrant = "fixed_dsdt"
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#TODO: subtract (0,1), (0,2), (7,0)
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+quadrant = "dsst"
 if not os.path.exists(quadrant + "_formatted_imgs"):
     os.makedirs(quadrant + "_formatted_imgs")
 
@@ -47,8 +52,8 @@ def format_img(img):
     screen = np.vstack([game_screen,scoreScreen,score])
 
     return screen
-
-filenames = [img for img in glob.glob(quadrant + "_unformatted_imgs/*.png")]
+path = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/all_unformatted_imgs/"
+filenames = [img for img in glob.glob(path + quadrant + "_unformatted_imgs/*.png")]
 filenames.sort()
 
 for i in range (0,len(filenames),2):
@@ -59,8 +64,9 @@ for i in range (0,len(filenames),2):
     if ("fixed" in quadrant):
         index = 2
     else:
-        index = 1
+        index = 7
     #get rid of filepath
+
     n1 = n1.replace("/","x")
     n1 = n1.replace(".png","x")
     n1 = n1.split("x")[index]
@@ -72,6 +78,8 @@ for i in range (0,len(filenames),2):
     # #get rid of the pair indicator
     n1 = n1.split("_")
     n2 = n2.split("_")
+
+
     # make sure we are always using images that corrospond to the same points
     name = n1[0] + "_" + n1[1] + ".png"
     name1 = n1[0] + "_" + n1[1] + "_0.png"
@@ -87,7 +95,7 @@ for i in range (0,len(filenames),2):
 
     res1 = format_img(img1)
     res2 = format_img(img2)
-    res = np.hstack([res1, res2])
+    res = np.hstack([res2,res1])
 
     dir = quadrant + "_formatted_imgs/" + n1[0]
 
@@ -95,8 +103,8 @@ for i in range (0,len(filenames),2):
     if not os.path.exists(dir):
         os.makedirs(dir)
     cv2.imwrite(dir + "/" + str(name),res)
-    cv2.imwrite(dir + "/" + str(name1),res1)
-    cv2.imwrite(dir + "/" + str(name2),res2)
+    cv2.imwrite(dir + "/" + str(name1),res2)
+    cv2.imwrite(dir + "/" + str(name2),res1)
 
 # img1 = format_img(cv2.imread("/Users/stephanehatgiskessell/Desktop/sample40.png"))
 # cv2.imwrite("sample40.png",img1)
