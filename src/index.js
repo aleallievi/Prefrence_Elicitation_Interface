@@ -383,7 +383,51 @@ window.boardNames.push(boardName7);
 window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_6_ins.png");
 window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/assets/images/board_6_ins.png");
 
+//NOTE: USE THIS LINK TO VIEW TRAJECTORIES https://codesandbox.io/s/gridworld-dwkdg?file=/src/trajHandler.js
+window.disTraj = false;
+window.im = new InstructionsManager();
+window.qm = new QueryManager();
+let isConnected = false;
+//this.socket.send(this.cur_name);
+window.socket = new WebSocket("ws://localhost:3000");
+    window.socket.addEventListener("open", function (event) {
+      isConnected = true;
+      console.log("Connected to the WS Server!");
 
+    });
+
+
+
+function waitForCondition() {
+  return new Promise(resolve => {
+    var start_time = Date.now();
+    function checkFlag() {
+      if (isConnected) {
+        resolve();
+      }else {
+        window.setTimeout(checkFlag, 1000);
+      }
+
+    }
+    checkFlag();
+  });
+}
+
+async function getInstanceParams() {
+  //make sure the worker has accepted our HIT
+  if (window.qm.assignmentID != "ASSIGNMENT_ID_NOT_AVAILABLE") {
+      //wait for the server to connect and then send our message
+      await waitForCondition();
+      console.log("sent");
+      window.socket.send(window.qm.assignmentID);
+  }
+}
+
+// Listen for messages
+window.socket.addEventListener("message", function (event) {
+  window.sampleNumber = parseInt(event.data)
+  console.log(window.sampleNumber);
+});
 
 //------------------------------------------------
 let nTrajBoards = 0;
@@ -400,17 +444,14 @@ window.finishedHIT = false;
 // window.sampleNumber = getRandomInt(0,2);
 window.nSamples = 40;
 window.nUsers = 30;
-window.sampleNumber = getRandomInt(0,window.nUsers);; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
-window.observationType = getRandomInt(0,2); //0 means display partial return and 1 means display change in state value
+// window.sampleNumber = getRandomInt(0,window.nUsers);; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
+getInstanceParams();
+// window.observationType = getRandomInt(0,2); //0 means display partial return and 1 means display change in state value
 // window.observationType = 0; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
-
+if (window.sampleNumber %2 == 0) window.observationType = 0;
+else window.observationType = 1;
 window.openedSurvey = false;
 
-
-//NOTE: USE THIS LINK TO VIEW TRAJECTORIES https://codesandbox.io/s/gridworld-dwkdg?file=/src/trajHandler.js
-window.disTraj = false;
-window.im = new InstructionsManager();
-window.qm = new QueryManager();
 // window.im.createButton(canvas, ctx);
 
 //creates buttons

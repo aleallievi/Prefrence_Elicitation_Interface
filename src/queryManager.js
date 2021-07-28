@@ -18,9 +18,13 @@ export default class InstructionManager {
     this.b4Color = "grey";
     this.isSubmitted = false;
     this.addedLink = false;
+    let gitDir;
+    if (window.observationType == 0){
+      gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/pr_sample" + String(window.sampleNumber) + "/"
+    } else {
+      gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/vf_sample" + String(window.sampleNumber) + "/"
 
-
-    let gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp2_data_samples/sample" + String(window.sampleNumber) + "/"
+    }
     for (let i = 0; i < window.nSamples; i++) {
       //create MTURK HIT query
       // <input type="hidden" id = "query3" name="query3" value="" /> -->
