@@ -448,7 +448,7 @@ window.total_tsteps = 50;
 window.timestep = 0;
 window.finishedHIT = false;
 // window.sampleNumber = getRandomInt(0,2);
-window.nSamples = 36;
+window.nSamples = 35;
 window.nUsers = 30;
 // window.sampleNumber = getRandomInt(0,window.nUsers);; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
 getInstanceParams();
