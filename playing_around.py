@@ -5,19 +5,65 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import os
 
-vf =[[42,43,44,45,46,47,46,45,44,43],
-[43,0,0,0,0,48,0,0,0,44],
-[44,0,0,0,0,49,0,0,0,45],
-[45,0,0,0,0,50,0,0,0,46],
-[46,47,48,49,50,0,49,48,47],
-[45,0,0,0,0,50,0,0,0,46],
-[44,0,0,0,0,49,0,0,0,45],
-[43,0,0,0,0,48,0,0,0,44],
-[42,0,0,0,0,47,0,0,0,43],
-[41,42,43,44,45,46,45,44,43,42]]
+q1 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/saved_data/2021_07_29_dsdt.json"
+q2 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/saved_data/2021_07_29_dsst.json"
+q3 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/saved_data/2021_07_29_ssst.json"
+q4 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/saved_data/2021_07_29_sss.json"
 
-with open("/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/assets/boards/player_board_5_board_value_function.json", 'w') as fp:
-    json.dump(vf,fp)
+
+
+with open(q1, 'r') as j:
+    q1 = json.loads(j.read())
+with open(q2, 'r') as j:
+    q2 = json.loads(j.read())
+with open(q3, 'r') as j:
+    q3 = json.loads(j.read())
+with open(q4, 'r') as j:
+    q4 = json.loads(j.read())
+
+def plot_quad(quad,name):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    ax.spines['top'].set_color('none')
+    ax.spines['left'].set_position('zero')
+    ax.spines['right'].set_color('none')
+    ax.spines['bottom'].set_position('zero')
+    # plt.axis([-15, 15, -15, 15])
+
+    for key in quad.keys():
+        print (key)
+        n_points = len(quad.get(key))
+
+        key_ = key.replace("(","")
+        key_ = key_.replace(")","")
+        key_ = key_.replace(" ","")
+        key_ = key_.split(",")
+        x = float(key_[0])
+        y = float(key_[1])
+
+        plt.scatter(x,y,s=40)
+        ax.annotate(str(n_points), (x, y),fontsize=10)
+    plt.savefig(name + "_all_#_points.png")
+
+plot_quad(q1,"2021_07_29_dsdt")
+plot_quad(q2,"2021_07_29_dsst")
+plot_quad(q3,"2021_07_29_ssst")
+plot_quad(q4,"2021_07_29_sss")
+
+# vf =[[42,43,44,45,46,47,46,45,44,43],
+# [43,0,0,0,0,48,0,0,0,44],
+# [44,0,0,0,0,49,0,0,0,45],
+# [45,0,0,0,0,50,0,0,0,46],
+# [46,47,48,49,50,0,49,48,47],
+# [45,0,0,0,0,50,0,0,0,46],
+# [44,0,0,0,0,49,0,0,0,45],
+# [43,0,0,0,0,48,0,0,0,44],
+# [42,0,0,0,0,47,0,0,0,43],
+# [41,42,43,44,45,46,45,44,43,42]]
+#
+# with open("/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/assets/boards/player_board_5_board_value_function.json", 'w') as fp:
+#     json.dump(vf,fp)
 
 # fps = []
 # for root, dirs, files in os.walk("/Users/stephanehatgiskessell/Desktop/Kivy_stuff/all_formatted_imgs/"):

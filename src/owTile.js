@@ -44,9 +44,9 @@ export default class OWTile {
 
   update() {
     if (detectCollision(this.game.vehicle, this)) {
-      if (!this.isOW(this.game.vehicle.lastCol)){
-        this.game.gasScore-=1;
-      }
+      // if (!this.isOW(this.game.vehicle.lastCol)){
+      //   this.game.gasScore-=1;
+      // }
       // this.game.ball.speed.x = 0;
       // this.game.ball.speed.y = 0;
       // this.markedForDeletion = true;
@@ -78,31 +78,31 @@ export default class OWTile {
       this.size_y
     );
     //check if above tile is a oneway tile
-    if (!this.isOW({ x: this.position.x, y: this.position.y - 1 })) {
-      ctx.drawImage(
-        this.blockade,
-        this.cellSize * this.position.x - 7,
-        this.cellSize * this.position.y - 20,
-        75,
-        30
-      );
-      // ctx.drawImage(
-      //   this.blockade,
-      //   this.cellSize * this.position.x + 28,
-      //   this.cellSize * this.position.y - 20,
-      //   40,
-      //   30
-      // );
-    }
-
-    if (!this.isOW({ x: this.position.x, y: this.position.y + 1 })) {
-      ctx.drawImage(
-        this.blockade,
-        this.cellSize * this.position.x - 7,
-        this.cellSize * this.position.y + this.cellSize,
-        75,
-        30
-      );
+    // if (!this.isOW({ x: this.position.x, y: this.position.y - 1 })) {
+    //   ctx.drawImage(
+    //     this.blockade,
+    //     this.cellSize * this.position.x - 7,
+    //     this.cellSize * this.position.y - 20,
+    //     75,
+    //     30
+    //   );
+    //   // ctx.drawImage(
+    //   //   this.blockade,
+    //   //   this.cellSize * this.position.x + 28,
+    //   //   this.cellSize * this.position.y - 20,
+    //   //   40,
+    //   //   30
+    //   // );
+    // }
+    //
+    // if (!this.isOW({ x: this.position.x, y: this.position.y + 1 })) {
+    //   ctx.drawImage(
+    //     this.blockade,
+    //     this.cellSize * this.position.x - 7,
+    //     this.cellSize * this.position.y + this.cellSize,
+    //     75,
+    //     30
+    //   );
       // ctx.drawImage(
       //   this.blockade,
       //   this.cellSize * this.position.x + 30,
@@ -110,6 +110,6 @@ export default class OWTile {
       //   40,
       //   30
       // );
-    }
+    //}
   }
 }

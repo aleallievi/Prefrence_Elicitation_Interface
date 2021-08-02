@@ -5,22 +5,24 @@ export default class InstructionManager {
     this.finishedIns = false;
     this.insScene = 1;
     this.finishedGamePlay = false;
-    this.animationGame = new Game(
+    this.animationGame1 = new Game(
       600,
       600,
       { x: 0, y: 3 },
-      "anim_examp",
+      "ins_4_board",
       false
     );
-    this.animationGame.start("",false,false,true);
-    // this.w = 1.252*window.gsWidth;
-    // this.h = 0.751*window.gsHeight;
-    // this.x = -0.125*window.gsWidth;
-    // this.y = 0.083*window.gsHeight;
-    // this.w = 750;
-    // this.h = 450;
-    // this.x = -75;
-    // this.y = 50;
+    this.animationGame1.start("",false,true,true,1);
+
+    this.animationGame2 = new Game(
+      600,
+      600,
+      { x: 4, y: 5 },
+      "ins_8_board",
+      false
+    );
+    this.animationGame2.start("",false,true,true,2);
+
   }
 
   // createButton(canvas, ctx) {}
@@ -40,6 +42,9 @@ export default class InstructionManager {
       window.begunQueries = true;
     }
 
+    //skips instruction where user explores gated area
+    if (this.insScene == 8) this.insScene +=1;
+
     this.img = document.getElementById("ins" + String(this.insScene));
 
 	// this.img.setAttribute('width',  66);
@@ -48,16 +53,29 @@ export default class InstructionManager {
     // $("#ins" + String(this.insScene)).show();
     // console.log("here");
   }
-  playAnimation(ctx) {
-    this.animationGame.update();
-    this.animationGame.draw(ctx);
+  playAnimation(ctx,id) {
+    if (id === 1) {
+      this.animationGame1.update();
+      this.animationGame1.draw(ctx);
+      // if (this.animationGame1.reached_terminal && ctx.globalAlpha > 0.5)ctx.globalAlpha-=0.001
+    } else if (id === 2) {
+      this.animationGame2.update();
+      this.animationGame2.draw(ctx);
+      // if (this.animationGame2.reached_terminal && ctx.globalAlpha > 0.5)ctx.globalAlpha-=0.001
+      //ctx.globalAlpha = 1;
+    }
+
   }
   draw(ctx) {
-    this.pa = false;
+    this.pa1 = false;
+    this.pa2 = false;
     if (this.insScene === 10 && !this.finishedGamePlay) return;
     if (this.insScene === 14) return;
     if (this.insScene === 4) {
-      this.pa = true;
+      this.pa2 = true;
+    }
+    if (this.insScene === 5) {
+      this.pa1 = true;
 
       // this.h = 0.333*window.gsWidth;
       // this.w = 1.166*window.gsWidth;
@@ -88,7 +106,8 @@ export default class InstructionManager {
     ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
 
     // $("#ins" + String(this.insScene)).show();
-    if (this.pa)this.playAnimation(ctx);
+    if (this.pa1)this.playAnimation(ctx,1);
+    if (this.pa2)this.playAnimation(ctx,2);
     //draw button
     // ctx.fillStyle = "white";
     // ctx.beginPath();

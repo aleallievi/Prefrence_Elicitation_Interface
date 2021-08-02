@@ -389,7 +389,9 @@ window.im = new InstructionsManager();
 window.qm = new QueryManager();
 let isConnected = false;
 //this.socket.send(this.cur_name);
-window.socket = new WebSocket("ws://localhost:3000");
+// https://968874810f8c.ngrok.io
+// ws://localhost:3000
+window.socket = new WebSocket("wss://968874810f8c.ngrok.io");
     window.socket.addEventListener("open", function (event) {
       isConnected = true;
       console.log("Connected to the WS Server!");
@@ -425,12 +427,12 @@ async function getInstanceParams() {
 
 // Listen for messages
 window.socket.addEventListener("message", function (event) {
-  window.sampleNumber = parseInt(event.data)
-  if (window.sampleNumber %2 == 0) window.observationType = 0;
-  else window.observationType = 1;
+  window.sampleNumber = parseInt(event.data.split(",")[0])
+  window.observationType = parseInt(event.data.split(",")[1])
   window.qm.handleSampleImages()
   window.qm.nTrajs = window.nSamples;
   console.log(window.sampleNumber);
+
 });
 
 //------------------------------------------------
@@ -440,7 +442,7 @@ window.game = null;
 window.playTrajBoard = false;
 window.finishedTrajBoard = false;
 window.n_games = 0;
-window.max_games = 12;
+window.max_games = 11;
 window.finished_game = true;
 window.total_tsteps = 50;
 window.timestep = 0;
@@ -606,7 +608,7 @@ function checkInsCompletion() {
   if (window.n_games === 1){
     if (window.game.hitFlag)window.n_games += 1;
   }else if (window.n_games === 3){
-      if (window.game.triedLeaving)window.n_games += 1;
+      window.n_games += 1;
   }else if (window.n_games === 5){
     if (window.game.hitFlag)window.n_games += 1;
   }else if (window.n_games === 7){
@@ -619,8 +621,11 @@ function checkInsCompletion() {
   // }
 
 }
+
 function startNewGame() {
   if (window.finished_game && ((window.n_games < window.max_games) || window.playTrajBoard) ) {
+    console.log("starting new game...");
+    console.log(window.n_games);
     window.finished_game = false;
     window.timestep = 0;
     let boardName;
@@ -628,10 +633,10 @@ function startNewGame() {
     let ins = "";
     let dispIns = true;
     if (window.disTraj) {
-      boardName = "test_single_goal_mud";
+      boardName = "2021-07-29_sparseboard2-notrap";
       spawnPoint = { x: 0, y: 0 };
     } else if (window.playTrajBoard) {
-      boardName = "test_single_goal_mud";
+      boardName = "2021-07-29_sparseboard2-notrap";
       if (nTrajBoards === 0)spawnPoint ={ x: 0, y: 0 };
       else spawnPoint ={ x: 0, y: 5 };
       dispIns = false;
@@ -641,7 +646,14 @@ function startNewGame() {
       ins = window.instructions[window.n_games];
     }
 
-    // if (window.n_games===window.max_games) {
+    // if (boardName==="player_board_6") {
+    //   console.log("here")
+    //   window.n_games = window.max_games
+    //   window.game.reached_terminal = true;
+    //   window.im.finishedIns = false;
+    //   window.im.finishedGamePlay = true;
+    //   window.finished_game = true;
+    //   return
     //   //play the trajectory board
     // }
 
@@ -658,7 +670,7 @@ function startNewGame() {
 
     window.lastTime = 0;
     window.alpha = 1; /// current alpha value
-    window.delta = 0.005; /// delta = speed
+    window.delta = 0.015; /// delta = speed
 
     window.n_games += 1;
 

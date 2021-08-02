@@ -279,7 +279,7 @@ export default class Score {
 
 
         if (this.showRects) {
-          ctx.font = "40px CustomFont";
+          ctx.font = "25px CustomFont";
           ctx.fillStyle = "black";
           ctx.fillText("Score: $" + String(this.score), 10, 50);
           this.barImg(ctx, "img_gas", -25);
@@ -289,40 +289,45 @@ export default class Score {
         } else {
 
           // if (window.observationType === 0) {
-          ctx.font = "40px CustomFont";
+          ctx.font = "35px CustomFont";
           ctx.fillStyle = "black";
           ctx.fillText("Score: $" + String(this.score), 10, 50);
-          this.staticBarImg(ctx, "img_gas", 100,120,50,60)
-          this.staticBarText(ctx, this.gasScore, 130,50,"","30px")
+          this.staticBarImg(ctx, "img_gas", 70,120,50,60)
+          this.staticBarText(ctx, this.gasScore, 100,50,"","25px")
 
-          this.staticBarImg(ctx, "img_coin_multiple", 180,120,60,50);
-          this.staticBarText(ctx, this.game.nCoins, 210,50,"","30px");
+          this.staticBarImg(ctx, "img_coin_multiple", 130,120,60,50);
+          this.staticBarText(ctx, this.game.nCoins, 160,50,"","25px");
 
-          this.staticBarImg(ctx, "img_garbage_multiple", 260,120,70,50);
-          this.staticBarText(ctx, -this.game.nGarbage, 290,50,"","30px");
+          this.staticBarImg(ctx, "img_garbage_multiple", 190,120,70,50);
+          this.staticBarText(ctx, -this.game.nGarbage, 220,50,"","25px");
 
-          this.staticBarImg(ctx, "img_person", 340,120,50,60);
-          this.staticBarText(ctx, -50*this.game.nPeople, 370,50,"","30px");
+          this.staticBarImg(ctx, "img_person", 250,120,50,60);
+          this.staticBarText(ctx, -50*this.game.nPeople, 290,50,"","25px");
 
-          this.staticBarImg(ctx, "img_flag", 420,120,50,60);
-          this.staticBarText(ctx, 50*this.game.nFlags, 460,50,"","30px");
+          this.staticBarImg(ctx, "img_flag", 320,120,50,60);
+          this.staticBarText(ctx, 50*this.game.nFlags, 350,50,"","25px");
           // } else {
           ctx.fillStyle = "black";
-          ctx.font = "25px CustomFont";
+          ctx.font = "35px CustomFont";
           ctx.fillText(
-            "Most Money You",
+            "Most Additional",
             5,
-            530
+            450
           );
           ctx.fillText(
-            "Can Earn From Here:",
+            "Money You Can",
             5,
-            580
+            500
+          );
+          ctx.fillText(
+            "Earn From Here:",
+            5,
+            550
           );
 
           if (this.loadedVFunc) {
             let sv= this.vFunc[this.game.vehicle.curStatePrevCords.y][this.game.vehicle.curStatePrevCords.x]
-            this.staticBarText(ctx, sv, 630,10,"","35px")
+            this.staticBarText(ctx, sv, 600,10,"","30px")
           }
 
           //}

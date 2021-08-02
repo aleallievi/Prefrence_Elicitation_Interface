@@ -108,7 +108,8 @@ export default class Vehicle {
 
   isdone() {
     let ib = this.find_is_blocking();
-    if (ib || this.game.isLeaving === true) {
+    //
+    if (ib) {
       this.isDone = true;
       this.game.trajHandler.incompleteCords.push(this.lastCol);
       this.game.trajHandler.incompleteActions.push(this.lastAction);
@@ -383,7 +384,7 @@ export default class Vehicle {
         this.game.score += ds;
 
         if (!this.game.reached_terminal) {
-          if (!this.game.is_in_ow(this.curStatePrevCords)) {
+          if (!this.game.is_in_ow(this.goal)) {
             this.game.gasScore -= 1;
           } else {
             this.game.gasScore -= 2;
@@ -413,11 +414,12 @@ export default class Vehicle {
 
       if (ns.x >= 0 && ns.x < 10 && ns.y >= 0 && ns.y < 10) {
         if (
-          !this.inBlocking(ns) &&
-          !(
-            this.game.is_in_ow(this.curStatePrevCords) &&
-            !this.game.is_in_ow(ns)
-          )
+          !this.inBlocking(ns)
+          // &&
+          // !(
+          //   this.game.is_in_ow(this.curStatePrevCords) &&
+          //   !this.game.is_in_ow(ns)
+          // )
         )
           this.curStatePrevCords = ns;
       }
@@ -426,6 +428,14 @@ export default class Vehicle {
 
   update(deltaTime) {
     this.game.find_is_leaving_ow(this.goal);
+
+    if (this.game.is_in_ow(this.goal)) {
+      if (this.speed.x > 0)this.speed.x = 0.05;
+      if (this.speed.x < 0)this.speed.x = -0.05;
+      if (this.speed.y > 0)this.speed.y = 0.05;
+      if (this.speed.y < 0)this.speed.y = -0.05;
+    }
+
 
     this.new_pos = {
       x: this.position.x + this.speed.x,
@@ -466,7 +476,7 @@ export default class Vehicle {
         return;
       }
       if (!this.game.isLeaving) this.lastCol = this.goal;
-      
+
       this.reachedGoal = true;
       this.stop();
     }

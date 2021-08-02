@@ -52,9 +52,11 @@ export default class Game {
 //     httpRequest.send();
 // }
 
-  start(ins = "",dispIns = true, loadTerm = true, isAnimating = false) {
+  start(ins = "",dispIns = true, loadTerm = true, isAnimating = false, id = 0) {
     // if (window.n_games === 7)return;
     this.gameObjects = null;
+    this.isAnimating = isAnimating;
+    this.animationId = id
     this.vehicle = new Vehicle(this, isAnimating);
     // this.coin = new Coin(this, { x: 0, y: 0 });
     this.score = 0;
@@ -76,7 +78,7 @@ export default class Game {
     });
     this.trajHandler = new TrajHandler(this.vehicle, this);
 
-    if (window.n_games !== 11 && dispIns) {
+    if (window.n_games !== 10 && dispIns) {
       // document.getElementById("displayInsBtn").style.display = "block";
       // displayInsBtn
       $(".displayInsBtn").show();
@@ -125,6 +127,24 @@ export default class Game {
     ctx.globalCompositeOperation = "source-over";
     this.gameObjects.forEach((object) => object.draw(ctx));
     if (this.dispTraj === true) this.trajHandler.draw(ctx);
+    if (this.reached_terminal && this.isAnimating && this.animationId === 1) {
+      ctx.font = "30px CustomFont";
+      ctx.fillStyle = "green";
+      ctx.fillText("+ $50", 20, 525);
+      // if (window.alpha > 0) {
+      //   window.alpha-=window.delta
+      //   ctx.globalAlpha = window.alpha;
+      // }
+
+    } else if (this.reached_terminal && this.isAnimating && this.animationId === 2) {
+      ctx.font = "30px CustomFont";
+      ctx.fillStyle = "red";
+      ctx.fillText("- $50", 310, 340);
+      // if (window.alpha > 0) {
+      //   window.alpha-=window.delta
+      //   ctx.globalAlpha = window.alpha;
+      // }
+    }
   }
 
   is_in_ow(cords) {
@@ -149,13 +169,14 @@ export default class Game {
   }
 
   find_is_leaving_ow(nextCords) {
-    //check if the car is trying to leave a oneway area
-    if (!this.is_in_ow(nextCords) && this.is_in_ow(this.vehicle.lastCol)) {
-      this.isLeaving = true;
-    } else {
-      // console.log(this.vehicle.lastCol);
-      this.isLeaving = false;
-    }
+    return false;
+    // //check if the car is trying to leave a oneway area
+    // if (!this.is_in_ow(nextCords) && this.is_in_ow(this.vehicle.lastCol)) {
+    //   this.isLeaving = true;
+    // } else {
+    //   // console.log(this.vehicle.lastCol);
+    //   this.isLeaving = false;
+    // }
   }
 
   async load_board(loadTerm) {
@@ -194,7 +215,7 @@ export default class Game {
           y: rowIndex
         };
         if (item === 1) {
-          if (loadTerm) {
+          if (loadTerm && this.animationId != 2) {
             objects.push(new Flag(this, position));
             this.terminal_cords.push(position);
           }

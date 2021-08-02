@@ -6,7 +6,7 @@ import mss
 import mss.tools
 
 connected = set()
-fp = "appended_dsdt_unformatted_imgs/"
+fp = "2021_07_29_ssst_unformatted_imgs/"
 async def server(websocket, path):
     lastName = None
     while True:

@@ -179,10 +179,10 @@ def plot_quad(quad_dict,quad,n):
     # for i in range(len(xs)):
     #     plt.scatter(xs[i], ys[i], color=colors[i],s=s[i])
     plt.savefig("woi_exp2_" + quad + ".png")
-plot_quad(dsdt_res,"dsdt",1)
+# plot_quad(dsdt_res,"dsdt",1)
 # plot_quad(dsst_res,"dsst",2)
 # plot_quad(ssst_res,"ssst",3)
-# plot_quad(sss_res,"sss",4)
+plot_quad(sss_res,"sss",4)
 
 # fig = plt.figure()
 # ax = fig.add_subplot(111)

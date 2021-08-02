@@ -12,33 +12,38 @@ sss_pts2img = {}
 
 quad2points = {"dsdt":[],"dsst":[],"ssst":[],"sss":[]}
 fps = []
-for root, dirs, files in os.walk("all_formatted_imgs/"):
+for root, dirs, files in os.walk("/Users/stephanehatgiskessell/Desktop/Kivy_stuff/2021_07_29_all_formatted_imgs/"):
     # for name in files:
     for root2, dirs2, files2 in os.walk(root):
         for name in files2:
+            if "L" in name or "R" in name:
+                continue
             name_split = name.split("_")
-
             if name == ".DS_Store" or len(name_split) == 2:
                 continue
             #/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/all_formatted_imgs/ssst_formatted_imgs/(0, -1.0)
 
-            # sub_dir = root.split("/")[7]
-            sub_dir = root.split("/")[0]
+            # print (root.split("/"))
+            sub_dir = root.split("/")[6]
+            # sub_dir = root.split("/")[0]
+
             pt =root.split("/")[-1]
             quad = sub_dir.split("_")[0]
-
+            if quad == "":
+                continue
             # traj_root = root2 + "/" + name
             quad_id = name_split[1]
 
             fp = root + "/" + name
             root_split = root.split("/")
-            # if len(root_split) == 9:
-            if len(root_split) == 3:
+            # print (len(root_split))
+            if len(root_split) == 8:
                 fps.append(fp)
+#
 fps = sorted(fps)
 for i in range(0,len(fps),2):
-    print (i)
     imgs =  [fps[i],fps[i+1]]
+    # print (fps[i],fps[i+1])
 
     #merge these images in a random order
     left = random.choice(imgs)
@@ -71,8 +76,11 @@ for i in range(0,len(fps),2):
     else:
         right += "_1_R.png"
 
+    # print (left)
     cv2.imwrite(left,left_img)
     cv2.imwrite(right,right_img)
+
+
     #ceate new file path name
     #/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/all_formatted_imgs/ssst_formatted_imgs/(0.0, 0.0)/(0.0, 0.0)_9_0.png
     # pt_name = fps[i].split("/")[-1]

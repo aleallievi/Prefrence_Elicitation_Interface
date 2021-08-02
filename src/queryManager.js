@@ -58,13 +58,15 @@ export default class InstructionManager {
 
   handleSampleImages(){
     let gitDir;
-    console.log(window.observationType)
-    console.log(window.sampleNumber)
+
     if (window.observationType == 0){
       gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/pr_sample" + String(window.sampleNumber) + "/"
-    } else {
+    } else if (window.observationType == 1) {
       gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/vf_sample" + String(window.sampleNumber) + "/"
-
+    }else if (window.observationType == 2) {
+      gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/all_sample" + String(window.sampleNumber) + "/"
+    }else if (window.observationType == 3) {
+      gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/exp3_data_samples/none_sample" + String(window.sampleNumber) + "/"
     }
     for (let i = 0; i < window.nSamples; i++) {
       //create MTURK HIT query

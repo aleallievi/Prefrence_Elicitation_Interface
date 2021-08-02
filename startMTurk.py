@@ -16,8 +16,8 @@ environments = {
   },
 }
 mturk_environment = environments["production"] if create_hits_in_production else environments["sandbox"]
-aws_access_key_id = 'AKIAZPBE4QB4JZBIVUIE'
-aws_secret_access_key = '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'
+aws_access_key_id = 'AKIAZPBE4QB4EOCTWGYE'
+aws_secret_access_key = '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'
 
 session = boto3.Session(profile_name='stephane.hk')
 client = session.client(
@@ -39,28 +39,29 @@ TaskAttributes = {
     'MaxAssignments': 30,
     # How long the task will be available on MTurk (12 hours)
     'LifetimeInSeconds': 60*60*1,
-    # How long Workers have to complete each item (30 minutes)
-    'AssignmentDurationInSeconds': 60*30,
+    # How long Workers have to complete each item (60 minutes)
+    'AssignmentDurationInSeconds': 60*60,
     # The reward you will offer Workers for each response
     'Reward': '5.00',
-    'Title': '(Round 2) Choose the image that shows better behavior',
+    'Title': 'Choose the image that shows better behavior',
     'Keywords': 'trajectory',
     'Description': 'Choose the image that shows better behavior',
-    "QualificationRequirements":[{'QualificationTypeId':'00000000000000000040',
-                                   'Comparator': 'GreaterThanOrEqualTo',
-                                   'IntegerValues':[50]},
-                                {'QualificationTypeId':'000000000000000000L0',
-                                    'Comparator': 'GreaterThanOrEqualTo',
-                                    'IntegerValues':[99]},
-                                  {"QualificationTypeId":"00000000000000000071",
-                                        "Comparator":"EqualTo",
-                                        "LocaleValues":[{
-                                            "Country":"US"
-                                    }]}]
+
 
 
 }
 #
+# "QualificationRequirements":[{'QualificationTypeId':'00000000000000000040',
+#                                'Comparator': 'GreaterThanOrEqualTo',
+#                                'IntegerValues':[50]},
+#                             {'QualificationTypeId':'000000000000000000L0',
+#                                 'Comparator': 'GreaterThanOrEqualTo',
+#                                 'IntegerValues':[99]},
+#                               {"QualificationTypeId":"00000000000000000071",
+#                                     "Comparator":"EqualTo",
+#                                     "LocaleValues":[{
+#                                         "Country":"US"
+#                                 }]}]
 
 
 results = []

@@ -15,16 +15,22 @@ point2index = {}
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #TODO: subtract (0,1), (0,2), (7,0)
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-handling_vf_bucket = True
+handling_vf_bucket = False
+handling_all_bucket = False
+handling_none_bucket = True
 
 def build_sample(worker_1_cords,n):
     sample_1 = []
     sample_dict_1 = {}
     seen_sample_numbers_1 = []
     if handling_vf_bucket:
-        sample_dir_1 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/exp3_data_samples/vf_sample" + str(n) + "/"
+        sample_dir_1 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/2021_07_29_data_samples/vf_sample" + str(n) + "/"
+    elif handling_all_bucket:
+        sample_dir_1 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/2021_07_29_data_samples/all_sample" + str(n) + "/"
+    elif handling_none_bucket:
+        sample_dir_1 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/2021_07_29_data_samples/none_sample" + str(n) + "/"
     else:
-        sample_dir_1 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/exp3_data_samples/pr_sample" + str(n) + "/"
+        sample_dir_1 = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/2021_07_29_data_samples/pr_sample" + str(n) + "/"
     #make sample directory if it does not exist
     if not os.path.exists(sample_dir_1):
         os.makedirs(sample_dir_1)
@@ -84,28 +90,35 @@ def build_sample(worker_1_cords,n):
         img1 = cv2.imread(chosen)
         img2 = cv2.imread(chosen_2)
         chosen_name = chosen.replace("_0_" + dom_val + ".png","")
+
         cv2.imwrite(sample_dir_1 + "s" + str(query_number) + "_0.png",img1)
         cv2.imwrite(sample_dir_1 + "s" + str(query_number) + "_1.png",img2)
 
-        sample_dict_1[query_number] = {"query":query_number,"name":chosen_name,"quadrant":quad,"dom_val":dom_val,"disp_vf":handling_vf_bucket}
+        if handling_vf_bucket:
+            disp_type = 1
+        elif handling_all_bucket:
+            disp_type = 2
+        elif handling_none_bucket:
+            disp_type = 3
+        else:
+            disp_type = 0
+
+        sample_dict_1[query_number] = {"query":query_number,"name":chosen_name,"quadrant":quad,"dom_val":dom_val,"disp_type":disp_type}
         with open(sample_dir_1 +"/sample" + str(n) + "_dict" + '.pkl', 'wb') as f:
             pickle.dump(sample_dict_1, f, pickle.HIGHEST_PROTOCOL)
 
-for root, dirs, files in os.walk("/Users/stephanehatgiskessell/Desktop/Kivy_stuff/all_formatted_imgs/"):
+for root, dirs, files in os.walk("/Users/stephanehatgiskessell/Desktop/Kivy_stuff/2021_07_29_all_formatted_imgs/"):
     # for name in files:
     for root2, dirs2, files2 in os.walk(root):
         for name in files2:
 
-
-        # print (name)
-        # print (root)
-        # print ("\n")
-        #/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/all_formatted_imgs/ssst_formatted_imgs/(0, -1.0)
             if len(root.split("/")) == 7:
                 continue
             # print (len(root.split("/")))
+
             pt =root.split("/")[-1]
             quad = root.split("/")[6].split("_")[0]
+
             # traj_root = root2 + "/" + name
             name_split = name.split("_")
             if name_split[0] == "vf" and handling_vf_bucket == False:
@@ -113,11 +126,22 @@ for root, dirs, files in os.walk("/Users/stephanehatgiskessell/Desktop/Kivy_stuf
             if name_split[0] != "vf" and handling_vf_bucket == True:
                 continue
 
+            if name_split[0] == "all" and handling_all_bucket == False:
+                continue
+            if name_split[0] != "all" and handling_all_bucket == True:
+                continue
+
+            if name_split[0] == "none" and handling_none_bucket == False:
+                continue
+            if name_split[0] != "none" and handling_none_bucket == True:
+                continue
+
+            # print (pt)
             last_char = name_split[-1].replace(".png","")
             if (len(name_split) > 2 and last_char.isalpha()):
-                 if int(name_split[2]) == 1 and handling_vf_bucket == False:
+                 if int(name_split[2]) == 1 and not (handling_vf_bucket or handling_all_bucket or handling_none_bucket):
                      continue
-                 if int(name_split[3]) == 1 and handling_vf_bucket == True:
+                 if ".png" not in name_split[3] and int(name_split[3]) == 1 and (handling_vf_bucket or handling_all_bucket or handling_none_bucket):
                      continue
                  traj_root = root2 + "/" + name
                  # if (pt == "dsdt_formatted_imgs"):

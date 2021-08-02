@@ -11,7 +11,7 @@ import pickle
 #TODO: subtract (0,1), (0,2), (7,0)
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-quadrant = "dsst"
+quadrant = "2021_07_29_sss"
 if not os.path.exists(quadrant + "_formatted_imgs"):
     os.makedirs(quadrant + "_formatted_imgs")
 
