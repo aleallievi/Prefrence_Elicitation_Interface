@@ -62,6 +62,7 @@ export default class Game {
     this.score = 0;
     this.gasScore = 0;
     this.pScore = 0;
+    this.finishedAnimation = false;
     if (this.dispTraj === false) new InputHandler(this.vehicle);
     // this.board_objects = this.load_board();
     // this.fetchJSONFile(("/assets/boards/" + String(this.boardName) + "_board.json", function(data){
@@ -78,7 +79,7 @@ export default class Game {
     });
     this.trajHandler = new TrajHandler(this.vehicle, this);
 
-    if (window.n_games !== 10 && dispIns) {
+    if (window.n_games !== 10 && dispIns && !window.im.showMidGameIns) {
       // document.getElementById("displayInsBtn").style.display = "block";
       // displayInsBtn
       $(".displayInsBtn").show();
@@ -131,6 +132,7 @@ export default class Game {
       ctx.font = "30px CustomFont";
       ctx.fillStyle = "green";
       ctx.fillText("+ $50", 20, 525);
+      this.finishedAnimation = true;
       // if (window.alpha > 0) {
       //   window.alpha-=window.delta
       //   ctx.globalAlpha = window.alpha;
@@ -140,6 +142,7 @@ export default class Game {
       ctx.font = "30px CustomFont";
       ctx.fillStyle = "red";
       ctx.fillText("- $50", 310, 340);
+      this.finishedAnimation = true;
       // if (window.alpha > 0) {
       //   window.alpha-=window.delta
       //   ctx.globalAlpha = window.alpha;

@@ -2,6 +2,8 @@ import Game from "/src/game";
 
 export default class InstructionManager {
   constructor() {
+    window.alpha =1
+    window.delta = 0.015;
     this.finishedIns = false;
     this.insScene = 1;
     this.finishedGamePlay = false;
@@ -22,6 +24,9 @@ export default class InstructionManager {
       false
     );
     this.animationGame2.start("",false,true,true,2);
+    this.showMidGameIns = false;
+    this.midGameIns = 1;
+    this.finishedMidGameIns = false;
 
   }
 
@@ -29,24 +34,33 @@ export default class InstructionManager {
 
   update() {
 
-    if (this.insScene === 10 && !this.finishedGamePlay) {
+    if (this.insScene === 11 && !this.finishedGamePlay) {
       this.finishedIns = true;
     }
-    if (this.insScene === 11 && this.finishedGamePlay && !window.finishedTrajBoard) {
+    if (this.insScene === 12 && this.finishedGamePlay && !window.finishedTrajBoard) {
       this.finishedIns = true;
       window.playTrajBoard = true;
-
     }
-    if (this.insScene === 14) {
+    // console.log(this.insScene)
+    if (this.insScene === 15) {
       this.finishedIns = true;
       window.begunQueries = true;
     }
 
     //skips instruction where user explores gated area
-    if (this.insScene == 8) this.insScene +=1;
+    if (this.insScene == 9) this.insScene +=1;
 
     this.img = document.getElementById("ins" + String(this.insScene));
+    if (this.showMidGameIns && this.midGameIns < 6){
 
+      this.img = document.getElementById("mid_game_ins_" + String(this.midGameIns) + "_img");
+      this.img_text = document.getElementById("mid_game_ins_" + String(this.midGameIns) + "_text");
+
+    }
+    else if (this.midGameIns >= 6){
+      this.finishedMidGameIns = true;
+      this.showMidGameIns = false;
+    }
 	// this.img.setAttribute('width',  66);
 	// this.img.setAttribute('height',  66);
 
@@ -69,12 +83,13 @@ export default class InstructionManager {
   draw(ctx) {
     this.pa1 = false;
     this.pa2 = false;
-    if (this.insScene === 10 && !this.finishedGamePlay) return;
-    if (this.insScene === 14) return;
-    if (this.insScene === 4) {
+
+    if (this.insScene === 11 && !this.finishedGamePlay && !this.showMidGameIns) return;
+    if (this.insScene === 15) return;
+    if (this.insScene === 5) {
       this.pa2 = true;
     }
-    if (this.insScene === 5) {
+    if (this.insScene === 6) {
       this.pa1 = true;
 
       // this.h = 0.333*window.gsWidth;
@@ -103,7 +118,28 @@ export default class InstructionManager {
       this.y = 50;
     }
 
-    ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
+    let ins5_offset = 0;
+    if (this.insScene == 5) {
+      ins5_offset = -50;
+    }
+
+
+    if (this.showMidGameIns && this.midGameIns < 6){
+
+      ctx.drawImage(this.img,250, 100, 345, 535);
+      ctx.drawImage(this.img_text, 10, 170, 200, 120);
+
+
+
+    } else {
+      ctx.drawImage(this.img, this.x, this.y + ins5_offset, this.w, this.h);
+      if (this.insScene == 1) {
+        let label = document.getElementById("click_here_btn");
+        ctx.drawImage(label, 445, 500, 150, 50);
+
+      }
+    }
+
 
     // $("#ins" + String(this.insScene)).show();
     if (this.pa1)this.playAnimation(ctx,1);
@@ -119,10 +155,20 @@ export default class InstructionManager {
     ctx.fillStyle = "gray";
 
     // console.log("here");
-    if (this.insScene === 9) ctx.fillText("Play", 500, 570);
-    else if (this.insScene === 10) ctx.fillText("Play", 500, 570);
-    else if (this.insScene === 13) ctx.fillText("Begin", 500, 570);
-    else ctx.fillText("Next",500, 570);
+    if (this.insScene != 5 && this.insScene != 6) {
+      if (this.showMidGameIns && this.midGameIns <=5)ctx.fillText("Next",500, 570);
+      else if (this.insScene === 10) ctx.fillText("Play", 500, 570);
+      else if (this.insScene === 11) ctx.fillText("Play", 500, 570);
+      else if (this.insScene === 14) ctx.fillText("Begin", 500, 570);
+      else ctx.fillText("Next",500, 570);
+    } else {
+      if (this.insScene == 5 && this.animationGame2.finishedAnimation) {
+        ctx.fillText("Next",500, 570);
+      } else if (this.insScene == 6 && this.animationGame1.finishedAnimation) {
+        ctx.fillText("Next",500, 570);
+      }
+    }
+
     //500, 570
     //
     ctx.fill();

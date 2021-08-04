@@ -33,18 +33,19 @@ export default class InstructionManager {
     // this.b3_w = 50
     // this.b4_y = 0.714*window.qdHeight;
     this.offset = 500
-    this.b1_x = 200+(420/2)-(70/2)-100-125
-    this.b1_y = 500-100+15 + 40 + 70
+    this.b1_x = 200+(420/2)-(70/2)-100-125 - 10 + 20
+    this.b1_y = 500-100+15 + 40 + 70 + 130 - 30
     this.b1_h = 50
     this.b1_w = 70
-    this.b2_x = 290+(420/2)-(70/2)-100+500-125
-    this.b3_x = 720-160/2-100-125
-    this.b3_y = 425-100+15 + 40 + 70
+    this.b2_x = 290+(420/2)-(70/2)-100+500-125 - 10+ 20
+    this.b3_x = 720-160/2-100-125 - 10 + 20
+    this.b3_y = 425-100+15 + 40 + 70 + 130 - 30
     this.b3_h = 130
     this.b3_w = 50
-    this.b4_y = 500-100+15 + 40 + 70
+    this.b4_y = 500-100+15 + 40 + 70 + 130 - 30
 
     this.sb_x = 200+(420/2)-(70/2)
+    this.sb_x_d = 200+(420/2)-(70/2)-20
     this.sb_y = 500-100+15
     this.sb_w = 175
     this.sb_h = 100
@@ -64,10 +65,11 @@ export default class InstructionManager {
     } else if (window.observationType == 1) {
       gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/2021_07_29_data_samples/vf_sample" + String(window.sampleNumber) + "/"
     }else if (window.observationType == 2) {
-      gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/2021_07_29_data_samples/all_sample" + String(window.sampleNumber) + "/"
-    }else if (window.observationType == 3) {
       gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/2021_07_29_data_samples/none_sample" + String(window.sampleNumber) + "/"
     }
+    // else if (window.observationType == 3) {
+    //   gitDir = "https://raw.githubusercontent.com/Stephanehk/Prefrence_Elicitation_Interface/main/2021_07_29_data_samples/none_sample" + String(window.sampleNumber) + "/"
+    // }
     for (let i = 0; i < window.nSamples; i++) {
       //create MTURK HIT query
       // <input type="hidden" id = "query3" name="query3" value="" /> -->
@@ -261,7 +263,7 @@ export default class InstructionManager {
   draw(ctx) {
 
     if (window.showFinalScreen) {
-      this.img = document.getElementById("ins14");
+      this.img = document.getElementById("ins15");
       this.w = 750;
       this.h = 450;
       this.x = 75;
@@ -269,7 +271,7 @@ export default class InstructionManager {
 
 
       if (window.openedSurvey){
-        this.drawButton(ctx,this.sb_x,this.sb_y,this.sb_w,this.sb_h,"DodgerBlue","Submit HIT",this.sb_x-(this.sb_w/2)+120,this.sb_y+(this.sb_h/2)+25);
+        this.drawButton(ctx,this.sb_x-5,this.sb_y,this.sb_w,this.sb_h,"DodgerBlue","Submit HIT",this.sb_x-(this.sb_w/2)+120-5,this.sb_y+(this.sb_h/2)+25);
 
       }
 
@@ -286,35 +288,36 @@ export default class InstructionManager {
     } else {
       ctx.font = "25px CustomFont";
       ctx.fillStyle = "black";
-      ctx.fillText("Which shows", 480-40-20-30,20);
-      ctx.fillText("better behavior?", 480-40-30-30,45);
+      ctx.fillText("Which Shows", 480-40-20-30+10-5-5+20+5,20+130);
+      ctx.fillText("Better", 480-40-20-30+10-5+20+30,20+160);
+      ctx.fillText("Behavior?", 480-40-20-30+10-5+20+15,20 + 190);
       ctx.fill();
 
 
       ctx.font = "20px CustomFont";
       ctx.fillStyle = "black";
-      ctx.fillText(String(this.traj+1) + "/" + String(this.nTrajs+1),480-40-30-30+70,85);
+      ctx.fillText(String(this.traj+1) + "/" + String(this.nTrajs+1),480-40-30-30+70-5+20,85+170);
       ctx.fill();
 
-
+      //350*520
       ctx.drawImage(
         this.img1,
         200-100-100,
         0,
-        350,
-        520
+        402.5,
+        598
       );
 
       ctx.drawImage(
         this.img2,
-        290+this.offset-100-80,
+        290+this.offset-100-170+70,
         0,
-        350,
-        520
+        402.5,
+        598
       );
 
-      this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h/2)+5);
-      this.drawButton(ctx,this.b2_x,this.b1_y,this.b1_w,this.b1_h,this.b2Color,"Right",this.b2_x-(this.b1_w/2)+45,this.b1_y+(this.b1_h /2)+5)
+      this.drawButton(ctx,this.b1_x,this.b1_y,this.b1_w,this.b1_h,this.b1Color,"Left",this.b1_x-(this.b1_w/2)+50,this.b1_y+(this.b1_h/2)+5);
+      this.drawButton(ctx,this.b2_x,this.b1_y,this.b1_w,this.b1_h,this.b2Color,"Right",this.b2_x-(this.b1_w/2)+42,this.b1_y+(this.b1_h /2)+5)
 
 
       this.drawButton(ctx,this.b3_x,  this.b3_y,this.b3_h,this.b3_w,this.b3Color,"Same",this.b3_x+(this.b3_h/2)-25,  this.b3_y+(this.b3_w/2)+5);

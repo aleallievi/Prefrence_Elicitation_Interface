@@ -63,7 +63,7 @@ window.canvas.height = $(window).height()
 window.gsWidth = window.canvas.width;
 window.gsHeight = window.canvas.height;
 
-window.qdWidth = 0.75*$(window).width();
+window.qdWidth = 0.9*$(window).width();
 window.qdHeight= 1*$(window).height();
 
 
@@ -86,11 +86,11 @@ scoreDisp.style.position = "absolute";
 
 // queryDisp.width = QUERY_WIDTH;
 // queryDisp.height = QUERY_HEIGHT;
-queryDisp.width = 0.75*$(window).width();
+queryDisp.width = 0.9*$(window).width();
 queryDisp.height =  1*$(window).height()
 
-queryDisp.style.left = "15%";
-queryDisp.style.top = "15%";
+queryDisp.style.left = "5%";
+queryDisp.style.top = "0%";
 queryDisp.style.position = "absolute";
 
 window.addEventListener("keydown", function(e) {
@@ -154,8 +154,8 @@ window.addEventListener("load", function(event) {
   sd.css("left",gsLX + newGsSize + 10);
 
   var qs = $('#queryScreen');
-  qs.css("width", 0.75*$(window).width());
-  qs.css("height", 1*$(window).height());
+  qs.css("width", 0.9*$(window).width());
+  qs.css("height", newGsSize);
 
   var bs = $('.displayInsBtn');
   bs.css("width", 0.1*$(window).width());
@@ -166,8 +166,8 @@ window.addEventListener("load", function(event) {
   window.gsWidth = newGsSize;
   window.gsHeight = newGsSize;
 
-  window.qdWidth = 0.75*$(window).width();
-  window.qdHeight= 1*$(window).height();
+  window.qdWidth = 0.9*$(window).width();
+  window.qdHeight=  newGsSize;
 
   scoreDisp.width = newCsDispWidth;
   scoreDisp.height = newCsDispHeight;
@@ -261,8 +261,8 @@ window.addEventListener("resize", function(event) {
   sd.css("left",gsLX + newGsSize + 10);
 
   var qs = $('#queryScreen');
-  qs.css("width", 0.75*$(window).width());
-  qs.css("height", 0.41*$(window).width());
+  qs.css("width", 0.9*$(window).width());
+  qs.css("height", newGsSize);
 
   var bs = $('.displayInsBtn');
   bs.css("width", 0.1*$(window).width());
@@ -276,8 +276,8 @@ window.addEventListener("resize", function(event) {
   window.gsWidth = newGsSize;
   window.gsHeight = newGsSize;
 
-  window.qdWidth = 0.75*$(window).width();
-  window.qdHeight=  0.41*$(window).width();
+  window.qdWidth = 0.9*$(window).width();
+  window.qdHeight=  newGsSize;
 
   scoreDisp.width = newCsDispWidth;
   scoreDisp.height = newCsDispHeight;
@@ -389,9 +389,8 @@ window.im = new InstructionsManager();
 window.qm = new QueryManager();
 let isConnected = false;
 //this.socket.send(this.cur_name);
-// https://968874810f8c.ngrok.io
 // ws://localhost:3000
-window.socket = new WebSocket("wss://968874810f8c.ngrok.io");
+window.socket = new WebSocket("wss://a24ca38b7cff.ngrok.io");
     window.socket.addEventListener("open", function (event) {
       isConnected = true;
       console.log("Connected to the WS Server!");
@@ -562,8 +561,12 @@ window.canvas.addEventListener(
   function (evt) {
     let mousePos = getMousePos(window.canvas, evt);
 
-    if (isInside(mousePos, window.nextRect) && !this.finishedIns) {
-      window.im.insScene += 1;
+    if (isInside(mousePos, window.nextRect) && !this.finishedIns && !(window.im.insScene == 5 && !window.im.animationGame2.finishedAnimation) && !(window.im.insScene == 6 && !window.im.animationGame1.finishedAnimation)) {
+      if (!window.im.showMidGameIns)window.im.insScene += 1;
+      if (window.im.showMidGameIns)window.im.midGameIns+=1;
+      // window.alpha = 1;
+      ctx.globalAlpha = 1;
+      window.alpha = 1;
     }
   },
   false
@@ -646,6 +649,11 @@ function startNewGame() {
       ins = window.instructions[window.n_games];
     }
 
+    if (window.n_games == 4 && !window.im.finishedMidGameIns) {
+      window.im.showMidGameIns = true;
+
+    }
+
     // if (boardName==="player_board_6") {
     //   console.log("here")
     //   window.n_games = window.max_games
@@ -656,7 +664,7 @@ function startNewGame() {
     //   return
     //   //play the trajectory board
     // }
-
+    // this.finishedAnimation = false;
     window.game = new Game(
       GAME_WIDTH,
       GAME_HEIGHT,
@@ -690,9 +698,23 @@ function gameLoop(timestamp) {
   let deltaTime = timestamp - window.lastTime;
 
   if (!window.im.finishedIns && !window.disTraj) {
-    ctx.globalAlpha = 1;
+    // console.log("here")
+    // ctx.globalAlpha = 1;
     window.im.update();
     window.im.draw(ctx);
+    // console.log(window.im.animationGame1.finishedAnimation)
+    if (((window.im.animationGame2.finishedAnimation && window.im.insScene == 5)||(window.im.animationGame1.finishedAnimation && window.im.insScene == 6))) {
+      //figure out how to fade
+      // window.alpha -= window.delta;
+      // ctx.globalAlpha = window.alpha;
+      ctx.beginPath();
+      ctx.fillStyle = "white";
+      ctx.globalCompositeOperation='soft-light';
+      ctx.fillRect(0, 190, 600, 350);
+      ctx.fillRect(0, 540, 400, 350);
+      ctx.stroke();
+    }
+
     requestAnimationFrame(gameLoop);
     // requestAnimationFrame(gameLoop);
   } else if (window.begunQueries) {
@@ -706,7 +728,8 @@ function gameLoop(timestamp) {
     startNewGame();
     window.lastTime = timestamp;
 
-    if (window.game.reached_terminal === true && !window.disTraj) {
+    if ((window.game.reached_terminal === true && !window.disTraj) || window.finishedAnimation) {
+
       //figure out how to fade
       window.alpha -= window.delta;
       // if (alpha <= 0 || alpha >= 1) delta = -delta;
@@ -716,7 +739,7 @@ function gameLoop(timestamp) {
     }
 
     if (window.alpha > 0) {
-      if (window.game.gameObjects != null) {
+      if (window.game.gameObjects != null && !window.im.showMidGameIns) {
         window.game.update(deltaTime);
         window.game.draw(ctx);
         window.score.update(deltaTime);
@@ -729,6 +752,10 @@ function gameLoop(timestamp) {
           window.finished_game = true;
           $(".displayInsBtn").hide();
         }
+      } else if (window.im.showMidGameIns && !window.im.finishedMidGameIns){
+          ctx.globalAlpha = 1;
+          window.im.update();
+          window.im.draw(ctx);
       }
     } else {
       window.finished_game = true;
@@ -741,6 +768,8 @@ function gameLoop(timestamp) {
         window.im.finishedIns = false;
         window.im.finishedGamePlay = true;
         window.finishedTrajBoard = true;
+        ctx.globalAlpha = 1;
+        // window.im.insScene+=1;
       }
       // window.playTrajBoard = false;
     }

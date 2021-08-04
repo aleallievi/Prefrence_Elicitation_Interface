@@ -95,11 +95,11 @@ export default class Score {
     ctx.font = fontSize + " CustomFont";
     let symbol = "$";
     if (val > 0) {
-      ctx.fillStyle = "green";
+      ctx.fillStyle = "rgb(83, 117, 76)";
       symbol = "+ $";
     }
     if (val < 0) {
-      ctx.fillStyle = "red";
+      ctx.fillStyle = "rgb(196, 57, 57)";
       symbol = "- $";
       val = -val;
     }
@@ -289,7 +289,7 @@ export default class Score {
         } else {
 
           // if (window.observationType === 0) {
-          ctx.font = "35px CustomFont";
+          ctx.font = "25px CustomFont";
           ctx.fillStyle = "black";
           ctx.fillText("Score: $" + String(this.score), 10, 50);
           this.staticBarImg(ctx, "img_gas", 70,120,50,60)
@@ -307,27 +307,54 @@ export default class Score {
           this.staticBarImg(ctx, "img_flag", 320,120,50,60);
           this.staticBarText(ctx, 50*this.game.nFlags, 350,50,"","25px");
           // } else {
-          ctx.fillStyle = "black";
-          ctx.font = "35px CustomFont";
+          ctx.fillStyle = "rgb(62, 63, 64)";
+          ctx.font = "20px CustomFont";
           ctx.fillText(
-            "Most Additional",
+            "Best Possible",
             5,
-            450
+            410
           );
           ctx.fillText(
-            "Money You Can",
+            "Score From Start",
             5,
-            500
+            435
+          );
+
+          if (this.loadedVFunc) {
+            // let sv= this.vFunc[this.game.vehicle.curStatePrevCords.y][this.game.vehicle.curStatePrevCords.x]
+            let sv= this.vFunc[this.game.spawnPoint.y][this.game.spawnPoint.x]
+            this.staticBarText(ctx, sv, 465,10,"","20px")
+          }
+          ctx.fillStyle = "rgb(62, 63, 64)";
+          ctx.fillText(
+            "Best Possible Score",
+            5,
+            515
           );
           ctx.fillText(
-            "Earn From Here:",
+            "Given Your Moves",
             5,
-            550
+            545
           );
 
           if (this.loadedVFunc) {
             let sv= this.vFunc[this.game.vehicle.curStatePrevCords.y][this.game.vehicle.curStatePrevCords.x]
-            this.staticBarText(ctx, sv, 600,10,"","30px")
+            // let sv= this.vFunc[this.game.spawnPoint.y][this.game.spawnPoint.x]
+            this.staticBarText(ctx, sv, 575,10,"","20px")
+          }
+
+          ctx.fillStyle = "black";
+          ctx.font = "25px CustomFont";
+          ctx.fillText(
+            "Oppertunity Cost",
+            5,
+            620
+          );
+
+          if (this.loadedVFunc) {
+            let dsv= this.vFunc[this.game.vehicle.curStatePrevCords.y][this.game.vehicle.curStatePrevCords.x] - this.vFunc[this.game.spawnPoint.y][this.game.spawnPoint.x]
+            // let sv= this.vFunc[this.game.spawnPoint.y][this.game.spawnPoint.x]
+            this.staticBarText(ctx,this.score +  dsv, 650,10,"","25px")
           }
 
           //}
