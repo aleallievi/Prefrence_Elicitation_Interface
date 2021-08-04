@@ -304,7 +304,7 @@ export default class Score {
           this.staticBarImg(ctx, "img_person", 250,120,50,60);
           this.staticBarText(ctx, -50*this.game.nPeople, 290,50,"","25px");
 
-          this.staticBarImg(ctx, "img_flag", 320,120,50,60);
+          this.staticBarImg(ctx, "img_flag", 320,120,60,60);
           this.staticBarText(ctx, 50*this.game.nFlags, 350,50,"","25px");
           // } else {
           ctx.fillStyle = "rgb(62, 63, 64)";
@@ -340,13 +340,13 @@ export default class Score {
           if (this.loadedVFunc) {
             let sv= this.vFunc[this.game.vehicle.curStatePrevCords.y][this.game.vehicle.curStatePrevCords.x]
             // let sv= this.vFunc[this.game.spawnPoint.y][this.game.spawnPoint.x]
-            this.staticBarText(ctx, sv, 575,10,"","20px")
+            this.staticBarText(ctx, this.score + sv, 575,10,"","20px")
           }
 
           ctx.fillStyle = "black";
           ctx.font = "25px CustomFont";
           ctx.fillText(
-            "Oppertunity Cost",
+            "Opportunity Cost",
             5,
             620
           );

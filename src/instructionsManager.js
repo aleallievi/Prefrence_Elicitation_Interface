@@ -126,8 +126,14 @@ export default class InstructionManager {
 
     if (this.showMidGameIns && this.midGameIns < 6){
 
-      ctx.drawImage(this.img,250, 100, 345, 535);
-      ctx.drawImage(this.img_text, 10, 170, 200, 120);
+      ctx.drawImage(this.img,250, 10, 345, 523);
+      if (this.midGameIns == 1)ctx.drawImage(this.img_text, 60, 130, 127*1.4, 90*1.4);
+      else if (this.midGameIns == 2)ctx.drawImage(this.img_text, 30, 70, 144.5*1.4, 209*1.4);
+      else if (this.midGameIns == 3)ctx.drawImage(this.img_text, 60, 250, 120*1.4, 204.5*1.4);
+      else if (this.midGameIns == 4)ctx.drawImage(this.img_text, 20, 270, 142.5*1.4, 234*1.4);
+      else if (this.midGameIns == 5)ctx.drawImage(this.img_text, 15, 210, 174.5*1.4, 264.5*1.4);
+        // ctx.drawImage(this.img,250, 10, 345, 535);
+
 
 
 

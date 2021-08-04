@@ -33,12 +33,12 @@ export default class InstructionManager {
     // this.b3_w = 50
     // this.b4_y = 0.714*window.qdHeight;
     this.offset = 500
-    this.b1_x = 200+(420/2)-(70/2)-100-125 - 10 + 20
+    this.b1_x = 200+(420/2)-(70/2)-100-125 - 10 + 23
     this.b1_y = 500-100+15 + 40 + 70 + 130 - 30
     this.b1_h = 50
     this.b1_w = 70
-    this.b2_x = 290+(420/2)-(70/2)-100+500-125 - 10+ 20
-    this.b3_x = 720-160/2-100-125 - 10 + 20
+    this.b2_x = 290+(420/2)-(70/2)-100+500-125 - 10+ 23
+    this.b3_x = 720-160/2-100-125 - 10 + 23
     this.b3_y = 425-100+15 + 40 + 70 + 130 - 30
     this.b3_h = 130
     this.b3_w = 50
@@ -288,18 +288,40 @@ export default class InstructionManager {
     } else {
       ctx.font = "25px CustomFont";
       ctx.fillStyle = "black";
-      ctx.fillText("Which Shows", 480-40-20-30+10-5-5+20+5,20+130);
-      ctx.fillText("Better", 480-40-20-30+10-5+20+30,20+160);
-      ctx.fillText("Behavior?", 480-40-20-30+10-5+20+15,20 + 190);
+      ctx.fillText("Which Shows", 480-40-20-30+10-5-5+20+7,20+130);
+      ctx.fillText("Better", 480-40-20-30+10-5+20+30+10,20+160);
+      ctx.fillText("Behavior?", 480-40-20-30+10-5+20+15+7,20 + 190);
       ctx.fill();
 
 
       ctx.font = "20px CustomFont";
       ctx.fillStyle = "black";
-      ctx.fillText(String(this.traj+1) + "/" + String(this.nTrajs+1),480-40-30-30+70-5+20,85+170);
+      ctx.fillText(String(this.traj+1) + "/" + String(this.nTrajs+1),480-40-30-30+70-5+20+10,85+170);
       ctx.fill();
 
       //350*520
+      // console.log(window.qdWidth);
+      // console.log(window.qdHeight);
+      // console.log("\n");
+      // 1296
+      // 696
+      //
+      // ctx.drawImage(
+      //   this.img1,
+      //   200-100-100,
+      //   0,
+      //   0.3105*window.qdWidth,
+      //   0.859*window.qdHeight
+      // );
+      //
+      // ctx.drawImage(
+      //   this.img2,
+      //   290+this.offset-100-170+70,
+      //   0,
+      //   0.3105*window.qdWidth,
+      //   0.859*window.qdHeight
+      // );
+
       ctx.drawImage(
         this.img1,
         200-100-100,

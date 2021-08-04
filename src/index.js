@@ -64,8 +64,7 @@ window.gsWidth = window.canvas.width;
 window.gsHeight = window.canvas.height;
 
 window.qdWidth = 0.9*$(window).width();
-window.qdHeight= 1*$(window).height();
-
+window.qdHeight=  window.qdWidth/2;
 
 window.canvas.style.left = "18%";
 window.canvas.style.top = "0%"
@@ -86,10 +85,14 @@ scoreDisp.style.position = "absolute";
 
 // queryDisp.width = QUERY_WIDTH;
 // queryDisp.height = QUERY_HEIGHT;
-queryDisp.width = 0.9*$(window).width();
-queryDisp.height =  1*$(window).height()
+// queryDisp.width = 0.9*$(window).width();
+// queryDisp.height =  1*$(window).height()
 
 queryDisp.style.left = "5%";
+// $('#queryScreen').css('width', '90%');
+$('#queryScreen').css('height', '100%');
+
+
 queryDisp.style.top = "0%";
 queryDisp.style.position = "absolute";
 
@@ -154,8 +157,13 @@ window.addEventListener("load", function(event) {
   sd.css("left",gsLX + newGsSize + 10);
 
   var qs = $('#queryScreen');
-  qs.css("width", 0.9*$(window).width());
-  qs.css("height", newGsSize);
+  // qs.css("width", 0.9*$(window).width());
+  // qs.css("height", newGsSize);
+  // qs.css("height", newGsSize);
+  $('#queryScreen').width($('#queryScreen').height()*2);
+  if ($('#queryScreen').height()*2 > 0.9*$(window).width()){
+    $('#queryScreen').width(0.9*$(window).width());
+  }
 
   var bs = $('.displayInsBtn');
   bs.css("width", 0.1*$(window).width());
@@ -166,8 +174,12 @@ window.addEventListener("load", function(event) {
   window.gsWidth = newGsSize;
   window.gsHeight = newGsSize;
 
-  window.qdWidth = 0.9*$(window).width();
-  window.qdHeight=  newGsSize;
+  window.qdHeight=  $(window).height();
+  window.qdWidth = 2*window.qdHeight;
+
+  if (2*window.qdHeight > 0.9*$(window).width()) {
+    window.qdWidth = 0.9*$(window).width()
+  }
 
   scoreDisp.width = newCsDispWidth;
   scoreDisp.height = newCsDispHeight;
@@ -261,8 +273,12 @@ window.addEventListener("resize", function(event) {
   sd.css("left",gsLX + newGsSize + 10);
 
   var qs = $('#queryScreen');
-  qs.css("width", 0.9*$(window).width());
-  qs.css("height", newGsSize);
+  // qs.css("width", 0.9*$(window).width());
+  // qs.css("height", newGsSize);
+  $('#queryScreen').width($('#queryScreen').height()*2);
+  if ($('#queryScreen').height()*2 > 0.9*$(window).width()){
+    $('#queryScreen').width(0.9*$(window).width());
+  }
 
   var bs = $('.displayInsBtn');
   bs.css("width", 0.1*$(window).width());
@@ -276,8 +292,12 @@ window.addEventListener("resize", function(event) {
   window.gsWidth = newGsSize;
   window.gsHeight = newGsSize;
 
-  window.qdWidth = 0.9*$(window).width();
-  window.qdHeight=  newGsSize;
+  window.qdHeight=  $(window).height();
+  window.qdWidth = 2*window.qdHeight;
+
+  if (2*window.qdHeight > 0.9*$(window).width()) {
+    window.qdWidth = 0.9*$(window).width()
+  }
 
   scoreDisp.width = newCsDispWidth;
   scoreDisp.height = newCsDispHeight;
@@ -390,7 +410,7 @@ window.qm = new QueryManager();
 let isConnected = false;
 //this.socket.send(this.cur_name);
 // ws://localhost:3000
-window.socket = new WebSocket("wss://a24ca38b7cff.ngrok.io");
+window.socket = new WebSocket("wss://d9d2c0c303ed.ngrok.io");
     window.socket.addEventListener("open", function (event) {
       isConnected = true;
       console.log("Connected to the WS Server!");
@@ -678,7 +698,7 @@ function startNewGame() {
 
     window.lastTime = 0;
     window.alpha = 1; /// current alpha value
-    window.delta = 0.015; /// delta = speed
+    window.delta = 0.008; /// delta = speed
 
     window.n_games += 1;
 
