@@ -407,12 +407,12 @@ window.instructions.push("https://raw.githubusercontent.com/Stephanehk/Prefrence
 window.disTraj = false;
 window.im = new InstructionsManager();
 window.qm = new QueryManager();
-let isConnected = false;
+window.isConnected = false;
 //this.socket.send(this.cur_name);
 // ws://localhost:3000
-window.socket = new WebSocket("wss://d9d2c0c303ed.ngrok.io");
+window.socket = new WebSocket("wss://f5c764accdb1.ngrok.io");
     window.socket.addEventListener("open", function (event) {
-      isConnected = true;
+      window.isConnected = true;
       console.log("Connected to the WS Server!");
 
     });
@@ -423,7 +423,7 @@ function waitForCondition() {
   return new Promise(resolve => {
     var start_time = Date.now();
     function checkFlag() {
-      if (isConnected) {
+      if (window.isConnected) {
         resolve();
       }else {
         window.setTimeout(checkFlag, 1000);
@@ -448,9 +448,11 @@ async function getInstanceParams() {
 window.socket.addEventListener("message", function (event) {
   window.sampleNumber = parseInt(event.data.split(",")[0])
   window.observationType = parseInt(event.data.split(",")[1])
-  window.qm.handleSampleImages()
-  window.qm.nTrajs = window.nSamples;
-  console.log(window.sampleNumber);
+  if (window.sampleNumber >=0 && window.sampleNumber <= window.nSamples && window.observationType >= 0 && window.observationType <=2) {
+    window.qm.handleSampleImages()
+    window.qm.nTrajs = window.nSamples;
+    window.retrievedSamples = true;
+  }
 
 });
 
@@ -467,8 +469,9 @@ window.total_tsteps = 50;
 window.timestep = 0;
 window.finishedHIT = false;
 // window.sampleNumber = getRandomInt(0,2);
-window.nSamples = 35;
+window.nSamples = 37;
 window.nUsers = 30;
+window.abort = false;
 // window.sampleNumber = getRandomInt(0,window.nUsers);; //TODO: CHANGE ONCE WE MAKE MORE SAMPLE SETS
 getInstanceParams();
 // window.observationType = getRandomInt(0,2); //0 means display partial return and 1 means display change in state value
@@ -581,7 +584,7 @@ window.canvas.addEventListener(
   function (evt) {
     let mousePos = getMousePos(window.canvas, evt);
 
-    if (isInside(mousePos, window.nextRect) && !this.finishedIns && !(window.im.insScene == 5 && !window.im.animationGame2.finishedAnimation) && !(window.im.insScene == 6 && !window.im.animationGame1.finishedAnimation)) {
+    if (isInside(mousePos, window.nextRect) && !this.finishedIns && !(window.im.insScene == 5 && !window.im.animationGame2.finishedAnimation) && !(window.im.insScene == 6 && !window.im.animationGame1.finishedAnimation) && !window.abort) {
       if (!window.im.showMidGameIns)window.im.insScene += 1;
       if (window.im.showMidGameIns)window.im.midGameIns+=1;
       // window.alpha = 1;

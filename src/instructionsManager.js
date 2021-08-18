@@ -61,6 +61,12 @@ export default class InstructionManager {
       this.finishedMidGameIns = true;
       this.showMidGameIns = false;
     }
+    if (this.insScene == 2 && (!window.isConnected || !window.retrievedSamples)) {
+      console.log("failed to connect...")
+      window.abort = true;
+      this.img  = document.getElementById("error_message");
+      //means there was an error connecting to the server
+    }
 	// this.img.setAttribute('width',  66);
 	// this.img.setAttribute('height',  66);
 
@@ -134,9 +140,6 @@ export default class InstructionManager {
       else if (this.midGameIns == 5)ctx.drawImage(this.img_text, 15, 210, 174.5*1.4, 264.5*1.4);
         // ctx.drawImage(this.img,250, 10, 345, 535);
 
-
-
-
     } else {
       ctx.drawImage(this.img, this.x, this.y + ins5_offset, this.w, this.h);
       if (this.insScene == 1) {
@@ -160,23 +163,26 @@ export default class InstructionManager {
 
     ctx.fillStyle = "gray";
 
-    // console.log("here");
-    if (this.insScene != 5 && this.insScene != 6) {
-      if (this.showMidGameIns && this.midGameIns <=5)ctx.fillText("Next",500, 570);
-      else if (this.insScene === 10) ctx.fillText("Play", 500, 570);
-      else if (this.insScene === 11) ctx.fillText("Play", 500, 570);
-      else if (this.insScene === 14) ctx.fillText("Begin", 500, 570);
-      else ctx.fillText("Next",500, 570);
-    } else {
-      if (this.insScene == 5 && this.animationGame2.finishedAnimation) {
-        ctx.fillText("Next",500, 570);
-      } else if (this.insScene == 6 && this.animationGame1.finishedAnimation) {
-        ctx.fillText("Next",500, 570);
+    if (!window.abort) {
+      if (this.insScene != 5 && this.insScene != 6) {
+        if (this.showMidGameIns && this.midGameIns <=5)ctx.fillText("Next",500, 570);
+        else if (this.insScene === 10) ctx.fillText("Play", 500, 570);
+        else if (this.insScene === 11) ctx.fillText("Play", 500, 570);
+        else if (this.insScene === 14) ctx.fillText("Begin", 500, 570);
+        else ctx.fillText("Next",500, 570);
+      } else {
+        if (this.insScene == 5 && this.animationGame2.finishedAnimation) {
+          ctx.fillText("Next",500, 570);
+        } else if (this.insScene == 6 && this.animationGame1.finishedAnimation) {
+          ctx.fillText("Next",500, 570);
+        }
       }
+      ctx.fill();
     }
+    // console.log("here");
+
 
     //500, 570
-    //
-    ctx.fill();
+
   }
 }
