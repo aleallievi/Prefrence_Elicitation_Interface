@@ -77,9 +77,9 @@ class OrdinalClassifier():
             y_pred.append(pred_probs)
         return y_pred
 
-with open('/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/2021_08_13_woi_questions.data', 'rb') as f:
+with open('/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/2021_08_18_woi_questions.data', 'rb') as f:
     questions = pickle.load(f)
-with open('/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/2021_08_13_woi_answers.data', 'rb') as f:
+with open('/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/2021_08_18_woi_answers.data', 'rb') as f:
     answers = pickle.load(f)
 
 dsdt_data = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/saved_data/2021_07_29_dsdt_chosen.json"
@@ -598,6 +598,9 @@ class LogisticRegression(torch.nn.Module):
      def __init__(self,input_size,bias):
         super(LogisticRegression, self).__init__()
         self.linear1 = torch.nn.Linear(input_size, 1,bias=bias)
+        #set initial weights to 0 for readability
+        with torch.no_grad():
+            self.linear1.weight = torch.nn.Parameter(torch.tensor([[0 for i in range(input_size)]],dtype=torch.float))
      def forward(self, x):
         y_pred = torch.sigmoid(self.linear1(x))
         return y_pred
@@ -620,6 +623,7 @@ def print_model_params(aX, ay,name,input_type,randomized):
         input_size = 3
         bias = False
     y_train,_ = format_y(ay)
+
 
     model = LogisticRegression(input_size,bias)
     # criterion = torch.nn.BCELoss()
@@ -688,12 +692,12 @@ def train_and_eval(aX, ay,name,input_type, randomized=False):
             optimizer = torch.optim.SGD(model.parameters(), lr=0.005)
 
             for epoch in range(3000):
+
                 model.train()
                 optimizer.zero_grad()
                 # Forward pass
                 y_pred = model(X_train)
                 # Compute Loss
-
                 loss = prefrence_pred_loss(y_pred, y_train)
                 # Backward pass
                 loss.backward()
@@ -765,15 +769,17 @@ def execute_quad_log_reg(input_type,X_dicts,prefrences_dict, disp_type, quad, co
             vars = []
             for d in X_dicts:
                 vars.append(d.get(key))
+
             x = np.stack((vars[0],vars[1],vars[2]),axis=1)
             X.extend(x)
             Y.extend(y)
 
         X = np.array(X)
         Y = np.array(Y)
+
         aX, ay = augment_data(X,Y)
         name = "-- " + quad_name + " --"
-
+        print (name)
     train_and_eval(aX,ay,name,input_type,randomized=randomized)
 
 
@@ -783,114 +789,131 @@ X_dicts, delta_cis_dict,prefrences_dict, prefrences, delta_rs, delta_v_sts, delt
 X = np.array([delta_rs, delta_v_sts,delta_v_s0s]).T
 y = np.array(prefrences)
 
-# print ("------------------------------------------------------")
-# print ("       Spearman’s rank correlation test results       ")
-# print ("------------------------------------------------------")
+print ("------------------------------------------------------")
+print ("       Spearman’s rank correlation test results       ")
+print ("------------------------------------------------------")
+
+
+print ("------------ Condition 1 - partial return shown ------------")
+execute_quad_spearmans(pr_dsdt_res,"different start state / different end state","partial return")
+execute_quad_spearmans(pr_dsst_res,"different start state / same end state","partial return")
+execute_quad_spearmans(pr_ssst_res,"same start state / same end state","partial return")
+execute_quad_spearmans(pr_sss_res,"same start state / different end state","partial return")
+execute_quad_spearmans([pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"","partial_return",multi_quads=True)
+
+print ("------------ Condition 2 - expected return shown ------------")
+execute_quad_spearmans(vf_dsdt_res,"different start state / different end state","expected return")
+execute_quad_spearmans(vf_dsst_res,"different start state / same end state","expected return")
+execute_quad_spearmans(vf_ssst_res,"same start state / same end state","expected return")
+execute_quad_spearmans(vf_sss_res,"same start state / different end state","expected return")
+execute_quad_spearmans([vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"","expected_return",multi_quads=True)
+
+print ("------------ Condition 3 - No info shown ------------")
+execute_quad_spearmans(none_dsdt_res,"different start state / different end state","no info")
+execute_quad_spearmans(none_dsst_res,"different start state / same end state","no info")
+execute_quad_spearmans(none_ssst_res,"same start state / same end state","no info")
+execute_quad_spearmans(none_sss_res,"same start state / different end state","no info")
+execute_quad_spearmans([none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"","no info",multi_quads=True)
+
+
+
+
+
+
+# print ("--------------------------------------------------------------")
+# print ("  Expected Return Model - Logistic Regression Test Results ")
+# print ("--------------------------------------------------------------")
 #
-#
+# #
 # print ("------------ Condition 1 - partial return shown ------------")
-# execute_quad_spearmans(pr_dsdt_res,"different start state / different end state","partial return")
-# execute_quad_spearmans(pr_dsst_res,"different start state / same end state","partial return")
-# execute_quad_spearmans(pr_ssst_res,"same start state / same end state","partial return")
-# execute_quad_spearmans(pr_sss_res,"same start state / different end state","partial return")
-# execute_quad_spearmans([pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"","partial_return",multi_quads=True)
+# execute_quad_log_reg("er",X_dicts,prefrences_dict, 0, ["dsdt","dsst","ssst","sss"], [pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"",multi_quads=True,randomized=False)
+# print ("\n")
 #
 # print ("------------ Condition 2 - expected return shown ------------")
-# execute_quad_spearmans(vf_dsdt_res,"different start state / different end state","expected return")
-# execute_quad_spearmans(vf_dsst_res,"different start state / same end state","expected return")
-# execute_quad_spearmans(vf_ssst_res,"same start state / same end state","expected return")
-# execute_quad_spearmans(vf_sss_res,"same start state / different end state","expected return")
-# execute_quad_spearmans([vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"","expected_return",multi_quads=True)
+# execute_quad_log_reg("er",X_dicts,prefrences_dict, 1, ["dsdt","dsst","ssst","sss"], [vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"",multi_quads=True,randomized=False)
+# print ("\n")
 #
 # print ("------------ Condition 3 - No info shown ------------")
-# execute_quad_spearmans(none_dsdt_res,"different start state / different end state","no info")
-# execute_quad_spearmans(none_dsst_res,"different start state / same end state","no info")
-# execute_quad_spearmans(none_ssst_res,"same start state / same end state","no info")
-# execute_quad_spearmans(none_sss_res,"same start state / different end state","no info")
-# execute_quad_spearmans([none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"","no info",multi_quads=True)
-
-
-
-
-
-
-print ("--------------------------------------------------------------")
-print ("  Expected Return Model - Logistic Regression Test Results ")
-print ("--------------------------------------------------------------")
-
+# execute_quad_log_reg("er",X_dicts,prefrences_dict, 3, ["dsdt","dsst","ssst","sss"], [none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"",multi_quads=True,randomized=False)
+# print ("\n")
 #
-print ("------------ Condition 1 - partial return shown ------------")
-execute_quad_log_reg("er",X_dicts,prefrences_dict, 0, ["dsdt","dsst","ssst","sss"], [pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"",multi_quads=True,randomized=False)
-print ("\n")
-
-print ("------------ Condition 2 - expected return shown ------------")
-execute_quad_log_reg("er",X_dicts,prefrences_dict, 1, ["dsdt","dsst","ssst","sss"], [vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"",multi_quads=True,randomized=False)
-print ("\n")
-
-print ("------------ Condition 3 - No info shown ------------")
-execute_quad_log_reg("er",X_dicts,prefrences_dict, 3, ["dsdt","dsst","ssst","sss"], [none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"",multi_quads=True,randomized=False)
-print ("\n")
-
-print ("------------ Condition 4 - All Data Used ------------")
-train_and_eval(X, y,"","er", randomized=False)
-
-print ("--------------------------------------------------------------")
-print ("  Partial Return Model - Logistic Regression Test Results ")
-print ("--------------------------------------------------------------")
-
+# print ("------------ Condition 4 - All Data Used ------------")
+# train_and_eval(X, y,"","er", randomized=False)
 #
-print ("------------ Condition 1 - partial return shown ------------")
-execute_quad_log_reg("pr",X_dicts,prefrences_dict, 0, ["dsdt","dsst","ssst","sss"], [pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"",multi_quads=True,randomized=False)
-print ("\n")
-
-print ("------------ Condition 2 - expected return shown ------------")
-execute_quad_log_reg("pr",X_dicts,prefrences_dict, 1, ["dsdt","dsst","ssst","sss"], [vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"",multi_quads=True,randomized=False)
-print ("\n")
-
-print ("------------ Condition 3 - No info shown ------------")
-execute_quad_log_reg("pr",X_dicts,prefrences_dict, 3, ["dsdt","dsst","ssst","sss"], [none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"",multi_quads=True,randomized=False)
-print ("\n")
-
-print ("------------ Condition 4 - All Data Used ------------")
-train_and_eval(X, y,"","pr", randomized=False)
-
-print ("--------------------------------------------------------------")
-print ("  Fully Expressed Model - Logistic Regression Test Results ")
-print ("Note: The order of the input is (1) partial return, (2) end state value, and (3) start state value")
-print ("--------------------------------------------------------------")
-
+# print ("--------------------------------------------------------------")
+# print ("  Partial Return Model - Logistic Regression Test Results ")
+# print ("--------------------------------------------------------------")
 #
-print ("------------ Condition 1 - partial return shown ------------")
-execute_quad_log_reg("full",X_dicts,prefrences_dict, 0, ["dsdt","dsst","ssst","sss"], [pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"",multi_quads=True,randomized=False)
-print ("\n")
-
-print ("------------ Condition 2 - expected return shown ------------")
-execute_quad_log_reg("full",X_dicts,prefrences_dict, 1, ["dsdt","dsst","ssst","sss"], [vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"",multi_quads=True,randomized=False)
-print ("\n")
-
-print ("------------ Condition 3 - No info shown ------------")
-execute_quad_log_reg("full",X_dicts,prefrences_dict, 3, ["dsdt","dsst","ssst","sss"], [none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"",multi_quads=True,randomized=False)
-print ("\n")
-
-print ("------------ Condition 4 - All Data Used ------------")
-train_and_eval(X, y,"","full", randomized=False)
-
-print ("--------------------------------------------------------------")
-print (" Uninformed Model - Logistic Regression Test Results ")
-print ("--------------------------------------------------------------")
-
+# #
+# print ("------------ Condition 1 - partial return shown ------------")
+# execute_quad_log_reg("pr",X_dicts,prefrences_dict, 0, ["dsdt","dsst","ssst","sss"], [pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"",multi_quads=True,randomized=False)
+# print ("\n")
 #
-print ("------------ Condition 1 - partial return shown ------------")
-execute_quad_log_reg("",X_dicts,prefrences_dict, 0, ["dsdt","dsst","ssst","sss"], [pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"",multi_quads=True,randomized=True)
-print ("\n")
+# print ("------------ Condition 2 - expected return shown ------------")
+# execute_quad_log_reg("pr",X_dicts,prefrences_dict, 1, ["dsdt","dsst","ssst","sss"], [vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"",multi_quads=True,randomized=False)
+# print ("\n")
+#
+# print ("------------ Condition 3 - No info shown ------------")
+# execute_quad_log_reg("pr",X_dicts,prefrences_dict, 3, ["dsdt","dsst","ssst","sss"], [none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"",multi_quads=True,randomized=False)
+# print ("\n")
+#
+# print ("------------ Condition 4 - All Data Used ------------")
+# train_and_eval(X, y,"","pr", randomized=False)
+#
+#
+# print ("--------------------------------------------------------------")
+# print ("  Fully Expressed Model - Logistic Regression Test Results ")
+# print ("Note: The order of the input is (1) partial return, (2) end state value, and (3) start state value")
+# print ("--------------------------------------------------------------")
+#
+# # #
+# print ("------------ Condition 1 - partial return shown ------------")
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 0, "dsdt",pr_dsdt_res,"Different Start State / Different End State",multi_quads=False,randomized=False)
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 0, "dsst",pr_dsst_res,"Different Start State / Same End State",multi_quads=False,randomized=False)
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 0, "ssst",pr_ssst_res,"Same Start State / Same End State",multi_quads=False,randomized=False)
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 0, "sss",pr_sss_res,"Same Start State / Different End State",multi_quads=False,randomized=False)
+# print ("-- All Quadrants -- ")
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 0, ["dsdt","dsst","ssst","sss"], [pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"",multi_quads=True,randomized=False)
+# print ("\n")
 
-print ("------------ Condition 2 - expected return shown ------------")
-execute_quad_log_reg("",X_dicts,prefrences_dict, 1, ["dsdt","dsst","ssst","sss"], [vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"",multi_quads=True,randomized=True)
-print ("\n")
+# print ("------------ Condition 2 - expected return shown ------------")
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 1, "dsdt",vf_dsdt_res,"Different Start State / Different End State",multi_quads=False,randomized=False)
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 1, "dsst",vf_dsst_res,"Different Start State / Same End State",multi_quads=False,randomized=False)
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 1, "ssst",vf_ssst_res,"Same Start State / Same End State",multi_quads=False,randomized=False)
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 1, "sss",vf_sss_res,"Same Start State / Different End State",multi_quads=False,randomized=False)
+# print ("-- All Quadrants -- ")
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 1, ["dsdt","dsst","ssst","sss"], [vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"",multi_quads=True,randomized=False)
+# print ("\n")
 
-print ("------------ Condition 3 - No info shown ------------")
-execute_quad_log_reg("",X_dicts,prefrences_dict, 3, ["dsdt","dsst","ssst","sss"], [none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"",multi_quads=True,randomized=True)
-print ("\n")
+# print ("------------ Condition 3 - No info shown ------------")
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 3, "dsdt",none_dsdt_res,"Different Start State / Different End State",multi_quads=False,randomized=False)
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 3, "dsst",none_dsst_res,"Different Start State / Same End State",multi_quads=False,randomized=False)
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 3, "ssst",none_ssst_res,"Same Start State / Same End State",multi_quads=False,randomized=False)
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 3, "sss",none_sss_res,"Same Start State / Different End State",multi_quads=False,randomized=False)
+# print ("-- All Quadrants -- ")
+# execute_quad_log_reg("full",X_dicts,prefrences_dict, 3, ["dsdt","dsst","ssst","sss"], [none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"",multi_quads=True,randomized=False)
+# print ("\n")
+#
+# print ("------------ Condition 4 - All Data Used ------------")
+# train_and_eval(X, y,"","full", randomized=False)
+#
+#
+# print ("--------------------------------------------------------------")
+# print (" Uninformed Model - Logistic Regression Test Results ")
+# print ("--------------------------------------------------------------")
+#
+# #
+# print ("------------ Condition 1 - partial return shown ------------")
+# execute_quad_log_reg("",X_dicts,prefrences_dict, 0, ["dsdt","dsst","ssst","sss"], [pr_dsdt_res,pr_dsst_res,pr_ssst_res,pr_sss_res],"",multi_quads=True,randomized=True)
+# print ("\n")
+#
+# print ("------------ Condition 2 - expected return shown ------------")
+# execute_quad_log_reg("",X_dicts,prefrences_dict, 1, ["dsdt","dsst","ssst","sss"], [vf_dsdt_res,vf_dsst_res,vf_ssst_res,vf_sss_res],"",multi_quads=True,randomized=True)
+# print ("\n")
+#
+# print ("------------ Condition 3 - No info shown ------------")
+# execute_quad_log_reg("",X_dicts,prefrences_dict, 3, ["dsdt","dsst","ssst","sss"], [none_dsdt_res,none_dsst_res,none_ssst_res,none_sss_res],"",multi_quads=True,randomized=True)
+# print ("\n")
 #
 # print ("------------ Condition 4 - All Data Used ------------")
 # train_and_eval(X, y,"","", randomized=True)
