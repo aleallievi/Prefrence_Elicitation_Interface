@@ -72,19 +72,24 @@ class GridWorldEnv:
             print ("MUST SET START STATE FIRST")
 
         x,y = self.pos
+        
+        if self.board[x][y] == 3 or self.board[x][y] == 1 or self.board[x][y] == 7 or self.board[x][y] == 9:
+            done = True
+
+        reward = self.reward_function[x][y][a_index]
+
         done = False
         actions = [[-1,0],[1,0],[0,-1],[0,1]]
         a = actions[a_index]
         if self.is_valid_move(x,y,a):
             x = x + a[0]
             y = y + a[1]
-        if self.board[x][y] == 3 or self.board[x][y] == 1 or self.board[x][y] == 7 or self.board[x][y] == 9:
-            done = True
+
 
         self.pos = (x,y)
         assert a_index == self.find_action_index(a)
 
-        reward = self.reward_function[x][y][a_index]
+
         # if np.abs(reward) == 50:
         #     done = True
         #To retrieve tile coordinates from number:
