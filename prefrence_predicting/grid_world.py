@@ -84,6 +84,11 @@ class GridWorldEnv:
         reward = self.reward_function[x][y][a_index]
         reward_feature = np.zeros(self.feature_size)
 
+        if self.is_valid_move(x,y,a):
+            x = x + a[0]
+            y = y + a[1]
+        next_state = (x,y)
+
         if self.board[x][y] == 0:
             reward_feature[0] = 1
         elif self.board[x][y] == 1:
@@ -131,11 +136,6 @@ class GridWorldEnv:
             # reward_feature[0] = 1
             reward_feature[5] = 1
             reward_feature[4] = 1
-
-        if self.is_valid_move(x,y,a):
-            x = x + a[0]
-            y = y + a[1]
-        next_state = (x,y)
         # else:
             #gas area
             # reward_feature[0] = 1

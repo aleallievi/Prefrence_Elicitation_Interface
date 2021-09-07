@@ -75,9 +75,11 @@ def value_iteration():
                         Q = reward + GAMMA*V[ni][nj]
                         m = reward_feature + FGAMMA*M[ni][nj]
                     else:
+                        # print (reward_feature)
                         Q = reward
                         # assert (sum(reward_feature) == 1)
-                        m = reward_feature
+                        # m = reward_feature
+                        m = np.zeros(env.feature_size)
                     state_Qs.append(Q)
                     state_Ms.append(m)
 
@@ -133,19 +135,19 @@ def value_iteration():
     #----------------------------------------------------------------------------------------------------------------------------------------
 
     #subtract inital state reward
-    for i in range (10):
-        for j in range (10):
-            state_Qs = []
-            for a_index in range(len(actions)):
-                next_state, reward, done, reward_feature = env.get_next_state((i,j),a_index)
-                if not done:
-                    Q = reward + GAMMA*V[ni][nj]
-                else:
-                    Q = reward
-                state_Qs.append(Q)
-
-            next_state, reward, done, reward_feature = env.get_next_state((i,j),np.argmax(state_Qs))
-            M[i][j] -= reward_feature
+    # for i in range (10):
+    #     for j in range (10):
+    #         state_Qs = []
+    #         for a_index in range(len(actions)):
+    #             next_state, reward, done, reward_feature = env.get_next_state((i,j),a_index)
+    #             if not done:
+    #                 Q = reward + GAMMA*V[ni][nj]
+    #             else:
+    #                 Q = reward
+    #             state_Qs.append(Q)
+    #
+    #         next_state, reward, done, reward_feature = env.get_next_state((i,j),np.argmax(state_Qs))
+    #         M[i][j] -= reward_feature
 
     #test code
     for i in range (10):
@@ -160,8 +162,6 @@ def value_iteration():
             # print (V[i][j])
             # print ("\n")
             assert (v_pred == V[i][j])
-
-    print (M[0][0])
-
+    # print (M[8][9])
 # Q = np.load("/Users/stephanehatgiskessell/Desktop/Kivy_stuff/boards/2021-07-29_sparseboard2-notrap_Qs.npy")
 value_iteration()
