@@ -65,10 +65,9 @@ def value_iteration():
                 state_Qs = []
                 state_psis = []
                 for a_index in range(len(actions)):
-                    next_state, reward, next_state_phi, done, _ = env.get_next_state((i,j),a_index)
+                    next_state, reward, phi, done, _ = env.get_next_state((i,j),a_index)
                     # print (reward)
                     ni,nj = next_state
-                    phi = env.num2onehot_converter.num2onehot(env.board[ni][nj])
                     if not done:
                         Q = reward + GAMMA*V[ni][nj]
                         psi_temp = phi + FGAMMA*psi[ni][nj]
