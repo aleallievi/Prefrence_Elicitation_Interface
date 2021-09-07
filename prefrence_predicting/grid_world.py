@@ -13,8 +13,9 @@ class GridWorldEnv:
             self.reward_function = json.loads(j.read())
         self.observation_space = len(self.board)*len(self.board[0])
         self.action_space = 4
+        self.feature_size = 6
+        self.reward_array =[-1,50,-50,1,-1,-2]
 
-        self.reward_array = np.zeros(self.observation_space)
         actions = [[-1,0],[1,0],[0,-1],[0,1]]
 
         # for x in range(len(self.board)):
@@ -56,7 +57,6 @@ class GridWorldEnv:
         else:
             return False
 
-
     def is_terminal(self,x,y,a):
         x = a[0]
         y = a[1]
@@ -82,13 +82,65 @@ class GridWorldEnv:
             done = True
 
         reward = self.reward_function[x][y][a_index]
+        reward_feature = np.zeros(self.feature_size)
+
+        if self.board[x][y] == 0:
+            reward_feature[0] = 1
+        elif self.board[x][y] == 1:
+            #flag
+            # reward_feature[0] = 1
+            reward_feature[1] = 1
+        elif self.board[x][y] == 2:
+            #house
+            # reward_feature[0] = 1
+            pass
+        elif self.board[x][y] == 3:
+            #sheep
+            # reward_feature[0] = 1
+            reward_feature[2] = 1
+        elif self.board[x][y] == 4:
+            #coin
+            # reward_feature[0] = 1
+            reward_feature[0] = 1
+            reward_feature[3] = 1
+        elif self.board[x][y] == 5:
+            #road block
+            # reward_feature[0] = 1
+            reward_feature[0] = 1
+            reward_feature[4] = 1
+        elif self.board[x][y] == 6:
+            #mud area
+            # reward_feature[0] = 1
+            reward_feature[5] = 1
+        elif self.board[x][y] == 7:
+            #mud area + flag
+            reward_feature[1] = 1
+        elif self.board[x][y] == 8:
+            #mud area + house
+            pass
+        elif self.board[x][y] == 9:
+            #mud area + sheep
+            reward_feature[2] = 1
+        elif self.board[x][y] == 10:
+            #mud area + coin
+            # reward_feature[0] = 1
+            reward_feature[5] = 1
+            reward_feature[3] = 1
+        elif self.board[x][y] == 11:
+            #mud area + roadblock
+            # reward_feature[0] = 1
+            reward_feature[5] = 1
+            reward_feature[4] = 1
 
         if self.is_valid_move(x,y,a):
             x = x + a[0]
             y = y + a[1]
         next_state = (x,y)
+        # else:
+            #gas area
+            # reward_feature[0] = 1
 
-        return next_state, reward, done, None
+        return next_state, reward, done, reward_feature
 
     def step(self,a_index):
         if self.pos == None:
