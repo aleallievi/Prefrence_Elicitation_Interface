@@ -20,6 +20,8 @@ def value_iteration():
     # Q = defaultdict(lambda: np.zeros(env.action_space))
     V = np.zeros((int(np.sqrt(env.observation_space)), int(np.sqrt(env.observation_space))))
     M = [[np.zeros(env.observation_space) for i in range(int(np.sqrt(env.observation_space)))] for j in range (int(np.sqrt(env.observation_space)))]
+    phi = np.zeros(env.num_state_types)
+    psi = [[np.zeros(len(phi)) for i in range(int(np.sqrt(env.observation_space)))] for j in range (int(np.sqrt(env.observation_space)))]
 
     actions = [[-1,0],[1,0],[0,-1],[0,1]]
     n = 0
@@ -37,7 +39,7 @@ def value_iteration():
                 v = V[i][j]
                 state_Qs = []
                 for a_index in range(len(actions)):
-                    next_state, reward, done, _ = env.get_next_state((i,j),a_index)
+                    next_state, reward, next_state_type, done, _ = env.get_next_state((i,j),a_index)
                     ni,nj = next_state
                     if not done:
                         Q = reward + GAMMA*V[ni][nj]
@@ -60,29 +62,39 @@ def value_iteration():
                 if env.is_blocked(i,j):
                     continue
                 m_original = M[i][j]
+                psi_original = psi[i][j]
                 s_tab,N = env.state2tab(i,j)
+                phi = env.num2onehot_converter.num2onehot(env.board[i][j])
                 # print ("here")
                 state_Qs = []
                 state_Ms = []
+                state_psis = []
                 total_occupancies = []
                 for a_index in range(len(actions)):
-                    next_state, reward, done, _ = env.get_next_state((i,j),a_index)
+                    next_state, reward, next_state_type, done, _ = env.get_next_state((i,j),a_index)
                     # print (reward)
                     ni,nj = next_state
 
                     if not done:
                         Q = reward + GAMMA*V[ni][nj]
                         m = s_tab + FGAMMA*M[ni][nj]
+                        psi_temp = phi + FGAMMA*psi[ni][nj]
                     else:
                         Q = reward
                         m = s_tab
+                        psi_temp = phi
+
                     state_Qs.append(Q)
                     state_Ms.append(m)
+                    state_psis.append(psi_temp)
 
                 M[i][j] = state_Ms[np.argmax(state_Qs)]
-                delta = max(delta,np.sum(np.abs((m_original-M[i][j]))))
+                psi[i][j] = state_psis[np.argmax(state_Qs)]
+                # delta = max(delta,np.sum(np.abs((m_original-M[i][j]))))
+                delta = max(delta,np.sum(np.abs((psi_original-psi[i][j]))))
 
         if delta < THETA:
+            breakpoint()
             break
 
 

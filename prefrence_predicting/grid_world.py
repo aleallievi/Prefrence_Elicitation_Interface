@@ -1,6 +1,16 @@
 import numpy as np
 import json
 
+class Num2OneHot_Converter(object):
+    def __init__(self, s_size):
+        self.s_size = int(s_size)
+
+    def num2onehot(self, s_idx):
+        s_idx = int(s_idx)
+        onehot_s = np.zeros(self.s_size)
+        onehot_s[s_idx]=1
+        return onehot_s
+
 class GridWorldEnv:
     def __init__(self,board_name):
         board_fp = "../assets/boards/" + board_name + "_board.json"
@@ -32,6 +42,8 @@ class GridWorldEnv:
         #                     print (self.reward_function[x+a[0]][y+a[1]])
         #                     assert False
         #                 # break
+        self.num_state_types = int(max([max(self.board[x]) for x in range(len(self.board))]))+1
+        self.num2onehot_converter = Num2OneHot_Converter(self.num_state_types)
 
     def set_start_state(self,ss):
         self.ss = ss
@@ -87,8 +99,10 @@ class GridWorldEnv:
             x = x + a[0]
             y = y + a[1]
         next_state = (x,y)
+        next_state_type = self.board[x][y]
+        next_state_type_1h = self.num2onehot_converter.num2onehot(next_state_type)
 
-        return next_state, reward, done, None
+        return next_state, reward, next_state_type_1h, done, None
 
     def step(self,a_index):
         if self.pos == None:
@@ -130,3 +144,4 @@ class GridWorldEnv:
                 return i
             i+=1
         return False
+
