@@ -7,7 +7,7 @@ import matplotlib
 import json
 import torch
 from sklearn.model_selection import train_test_split
-
+import math
 
 with open('/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/2021_08_18_woi_questions.data', 'rb') as f:
     questions = pickle.load(f)
@@ -125,8 +125,12 @@ def find_reward_features(traj):
             # if in_gated == False or  (in_gated and next_in_gated):
             traj_ts_x += traj[i][0]
             traj_ts_y += traj[i][1]
+        if (traj_ts_x,traj_ts_y) != (prev_x,prev_y):
+            phi += get_state_feature(traj_ts_x,traj_ts_y)
+        else:
+            #only keep the gas/mud area score
+            phi += (get_state_feature(traj_ts_x,traj_ts_y)*[1,0,0,0,0,1])
 
-        phi += get_state_feature(traj_ts_x,traj_ts_y)
         prev_x = traj_ts_x
         prev_y = traj_ts_y
 
@@ -162,10 +166,44 @@ def find_end_state(traj):
 
     return traj_ts_x, traj_ts_y,partial_return
 
+
+def generate_t_nt_samples(terminating, non_terminating):
+    phis = []
+    y = []
+    rewards = []
+    for i in range (min(len(terminating),len(non_terminating))):
+        phis.append([terminating[i][0],non_terminating[i][0]])
+        rewards.append([terminating[i][1], non_terminating[i][1]])
+        #[gas, goal, sheep, coin, roadblock, mud]
+
+        # assert (terminating[i][1] == np.dot(terminating[i][0], [-1,50,-50,1,-1,-2]))
+
+        # print (non_terminating[i][1])
+        # print (non_terminating[i][0])
+        # print ("\n")
+        # assert (non_terminating[i][1] == np.dot(non_terminating[i][0], [-1,50,-50,1,-1,-2]))
+
+        if terminating[i][1] > non_terminating[i][1]:
+            y.append([1,0])
+        elif terminating[i][1] < non_terminating[i][1]:
+            y.append([0,1])
+        elif terminating[i][1] == non_terminating[i][1]:
+            y.append([0.5,0.5])
+
+    return phis,y,rewards
+
 def get_all_statistics(questions,answers):
     pr_X = []
     vf_X = []
     none_X = []
+
+    pr_X_terminating = []
+    vf_X_terminating = []
+    none_X_terminating = []
+
+    pr_X_non_terminating = []
+    vf_X_non_terminating = []
+    none_X_non_terminating = []
 
     pr_y = []
     vf_y = []
@@ -175,7 +213,7 @@ def get_all_statistics(questions,answers):
     vf_r = []
     none_r = []
 
-
+    n_incorrect = 0
     for i in range(len(questions)):
         assignment_qs = questions[i]
         assignment_as = answers[i]
@@ -255,6 +293,11 @@ def get_all_statistics(questions,answers):
             assert ((traj2_v_st - traj2_v_s0) - (traj1_v_st - traj1_v_s0) == x)
             assert (pr2 - pr1 == y)
 
+            #TODO: THIS IS A POTENTIALLY MAJOR BUG, RIGHT NOW IT IS NOT VERY IMPACTFUL BUT MAKE SURE TO FIX LATER
+            if (pr1 != np.dot(phi1, [-1,50,-50,1,-1,-2])) or (pr2 != np.dot(phi2, [-1,50,-50,1,-1,-2])):
+                n_incorrect+=1
+                continue
+
             disp_type = point.get("disp_type")
             dom_val = point.get("dom_val")
 
@@ -270,19 +313,60 @@ def get_all_statistics(questions,answers):
 
             if disp_id == "vf":
                 vf_X.append([phi1,phi2])
-                vf_r.append([phi1,phi2])
+                vf_r.append([pr1,pr2])
                 vf_y.append(encoded_a)
+                if quad == "dsst" or quad == "ssst":
+                    vf_X_terminating.append([phi1,pr1])
+                    vf_X_terminating.append([phi2,pr2])
+                elif quad == "dsdt" or quad == "sss":
+                    vf_X_non_terminating.append([phi1,pr1])
+                    vf_X_non_terminating.append([phi2,pr2])
+
             elif disp_id == "pr":
                 pr_X.append([phi1,phi2])
-                pr_r.append([phi1,phi2])
+                pr_r.append([pr1,pr2])
                 pr_y.append(encoded_a)
+                if quad == "dsst" or quad == "ssst":
+                    pr_X_terminating.append([phi1,pr1])
+                    pr_X_terminating.append([phi2,pr2])
+                elif quad == "dsdt" or quad == "sss":
+                    pr_X_non_terminating.append([phi1,pr1])
+                    pr_X_non_terminating.append([phi2,pr2])
+
             elif disp_id == "none":
                 none_X.append([phi1,phi2])
-                none_r.append([phi1,phi2])
+                none_r.append([pr1,pr2])
                 none_y.append(encoded_a)
+                if quad == "dsst" or quad == "ssst":
+                    none_X_terminating.append([phi1,pr1])
+                    none_X_terminating.append([phi2,pr2])
+                elif quad == "dsdt" or quad == "sss":
+                    none_X_non_terminating.append([phi1,pr1])
+                    none_X_non_terminating.append([phi2,pr2])
+
+    vf_X_add, vf_y_add, vf_add_r = generate_t_nt_samples(vf_X_terminating, vf_X_non_terminating)
+    pr_X_add, pr_y_add, pr_add_r = generate_t_nt_samples(pr_X_terminating, pr_X_non_terminating)
+    none_X_add, none_y_add, none_add_r = generate_t_nt_samples(none_X_terminating, none_X_non_terminating)
+
+    #adds syntheitc prefrences between termianting and non-terminating trajectory
+    # vf_X.extend(vf_X_add)
+    # vf_r.extend(vf_add_r)
+    # vf_y.extend(vf_y_add)
+    #
+    # pr_X.extend(pr_X_add)
+    # pr_r.extend(pr_add_r)
+    # pr_y.extend(pr_y_add)
+    #
+    # none_X.extend(none_X_add)
+    # none_r.extend(none_add_r)
+    # none_y.extend(none_y_add)
+
+    # print (n_incorrect)
+
+
     return vf_X, vf_r, vf_y, pr_X, pr_r, pr_y, none_X, none_r, none_y
 
-def augment_data(X,Y):
+def augment_data(X,Y,ytype="scalar"):
     aX = []
     ay = []
     for x,y in zip(X,Y):
@@ -291,36 +375,84 @@ def augment_data(X,Y):
 
         neg_x = [x[1],x[0]]
         aX.append(neg_x)
-        if y == 0:
-            ay.append(1)
-        elif y == 1:
-            ay.append(0)
+        if ytype == "scalar":
+            ay.append(1-y)
         else:
-            ay.append(0.5)
+            ay.append([y[1],y[0]])
+
     return np.array(aX), np.array(ay)
 
-def format_y(Y):
+def format_y(Y,ytype="scalar"):
     formatted_y = []
-    for y in Y:
-        if y == 0:
-            formatted_y.append(np.array([[1,0]]))
-        elif y == 1:
-            formatted_y.append(np.array([[0,1]]))
-        elif y == 0.5:
-            formatted_y.append(np.array([[0.5,0.5]]))
-        # else:
-        #     print (y)
+    if ytype=="scalar":
+        for y in Y:
+            if y == 0:
+                formatted_y.append(np.array([1,0]))
+            elif y == 1:
+                formatted_y.append(np.array([0,1]))
+            elif y == 0.5:
+                formatted_y.append(np.array([0.5,0.5]))
+    else:
+        formatted_y = Y
+        # for y in Y:
+        #     formatted_y.append([y])
+
     return torch.tensor(formatted_y,dtype=torch.float)
 
 def format_X(X):
     return torch.tensor(X,dtype=torch.float)
+
+def sigmoid(val):
+    return 1 / (1 + math.exp(-val))
+
+def generate_synthetic_prefs(rewards,mode):
+    synth_y = []
+    for r in rewards:
+        if mode == "sigmoid":
+            pref = [sigmoid(r[0]-r[1]),sigmoid(r[1]-r[0])] #TODO: im pretty sure it is r2-r1 and not r1-r2
+        elif mode == "max":
+            if r[0] > r[1]:
+                pref = [1,0]
+            elif r[1] > r[0]:
+                pref = [0,1]
+            elif r[1] == r[0]:
+                pref = [0.5,0.5]
+        synth_y.append(pref)
+    return synth_y
+
+
+def reward_pred_loss(output, target):
+    batch_size = output.size()[0]
+    output = torch.squeeze(output)
+    output = torch.log(output)
+    res = torch.mul(output,target)
+    return -torch.sum(res)/batch_size
+
+
+def validate_synth_data(X,y):
+    for i in range(len(X)):
+        r1 = np.dot(X[i][0], [-1,50,-50,1,-1,-2])
+        r2 = np.dot(X[i][1], [-1,50,-50,1,-1,-2])
+
+        pref_prob = [sigmoid(r1-r2),sigmoid(r2-r1)]
+        if pref_prob[0] > pref_prob[1]:
+            recovered_pref = [1,0]
+        elif pref_prob[1] > pref_prob[0]:
+            recovered_pref = [0,1]
+        else:
+            recovered_pref = [0.5,0.5]
+        # synth_loss = reward_pred_loss(torch.tensor([recovered_pref],dtype=torch.float),torch.tensor([y[i]],dtype=torch.float))
+        # assert (synth_loss == 0)
+        assert (recovered_pref[0] == y[i][0] and recovered_pref[1] == y[i][1])
+
+
 
 class RewardFunction(torch.nn.Module):
     def __init__(self,n_features=6):
         super(RewardFunction, self).__init__()
         self.n_features = n_features
         # self.w = torch.nn.Parameter(torch.tensor(np.zeros(n_features).T,dtype = torch.float,requires_grad=True))
-        self.linear1 = torch.nn.Linear(n_features, 1,bias=False)
+        self.linear1 = torch.nn.Linear(self.n_features, 1,bias=False)
 
     def forward(self, phi):
         # phi = torch.matmul(phi,self.w)
@@ -328,47 +460,48 @@ class RewardFunction(torch.nn.Module):
         phi_logit = torch.sigmoid(self.linear1(phi))
         return phi_logit
 
-
 vf_X, vf_r, vf_y, pr_X, pr_r, pr_y, none_X, none_r, none_y = get_all_statistics(questions,answers)
 
-aX, ay = augment_data(pr_X,pr_y)
+synth_sig_y = generate_synthetic_prefs(pr_r,"sigmoid")
+synth_max_y = generate_synthetic_prefs(pr_r,"max")
 
-def reward_pred_loss(output, target):
-    batch_size = output.size()[0]
-    output = torch.log(output)
-    res = torch.mul(output,target)
-    return -torch.sum(res)/batch_size
+
+aX, ay = augment_data(pr_X,pr_y,"scalar")
+# aX, ay = augment_data(pr_X,synth_sig_y,"arr")
+# aX, ay = augment_data(pr_X,synth_max_y,"arr")
+# validate_synth_data(aX,ay)
+# print (len(aX))
 
 def train(aX, ay):
     torch.manual_seed(0)
-    X_train, X_test, y_train, y_test = train_test_split(aX, ay,test_size=.2,random_state= 0)
-
+    X_train, X_test, y_train, y_test = train_test_split(aX, ay,test_size=.2,random_state= 0,shuffle=True)
+    #
     X_train = format_X(X_train)
-    y_train = format_y(y_train)
+    y_train = format_y(y_train,"scalar")
+
+    # model = RewardFunction()
+    # optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
+    #
+    # for epoch in range(50000):
+    #
+    #     model.train()
+    #     optimizer.zero_grad()
+    #     # Forward pass
+    #     y_pred = model(X_train)
+    #     # Compute Loss
+    #     # loss = F.cross_entropy(y_pred, y_train)
+    #
+    #     loss = reward_pred_loss(y_pred, y_train)
+    #     # Backward pass
+    #     loss.backward()
+    #     optimizer.step()
+    #     print (loss)
+    # for param in model.parameters():
+    #     print (param)
 
 
-    model = RewardFunction()
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
-
-    for epoch in range(5000):
-
-        model.train()
-        optimizer.zero_grad()
-        # Forward pass
-        y_pred = model(X_train)
-        # Compute Loss
-        # loss = F.cross_entropy(y_pred, y_train)
-        loss = reward_pred_loss(y_pred, y_train)
-        # Backward pass
-        loss.backward()
-        optimizer.step()
-        # print (loss)
-    for param in model.parameters():
-        print (param)
-
-
-    # print ("\n")
-    # w = np.array([2.2008, 0.0672, 0.0669, 0.0925, 0.4213, 1.5453]).T
+    # # print ("\n")
+    # w = np.array([  2.2033,  0.4756,  0.1291, -0.0630, -0.0173,  1.4962]).T
     # n_correct = 0
     # total= 0
     # for (x,y) in zip(X_test,y_test):
@@ -376,13 +509,41 @@ def train(aX, ay):
     #     #     continue
     #     total +=1
     #     y_hat = np.matmul(x,w)
+    #     # print (y_hat)
     #     if (y_hat[0] > y_hat[1]):
-    #         res = 0
+    #         res = [1,0]
     #     elif (y_hat[1] > y_hat[0]):
-    #         res = 1
+    #         res = [0,1]
     #     else:
-    #         res = 0.5
-    #     if res == y:
+    #         res = [0.5,0.5]
+    #     if res[0] == y[0] and res[1] == y[1]:
+    #         n_correct += 1
+    # print (n_correct/total)
+    # #
+    # for (x,y) in zip(X_test,y_test):
+    #     # if y == 0.5:
+    #     #     continue
+    #     total +=1
+    #     r = np.matmul(x,w)
+    #     y_hat = [sigmoid(r[0]-r[1]),sigmoid(r[1]-r[0])]
+    #     # print (r)
+    #     # print (y)
+    #     # print ("\n")
+    #     if (y_hat[0] > y_hat[1]):
+    #         res = [1,0]
+    #     elif (y_hat[1] > y_hat[0]):
+    #         res = [0,1]
+    #     else:
+    #         res = [0.5,0.5]
+    #
+    #     if (y[0] > y[1]):
+    #         y_f = [1,0]
+    #     elif (y[1] > y[0]):
+    #         y_f = [0,1]
+    #     else:
+    #         y_f = [0.5,0.5]
+    #
+    #     if res[0] == y_f[0] and res[1] == y_f[1]:
     #         n_correct += 1
     # print (n_correct/total)
 
