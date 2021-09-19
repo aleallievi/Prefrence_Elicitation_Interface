@@ -466,8 +466,8 @@ synth_sig_y = generate_synthetic_prefs(pr_r,"sigmoid")
 synth_max_y = generate_synthetic_prefs(pr_r,"max")
 
 
-aX, ay = augment_data(pr_X,pr_y,"scalar")
-# aX, ay = augment_data(pr_X,synth_sig_y,"arr")
+# aX, ay = augment_data(pr_X,pr_y,"scalar")
+aX, ay = augment_data(pr_X,synth_sig_y,"arr")
 # aX, ay = augment_data(pr_X,synth_max_y,"arr")
 # validate_synth_data(aX,ay)
 # print (len(aX))
@@ -477,50 +477,51 @@ def train(aX, ay):
     X_train, X_test, y_train, y_test = train_test_split(aX, ay,test_size=.2,random_state= 0,shuffle=True)
     #
     X_train = format_X(X_train)
-    y_train = format_y(y_train,"scalar")
+    y_train = format_y(y_train,"arr")
 
-    # model = RewardFunction()
-    # optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
-    #
-    # for epoch in range(50000):
-    #
-    #     model.train()
-    #     optimizer.zero_grad()
-    #     # Forward pass
-    #     y_pred = model(X_train)
-    #     # Compute Loss
-    #     # loss = F.cross_entropy(y_pred, y_train)
-    #
-    #     loss = reward_pred_loss(y_pred, y_train)
-    #     # Backward pass
-    #     loss.backward()
-    #     optimizer.step()
-    #     print (loss)
-    # for param in model.parameters():
-    #     print (param)
+    model = RewardFunction()
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
+
+    for epoch in range(50000):
+
+        model.train()
+        optimizer.zero_grad()
+        # Forward pass
+        y_pred = model(X_train)
+        # Compute Loss
+        # loss = F.cross_entropy(y_pred, y_train)
+
+        loss = reward_pred_loss(y_pred, y_train)
+        # Backward pass
+        loss.backward()
+        optimizer.step()
+        print (loss)
+    for param in model.parameters():
+        print (param)
 
 
     # # print ("\n")
-    # w = np.array([  2.2033,  0.4756,  0.1291, -0.0630, -0.0173,  1.4962]).T
+    # y_test = format_y(y_test)
+    # w = np.array([ 2.2874,  0.4489,  0.0879,  0.0262, -0.0747,  0.9900]).T
     # n_correct = 0
     # total= 0
-    # for (x,y) in zip(X_test,y_test):
-    #     # if y == 0.5:
-    #     #     continue
-    #     total +=1
-    #     y_hat = np.matmul(x,w)
-    #     # print (y_hat)
-    #     if (y_hat[0] > y_hat[1]):
-    #         res = [1,0]
-    #     elif (y_hat[1] > y_hat[0]):
-    #         res = [0,1]
-    #     else:
-    #         res = [0.5,0.5]
-    #     if res[0] == y[0] and res[1] == y[1]:
-    #         n_correct += 1
-    # print (n_correct/total)
-    # #
-    # for (x,y) in zip(X_test,y_test):
+    # # for (x,y) in zip(X_test,y_test):
+    # #     # if y == 0.5:
+    # #     #     continue
+    # #     total +=1
+    # #     y_hat = np.matmul(x,w)
+    # #     # print (y_hat)
+    # #     if (y_hat[0] > y_hat[1]):
+    # #         res = [1,0]
+    # #     elif (y_hat[1] > y_hat[0]):
+    # #         res = [0,1]
+    # #     else:
+    # #         res = [0.5,0.5]
+    # #     if res[0] == y[0] and res[1] == y[1]:
+    # #         n_correct += 1
+    # # print (n_correct/total)
+    # # #
+    # for (x,y) in zip(X_train,y_train):
     #     # if y == 0.5:
     #     #     continue
     #     total +=1
