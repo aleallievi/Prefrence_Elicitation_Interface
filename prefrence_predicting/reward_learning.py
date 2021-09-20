@@ -472,6 +472,54 @@ aX, ay = augment_data(pr_X,synth_sig_y,"arr")
 # validate_synth_data(aX,ay)
 # print (len(aX))
 
+def model_eval(w,X,Y):
+    # w = np.array([ 2.2874,  0.4489,  0.0879,  0.0262, -0.0747,  0.9900]).T
+    n_correct = 0
+    total= 0
+    # for (x,y) in zip(X_test,y_test):
+    #     # if y == 0.5:
+    #     #     continue
+    #     total +=1
+    #     y_hat = np.matmul(x,w)
+    #     # print (y_hat)
+    #     if (y_hat[0] > y_hat[1]):
+    #         res = [1,0]
+    #     elif (y_hat[1] > y_hat[0]):
+    #         res = [0,1]
+    #     else:
+    #         res = [0.5,0.5]
+    #     if res[0] == y[0] and res[1] == y[1]:
+    #         n_correct += 1
+    # print (n_correct/total)
+    # #
+    for (x,y) in zip(X,Y):
+        # if y == 0.5:
+        #     continue
+        total +=1
+        r = np.matmul(x,w)
+        y_hat = [sigmoid(r[0]-r[1]),sigmoid(r[1]-r[0])]
+        # print (r)
+        # print (y)
+        # print ("\n")
+        if (y_hat[0] > y_hat[1]):
+            res = [1,0]
+        elif (y_hat[1] > y_hat[0]):
+            res = [0,1]
+        else:
+            res = [0.5,0.5]
+
+        if (y[0] > y[1]):
+            y_f = [1,0]
+        elif (y[1] > y[0]):
+            y_f = [0,1]
+        else:
+            y_f = [0.5,0.5]
+
+        if res[0] == y_f[0] and res[1] == y_f[1]:
+            n_correct += 1
+    print (n_correct/total)
+
+
 def train(aX, ay):
     torch.manual_seed(0)
     X_train, X_test, y_train, y_test = train_test_split(aX, ay,test_size=.2,random_state= 0,shuffle=True)
@@ -499,54 +547,14 @@ def train(aX, ay):
     for param in model.parameters():
         print (param)
 
+    #double check x*w = prefrence
+    #plot training/testing curve (ie: should not be exactly identical)
+    #check outputted logits from model.forward() - maybe generate synthetic dataset (ie: phi1, ph2, gt pr's, logits, gt prefrence, pred prefrence)
+    #try removing trajectories with terminating states and see what results we get
+    #[gas, goal, sheep, coin, roadblock, mud]
+    model_eval(X_train,y_train,np.array([ 2.2874,  0.4489,  0.0879,  0.0262, -0.0747,  0.9900]).T)
+    model_eval(X_test,y_test,np.array([ 2.2874,  0.4489,  0.0879,  0.0262, -0.0747,  0.9900]).T)
 
-    # # print ("\n")
-    # y_test = format_y(y_test)
-    # w = np.array([ 2.2874,  0.4489,  0.0879,  0.0262, -0.0747,  0.9900]).T
-    # n_correct = 0
-    # total= 0
-    # # for (x,y) in zip(X_test,y_test):
-    # #     # if y == 0.5:
-    # #     #     continue
-    # #     total +=1
-    # #     y_hat = np.matmul(x,w)
-    # #     # print (y_hat)
-    # #     if (y_hat[0] > y_hat[1]):
-    # #         res = [1,0]
-    # #     elif (y_hat[1] > y_hat[0]):
-    # #         res = [0,1]
-    # #     else:
-    # #         res = [0.5,0.5]
-    # #     if res[0] == y[0] and res[1] == y[1]:
-    # #         n_correct += 1
-    # # print (n_correct/total)
-    # # #
-    # for (x,y) in zip(X_train,y_train):
-    #     # if y == 0.5:
-    #     #     continue
-    #     total +=1
-    #     r = np.matmul(x,w)
-    #     y_hat = [sigmoid(r[0]-r[1]),sigmoid(r[1]-r[0])]
-    #     # print (r)
-    #     # print (y)
-    #     # print ("\n")
-    #     if (y_hat[0] > y_hat[1]):
-    #         res = [1,0]
-    #     elif (y_hat[1] > y_hat[0]):
-    #         res = [0,1]
-    #     else:
-    #         res = [0.5,0.5]
-    #
-    #     if (y[0] > y[1]):
-    #         y_f = [1,0]
-    #     elif (y[1] > y[0]):
-    #         y_f = [0,1]
-    #     else:
-    #         y_f = [0.5,0.5]
-    #
-    #     if res[0] == y_f[0] and res[1] == y_f[1]:
-    #         n_correct += 1
-    # print (n_correct/total)
 
         # print (model.parameters())
 train(aX, ay)
