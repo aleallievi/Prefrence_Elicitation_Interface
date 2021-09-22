@@ -9,18 +9,18 @@ import torch
 from sklearn.model_selection import train_test_split
 import math
 
-with open('/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/2021_08_18_woi_questions.data', 'rb') as f:
+with open('../2021_08_18_woi_questions.data', 'rb') as f:
     questions = pickle.load(f)
-with open('/Users/stephanehatgiskessell/Desktop/Kivy_stuff/MTURK_interface/2021_08_18_woi_answers.data', 'rb') as f:
+with open('../2021_08_18_woi_answers.data', 'rb') as f:
     answers = pickle.load(f)
 
-dsdt_data = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/saved_data/2021_07_29_dsdt_chosen.json"
-dsst_data = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/saved_data/2021_07_29_dsst_chosen.json"
-ssst_data = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/saved_data/2021_07_29_ssst_chosen.json"
-sss_data = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/saved_data/2021_07_29_sss_chosen.json"
-board = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/boards/2021-07-29_sparseboard2-notrap_board.json"
-board_vf = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/boards/2021-07-29_sparseboard2-notrap_value_function.json"
-board_rf = "/Users/stephanehatgiskessell/Desktop/Kivy_stuff/boards/2021-07-29_sparseboard2-notrap_rewards_function.json"
+dsdt_data = "../saved_data/2021_07_29_dsdt_chosen.json"
+dsst_data = "../saved_data/2021_07_29_dsst_chosen.json"
+ssst_data = "../saved_data/2021_07_29_ssst_chosen.json"
+sss_data = "../saved_data/2021_07_29_sss_chosen.json"
+board = "../saved_data/2021-07-29_sparseboard2-notrap_board.json"
+board_vf = "../saved_data/2021-07-29_sparseboard2-notrap_value_function.json"
+board_rf = "../saved_data/2021-07-29_sparseboard2-notrap_rewards_function.json"
 
 
 
@@ -551,7 +551,9 @@ def train(aX, ay):
     #plot training/testing curve (ie: should not be exactly identical)
     #check outputted logits from model.forward() - maybe generate synthetic dataset (ie: phi1, ph2, gt pr's, logits, gt prefrence, pred prefrence)
     #try removing trajectories with terminating states and see what results we get
+    #get rid of redundent data for synthetic dataset
     #[gas, goal, sheep, coin, roadblock, mud]
+
     model_eval(X_train,y_train,np.array([ 2.2874,  0.4489,  0.0879,  0.0262, -0.0747,  0.9900]).T)
     model_eval(X_test,y_test,np.array([ 2.2874,  0.4489,  0.0879,  0.0262, -0.0747,  0.9900]).T)
 
